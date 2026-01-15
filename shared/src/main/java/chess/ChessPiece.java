@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -10,14 +11,27 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
-    final ChessGame.TeamColor TeamColor;
     final ChessGame.TeamColor pieceColor;
-    final PieceType PieceType;
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
+    }
+
+    final ChessPiece.PieceType type;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
-        this.TeamColor = ChessGame.TeamColor;
-        this.pieceColor = ChessGame.pieceColor;
-        this.PieceType = ChessPiece.PieceType;
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
 
     /**
@@ -36,16 +50,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-
-        return TeamColor;
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-
-        return PieceType;
+        return type;
     }
 
     /**
@@ -56,6 +68,15 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+/*
+        Start with the king. all he can do is move one space in any direction unless a piece on his team is in
+        that position. If a piece is captured, just rewrite the space to contain the King.
+
+        Don't reuse code, that's bad practice. Write some methods that move directions and use those for multiple pieces
+
+        DONT MAKE SUBCLASSES, make a move calculator class with kingmove/queenmove subclasses. Then depending
+        on the pieceType, you know which thing to make a new instance of
+ */
         throw new RuntimeException("Not implemented");
     }
 }
