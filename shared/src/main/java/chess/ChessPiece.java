@@ -68,15 +68,56 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+
 /*
         Start with the king. all he can do is move one space in any direction unless a piece on his team is in
         that position. If a piece is captured, just rewrite the space to contain the King.
 
         Don't reuse code, that's bad practice. Write some methods that move directions and use those for multiple pieces
 
-        DONT MAKE SUBCLASSES, make a move calculator class with kingmove/queenmove subclasses. Then depending
+        DON'T MAKE SUBCLASSES, make a move calculator class with kingmove/queenmove subclasses. Then depending
         on the pieceType, you know which thing to make a new instance of
  */
         throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> moveCalculator(ChessBoard board, ChessPosition myPosition, PieceType type) {
+        if (type == PieceType.KING) {
+            /*
+            a king can move one up, one down, one right, one left, or diagonally one.
+
+            if possible move
+
+            if the row/col == 0 or == 9, not a valid move
+             */
+            new ChessMove(myPosition, myPosition, null);
+            throw new RuntimeException("Not implemented");
+
+        } else if (type == PieceType.QUEEN) {
+
+            throw new RuntimeException("Not implemented");
+
+        } else if (type == PieceType.BISHOP) {
+
+            throw new RuntimeException("Not implemented");
+
+        } else if (type == PieceType.ROOK) {
+
+            throw new RuntimeException("Not implemented");
+
+        } else if (type == PieceType.KNIGHT) {
+
+            throw new RuntimeException("Not implemented");
+
+        } else if (type == PieceType.PAWN) {
+
+            throw new RuntimeException("Not implemented");
+
+        } else {
+            throw new RuntimeException("Piece has no type");
+        }
+
+
+
     }
 }
