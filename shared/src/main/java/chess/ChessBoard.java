@@ -19,7 +19,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+//        chessBoard[position] = piece;
     }
 
     /**
@@ -38,6 +38,12 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+
+        ChessPiece[][] chessBoard = new ChessPiece[8][];
+        for (ChessPiece[] row : chessBoard) {
+            for (ChessPiece value : row) {
+                value = null;
+            }
+        }
     }
 }
