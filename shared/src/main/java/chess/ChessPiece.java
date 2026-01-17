@@ -65,7 +65,7 @@ public class ChessPiece {
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
      * danger
-     *
+     * <p>
      * pieceMoves: Given a board configuration, this method returns all the moves a specific piece can
      * legally make independant of whose turn it is or if the King is being attacked.
      * It considers the edges of the board and the location of both enemy and friendly pieces.
@@ -174,14 +174,55 @@ public class ChessPiece {
             }
         }
 
-        if (type == PieceType.PAWN) {
-            // It can move up two maybe
-            throw new RuntimeException("Not implemented");
-        }
-
         if (type == PieceType.KNIGHT) {
             // Does funny knight stuff
-            throw new RuntimeException("Not implemented");
+
+        }
+
+        if (type == PieceType.PAWN) {
+            // It can move up two maybe
+            if (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE) {
+                if (myPosition.row != 8) {
+                    ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col);
+
+                    if (myPosition.row == 2) {
+                        endPosition = new ChessPosition(myPosition.row + 2, myPosition.col);
+                        if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                            ChessMove upTwo = new ChessMove(myPosition, endPosition, null);
+                            possibleMoves.add(upTwo);
+                        }
+                    }
+
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                        if (endPosition.row == 8) {
+                            ChessMove upPromote = new ChessMove(myPosition, endPosition, type);
+                            possibleMoves.add(upPromote);
+                        }
+                    }
+                    ChessMove upMove = new ChessMove(myPosition, endPosition, null);
+                    possibleMoves.add(upMove);
+                }
+
+            } else if (myPosition.row != 1) {
+                    ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col);
+
+                    if (myPosition.row == 7) {
+                        endPosition = new ChessPosition(myPosition.row - 2, myPosition.col);
+                        if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                            ChessMove downTwo = new ChessMove(myPosition, endPosition, null);
+                            possibleMoves.add(downTwo);
+                        }
+                    }
+
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                        if (endPosition.row == 1) {
+                            ChessMove downPromote = new ChessMove(myPosition, endPosition, type);
+                            possibleMoves.add(downPromote);
+                        }
+                    }
+                    ChessMove downMove = new ChessMove(myPosition, endPosition, null);
+                    possibleMoves.add(downMove);
+            }
         }
 
 //        check diagonals (up + left) (up + right) (down + left) (down + right) (King, Queen, Bishop)
