@@ -88,41 +88,46 @@ public class ChessPiece {
         call the moveCalculator class
         return the array
          */
-        return moveCalculator(board, myPosition, null);
+        return moveCalculator(board, myPosition, board.getPiece(myPosition).getPieceType());
     }
 
 //    holdup this can totally just be the up down left right diagonal thing, but what about knights?
     private Collection<ChessMove> moveCalculator(ChessBoard board, ChessPosition myPosition, PieceType type) {
         // Need to figure out what to do with bishops, rooks, and the queen who can move more than one.
         Collection<ChessMove> possibleMoves = new ArrayList<>();
+        System.out.printf("type: %s row: %d col: %d %n", type, myPosition.row, myPosition.col);
 
         if (type == PieceType.BISHOP || type == PieceType.KING || type == PieceType.QUEEN || type == PieceType.ROOK) {
             if (type != PieceType.ROOK) {
                 //Diagonal
                 if (myPosition.row != 8 && myPosition.col != 8) {
+                    System.out.println("right up");
                     ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col + 1);
-                    if (board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                         ChessMove rightUpMove = new ChessMove(myPosition, endPosition, null);
                         possibleMoves.add(rightUpMove);
                     }
                 }
                 if (myPosition.row != 1 && myPosition.col != 8) {
+                    System.out.println("left up");
                     ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col + 1);
-                    if (board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                         ChessMove leftUpMove = new ChessMove(myPosition, endPosition, null);
                         possibleMoves.add(leftUpMove);
                     }
                 }
                 if (myPosition.row != 8 && myPosition.col != 1) {
+                    System.out.println("right down");
                     ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col - 1);
-                    if (board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                         ChessMove rightDownMove = new ChessMove(myPosition, endPosition, null);
                         possibleMoves.add(rightDownMove);
                     }
                 }
                 if (myPosition.row != 1 && myPosition.col != 1) {
+                    System.out.println("left down");
                     ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col - 1);
-                    if (board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                         ChessMove leftDownMove = new ChessMove(myPosition, endPosition, null);
                         possibleMoves.add(leftDownMove);
                     }
@@ -132,32 +137,36 @@ public class ChessPiece {
             // Left, right, up, down so far
             if (type != PieceType.BISHOP) {
                 if (myPosition.row != 1) {
+                    System.out.println("left");
                     ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col);
-                    if (board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                         ChessMove leftMove = new ChessMove(myPosition, endPosition, null);
                         possibleMoves.add(leftMove);
                     }
                 }
 
                 if (myPosition.row != 8) {
+                    System.out.println("right");
                     ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col);
-                    if (board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                         ChessMove rightMove = new ChessMove(myPosition, endPosition, null);
                         possibleMoves.add(rightMove);
                     }
                 }
 
                 if (myPosition.col != 8) {
+                    System.out.println("up");
                     ChessPosition endPosition = new ChessPosition(myPosition.row, myPosition.col + 1);
-                    if (board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                         ChessMove upMove = new ChessMove(myPosition, endPosition, null);
                         possibleMoves.add(upMove);
                     }
                 }
 
                 if (myPosition.col != 1) {
+                    System.out.println("down");
                     ChessPosition endPosition = new ChessPosition(myPosition.row, myPosition.col - 1);
-                    if (board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                    if (board.getPiece(endPosition) == null || board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                         ChessMove downMove = new ChessMove(myPosition, endPosition, null);
                         possibleMoves.add(downMove);
                     }
