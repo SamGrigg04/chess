@@ -74,26 +74,21 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
 
-/*
-        Start with the king. all he can do is move one space in any direction unless a piece on his team is in
-        that position. If a piece is captured, just rewrite the space to contain the King.
 
-        Don't reuse code, that's bad practice. Write some methods that move directions and use those for multiple pieces
-
-        DON'T MAKE SUBCLASSES, make a move calculator class with kingmove/queenmove subclasses. Then depending
-        on the pieceType, you know which thing to make a new instance of
- */
-        /*
-        get the piece at the position
-        call the moveCalculator class
-        return the array
-         */
         return moveCalculator(board, myPosition, board.getPiece(myPosition).getPieceType());
     }
 
 //    holdup this can totally just be the up down left right diagonal thing, but what about knights?
     private Collection<ChessMove> moveCalculator(ChessBoard board, ChessPosition myPosition, PieceType type) {
-        // Need to figure out what to do with bishops, rooks, and the queen who can move more than one.
+        // TODO: instead of all the nested ifs, have the parent moveCalculator with children KingMovesCalculator, QueenMoves
+        // TODO: calculator, etc. Parent will have shared code
+
+        // TODO: Need to figure out what to do with bishops, rooks, and the queen who can move more than one.
+        // TODO: Make a loop inside those subclasses that terminates when it hits a piece of the same color (when a
+        // TODO: move is not added to the collection? Maybe a toggle?)
+
+
+
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         System.out.printf("type: %s row: %d col: %d %n", type, myPosition.row, myPosition.col);
 
@@ -225,7 +220,6 @@ public class ChessPiece {
             }
         }
 
-//        check diagonals (up + left) (up + right) (down + left) (down + right) (King, Queen, Bishop)
 
 //        check for knight (up 2 + right or left, down 2 + right or left, left 2 + up or down, right 2 + up or down)
 
@@ -233,4 +227,29 @@ public class ChessPiece {
         return possibleMoves;
 
     }
+
+    private Collection<ChessMove> kingMovesCalculator(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> queenMovesCalculator(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> bishopMovesCalculator(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> knightMovesCalculator(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> rookMovesCalculator(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        throw new RuntimeException("Not implemented");
+    }
+
+    private Collection<ChessMove> pawnMovesCalculator(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {
+        throw new RuntimeException("Not implemented");
+    }
+
 }
