@@ -10,7 +10,6 @@ public class KingMovesCalculator extends MoveCalculator {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         possibleMoves.addAll(upMove(board, myPosition));
         possibleMoves.addAll(downMove(board, myPosition));
-        possibleMoves.addAll(downMove(board, myPosition));
         possibleMoves.addAll(rightMove(board, myPosition));
         possibleMoves.addAll(leftMove(board, myPosition));
 
