@@ -12,8 +12,10 @@ public class KingMovesCalculator extends MoveCalculator {
         possibleMoves.addAll(downMove(board, myPosition));
         possibleMoves.addAll(rightMove(board, myPosition));
         possibleMoves.addAll(leftMove(board, myPosition));
-
-
+        possibleMoves.addAll(upRightMove(board, myPosition));
+        possibleMoves.addAll(upLeftMove(board, myPosition));
+        possibleMoves.addAll(downRightMove(board, myPosition));
+        possibleMoves.addAll(downLeftMove(board, myPosition));
         return possibleMoves;
     }
 }

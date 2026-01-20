@@ -11,8 +11,10 @@ public class QueenMovesCalculator extends MoveCalculator {
         possibleMoves.addAll(downSlide(board, myPosition));
         possibleMoves.addAll(rightSlide(board, myPosition));
         possibleMoves.addAll(leftSlide(board, myPosition));
-
-
+        possibleMoves.addAll(upRightSlide(board, myPosition));
+        possibleMoves.addAll(upLeftSlide(board, myPosition));
+        possibleMoves.addAll(downRightSlide(board, myPosition));
+        possibleMoves.addAll(downLeftSlide(board, myPosition));
         return possibleMoves;
     }
 }

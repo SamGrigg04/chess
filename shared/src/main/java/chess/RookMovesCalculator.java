@@ -11,8 +11,6 @@ public class RookMovesCalculator extends MoveCalculator {
         possibleMoves.addAll(downSlide(board, myPosition));
         possibleMoves.addAll(rightSlide(board, myPosition));
         possibleMoves.addAll(leftSlide(board, myPosition));
-
-
         return possibleMoves;
     }
 }
