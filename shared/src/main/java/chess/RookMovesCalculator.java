@@ -7,10 +7,10 @@ public class RookMovesCalculator extends MoveCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition){
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        possibleMoves.addAll(upSlide(board, myPosition));
-        possibleMoves.addAll(downSlide(board, myPosition));
-        possibleMoves.addAll(rightSlide(board, myPosition));
-        possibleMoves.addAll(leftSlide(board, myPosition));
+        possibleMoves.addAll(slide(this::upMove, board, myPosition));
+//        possibleMoves.addAll(slide(this::downMove, board, myPosition));
+//        possibleMoves.addAll(slide(this::rightMove, board, myPosition));
+//        possibleMoves.addAll(slide(this::leftMove, board, myPosition));
         return possibleMoves;
     }
 }

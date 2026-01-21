@@ -10,7 +10,7 @@ import java.util.Objects;
  */
 public class ChessMove {
 
-    final ChessPosition startPosition;
+    ChessPosition startPosition;
     final ChessPosition endPosition;
     final ChessPiece.PieceType promotionPiece;
 
