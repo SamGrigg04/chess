@@ -6,19 +6,24 @@ import java.util.Collection;
 public class PawnMovesCalculator extends MoveCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition){
-//        Collection<ChessMove> possibleMoves = new ArrayList<>();
-//        // TODO: Logic in MoveCalculator?
-        // TODO: pawns can capture diagonally
-        // TODO: for each promotion possibility, make a new move
-//        if (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE) {
-//            possibleMoves.addAll(upMove(board, myPosition));
-//            possibleMoves.addAll(upTwoMove(board, myPosition));
-//            possibleMoves.addAll(promotionMove(board, myPosition));
-//        } else if (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK) {
-//            possibleMoves.addAll(downMove(board, myPosition));
-//        }
-
-        return null;
-//        return possibleMoves;
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        if (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE) {
+            possibleMoves.addAll(upMovePawn(board, myPosition));
+            possibleMoves.addAll(upTwoMove(board, myPosition));
+            possibleMoves.addAll(upLeftPawn(board, myPosition));
+            possibleMoves.addAll(upRightPawn(board, myPosition));
+//            if (myPosition.row == 8) {
+//                possibleMoves.addAll(slide(this::promotionMove, board, myPosition, true));
+//            }
+        } else if (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK) {
+            possibleMoves.addAll(downMovePawn(board, myPosition));
+            possibleMoves.addAll(downTwoMove(board, myPosition));
+            possibleMoves.addAll(downLeftPawn(board, myPosition));
+            possibleMoves.addAll(downRightPawn(board, myPosition));
+//            if (myPosition.row == 1) {
+//                possibleMoves.addAll(slide(this::promotionMove, board, myPosition, true));
+//            }
+        }
+        return possibleMoves;
     }
 }
