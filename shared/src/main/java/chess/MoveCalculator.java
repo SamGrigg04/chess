@@ -85,7 +85,8 @@ public class MoveCalculator {
         return possibleMoves;
     }
 
-    // Pass in a function (upMove, downMove, etc.), the board, and the position of the piece to be moved. The single boolean is for the king, pawns, and knights.
+    // Pass in a function (upMove, downMove, etc.), the board, and the position of the piece to be moved.
+    // The single boolean is for the king, pawns, and knights.
     protected Collection<ChessMove> slide (Direction dir, ChessBoard board, ChessPosition myPosition, boolean single) {
 
         // The ArrayList of ChessMoves we are going to return
