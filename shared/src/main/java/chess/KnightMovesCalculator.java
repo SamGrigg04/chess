@@ -8,8 +8,6 @@ public class KnightMovesCalculator extends MoveCalculator {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition){
         Collection<ChessMove> possibleMoves = new ArrayList<>();
 
-
-
         return possibleMoves;
     }
 }
