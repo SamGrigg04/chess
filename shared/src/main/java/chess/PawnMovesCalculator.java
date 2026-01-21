@@ -12,17 +12,12 @@ public class PawnMovesCalculator extends MoveCalculator {
             possibleMoves.addAll(upTwoMove(board, myPosition));
             possibleMoves.addAll(upLeftPawn(board, myPosition));
             possibleMoves.addAll(upRightPawn(board, myPosition));
-//            if (myPosition.row == 8) {
-//                possibleMoves.addAll(slide(this::promotionMove, board, myPosition, true));
-//            }
-        } else if (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK) {
+        }
+        else if (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.BLACK) {
             possibleMoves.addAll(downMovePawn(board, myPosition));
             possibleMoves.addAll(downTwoMove(board, myPosition));
             possibleMoves.addAll(downLeftPawn(board, myPosition));
             possibleMoves.addAll(downRightPawn(board, myPosition));
-//            if (myPosition.row == 1) {
-//                possibleMoves.addAll(slide(this::promotionMove, board, myPosition, true));
-//            }
         }
         return possibleMoves;
     }

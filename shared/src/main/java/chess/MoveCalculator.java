@@ -90,6 +90,9 @@ public class MoveCalculator {
         if (myPosition.row < 8 && myPosition.col < 8) {
             ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col + 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                if (endPosition.row == 8) {
+                    return promotionMove(board, myPosition, endPosition);
+                }
                 System.out.println("right up pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
@@ -102,6 +105,9 @@ public class MoveCalculator {
         if (myPosition.row < 8 && myPosition.col > 1) {
             ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col - 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                if (endPosition.row == 8) {
+                    return promotionMove(board, myPosition, endPosition);
+                }
                 System.out.println("left up pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
@@ -114,6 +120,9 @@ public class MoveCalculator {
         if (myPosition.row > 1 && myPosition.col < 8) {
             ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col + 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                if (endPosition.row == 1) {
+                    return promotionMove(board, myPosition, endPosition);
+                }
                 System.out.println("right down pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
@@ -126,6 +135,9 @@ public class MoveCalculator {
         if (myPosition.row > 1 && myPosition.col > 1) {
             ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col - 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
+                if (endPosition.row == 1) {
+                    return promotionMove(board, myPosition, endPosition);
+                }
                 System.out.println("left down pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
@@ -165,6 +177,9 @@ public class MoveCalculator {
         if (myPosition.row < 8) {
             ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col);
             if (board.getPiece(endPosition) == null) {
+                if (endPosition.row == 8) {
+                    return promotionMove(board, myPosition, endPosition);
+                }
                 System.out.println("up pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
@@ -177,10 +192,22 @@ public class MoveCalculator {
         if (myPosition.row > 1) {
             ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col);
             if (board.getPiece(endPosition) == null) {
+                if (endPosition.row == 1) {
+                    return promotionMove(board, myPosition, endPosition);
+                }
                 System.out.println("down pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
         }
+        return possibleMoves;
+    }
+
+    protected Collection<ChessMove> promotionMove(ChessBoard board, ChessPosition myPosition, ChessPosition endPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
+        possibleMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.KNIGHT));
+        possibleMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.ROOK));
+        possibleMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.QUEEN));
+        possibleMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.BISHOP));
         return possibleMoves;
     }
 
