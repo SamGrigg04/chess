@@ -1,12 +1,10 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class KnightMovesCalculator extends MoveCalculator {
     @Override
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition){
-        Collection<ChessMove> possibleMoves = new ArrayList<>();
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves){
         possibleMoves.addAll(slide(this::knight1, board, myPosition, true));
         possibleMoves.addAll(slide(this::knight2, board, myPosition, true));
         possibleMoves.addAll(slide(this::knight3, board, myPosition, true));

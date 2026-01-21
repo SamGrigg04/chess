@@ -73,18 +73,19 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
         if (type == ChessPiece.PieceType.KING) {
-            return new KingMovesCalculator().pieceMoves(board, myPosition);
+            return new KingMovesCalculator().pieceMoves(board, myPosition, possibleMoves);
         } else if (type == ChessPiece.PieceType.QUEEN) {
-            return new QueenMovesCalculator().pieceMoves(board, myPosition);
+            return new QueenMovesCalculator().pieceMoves(board, myPosition, possibleMoves);
         } else if (type == ChessPiece.PieceType.BISHOP) {
-            return new BishopMovesCalculator().pieceMoves(board, myPosition);
+            return new BishopMovesCalculator().pieceMoves(board, myPosition, possibleMoves);
         } else if (type == ChessPiece.PieceType.KNIGHT) {
-            return new KnightMovesCalculator().pieceMoves(board, myPosition);
+            return new KnightMovesCalculator().pieceMoves(board, myPosition, possibleMoves);
         } else if (type == ChessPiece.PieceType.ROOK) {
-            return new RookMovesCalculator().pieceMoves(board, myPosition);
+            return new RookMovesCalculator().pieceMoves(board, myPosition, possibleMoves);
         } else if (type == ChessPiece.PieceType.PAWN) {
-            return new PawnMovesCalculator().pieceMoves(board, myPosition);
+            return new PawnMovesCalculator().pieceMoves(board, myPosition, possibleMoves);
         } else {
             throw new RuntimeException("No piece type [ChessPiece.java]");
         }

@@ -5,7 +5,7 @@ import java.util.Collection;
 
 public class MoveCalculator {
 
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {return new ArrayList<>();}
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {return new ArrayList<>();}
 
     @FunctionalInterface
     interface Direction {
@@ -316,4 +316,4 @@ public class MoveCalculator {
     }
 }
 
-// TODO: KNIGHTS AND PAWNS MOVES
+

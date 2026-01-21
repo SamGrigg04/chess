@@ -1,12 +1,10 @@
 package chess;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class PawnMovesCalculator extends MoveCalculator {
     @Override
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition){
-        Collection<ChessMove> possibleMoves = new ArrayList<>();
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves){
         if (board.getPiece(myPosition).pieceColor == ChessGame.TeamColor.WHITE) {
             possibleMoves.addAll(upMovePawn(board, myPosition));
             possibleMoves.addAll(upTwoMove(board, myPosition));
