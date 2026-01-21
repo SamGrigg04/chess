@@ -91,7 +91,7 @@ public class MoveCalculator {
             ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col + 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                 if (endPosition.row == 8) {
-                    return promotionMove(board, myPosition, endPosition);
+                    return promotionMove(myPosition, endPosition);
                 }
                 System.out.println("right up pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
@@ -106,7 +106,7 @@ public class MoveCalculator {
             ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col - 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                 if (endPosition.row == 8) {
-                    return promotionMove(board, myPosition, endPosition);
+                    return promotionMove(myPosition, endPosition);
                 }
                 System.out.println("left up pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
@@ -121,7 +121,7 @@ public class MoveCalculator {
             ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col + 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                 if (endPosition.row == 1) {
-                    return promotionMove(board, myPosition, endPosition);
+                    return promotionMove(myPosition, endPosition);
                 }
                 System.out.println("right down pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
@@ -136,7 +136,7 @@ public class MoveCalculator {
             ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col - 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                 if (endPosition.row == 1) {
-                    return promotionMove(board, myPosition, endPosition);
+                    return promotionMove(myPosition, endPosition);
                 }
                 System.out.println("left down pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
@@ -178,7 +178,7 @@ public class MoveCalculator {
             ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col);
             if (board.getPiece(endPosition) == null) {
                 if (endPosition.row == 8) {
-                    return promotionMove(board, myPosition, endPosition);
+                    return promotionMove(myPosition, endPosition);
                 }
                 System.out.println("up pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
@@ -193,7 +193,7 @@ public class MoveCalculator {
             ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col);
             if (board.getPiece(endPosition) == null) {
                 if (endPosition.row == 1) {
-                    return promotionMove(board, myPosition, endPosition);
+                    return promotionMove(myPosition, endPosition);
                 }
                 System.out.println("down pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
@@ -202,12 +202,77 @@ public class MoveCalculator {
         return possibleMoves;
     }
 
-    protected Collection<ChessMove> promotionMove(ChessBoard board, ChessPosition myPosition, ChessPosition endPosition) {
+    protected Collection<ChessMove> promotionMove(ChessPosition myPosition, ChessPosition endPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         possibleMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.KNIGHT));
         possibleMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.ROOK));
         possibleMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.QUEEN));
         possibleMoves.add(new ChessMove(myPosition, endPosition, ChessPiece.PieceType.BISHOP));
+        return possibleMoves;
+    }
+
+    protected Collection<ChessPosition> knight1(ChessPosition myPosition) {
+        Collection<ChessPosition> possibleMoves = new ArrayList<>();
+        if (myPosition.row < 7 && myPosition.col < 8) {
+            possibleMoves.add(new ChessPosition(myPosition.row + 2, myPosition.col + 1));
+        }
+        return possibleMoves;
+    }
+
+    protected Collection<ChessPosition> knight2(ChessPosition myPosition) {
+        Collection<ChessPosition> possibleMoves = new ArrayList<>();
+        if (myPosition.row < 8 && myPosition.col < 7) {
+            System.out.println("right up");
+            possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col + 2));
+        }
+        return possibleMoves;
+    }
+
+    protected Collection<ChessPosition> knight3(ChessPosition myPosition) {
+        Collection<ChessPosition> possibleMoves = new ArrayList<>();
+        if (myPosition.row > 1 && myPosition.col < 7) {
+            possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col + 2));
+        }
+        return possibleMoves;
+    }
+
+    protected Collection<ChessPosition> knight4(ChessPosition myPosition) {
+        Collection<ChessPosition> possibleMoves = new ArrayList<>();
+        if (myPosition.row > 2 && myPosition.col < 8) {
+            possibleMoves.add(new ChessPosition(myPosition.row - 2, myPosition.col + 1));
+        }
+        return possibleMoves;
+    }
+
+    protected Collection<ChessPosition> knight5(ChessPosition myPosition) {
+        Collection<ChessPosition> possibleMoves = new ArrayList<>();
+        if (myPosition.row > 2 && myPosition.col > 1) {
+            possibleMoves.add(new ChessPosition(myPosition.row - 2, myPosition.col - 1));
+        }
+        return possibleMoves;
+    }
+
+    protected Collection<ChessPosition> knight6(ChessPosition myPosition) {
+        Collection<ChessPosition> possibleMoves = new ArrayList<>();
+        if (myPosition.row > 1 && myPosition.col > 2) {
+            possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col - 2));
+        }
+        return possibleMoves;
+    }
+
+    protected Collection<ChessPosition> knight7(ChessPosition myPosition) {
+        Collection<ChessPosition> possibleMoves = new ArrayList<>();
+        if (myPosition.row < 8 && myPosition.col > 2) {
+            possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col -2));
+        }
+        return possibleMoves;
+    }
+
+    protected Collection<ChessPosition> knight8(ChessPosition myPosition) {
+        Collection<ChessPosition> possibleMoves = new ArrayList<>();
+        if (myPosition.row < 7 && myPosition.col > 1) {
+            possibleMoves.add(new ChessPosition(myPosition.row + 2, myPosition.col - 1));
+        }
         return possibleMoves;
     }
 
@@ -217,7 +282,7 @@ public class MoveCalculator {
     protected Collection<ChessMove> slide (Direction dir, ChessBoard board, ChessPosition myPosition, boolean single) {
 
         // The ArrayList of ChessMoves we are going to return
-        Collection<ChessMove> possibleMoves = new ArrayList<ChessMove>();
+        Collection<ChessMove> possibleMoves = new ArrayList<>();
 
         // Initialize the variable that's going to be iterated
         ChessPosition newEndPosition = myPosition;

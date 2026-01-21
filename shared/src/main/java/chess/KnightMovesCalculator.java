@@ -7,7 +7,14 @@ public class KnightMovesCalculator extends MoveCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition){
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-
+        possibleMoves.addAll(slide(this::knight1, board, myPosition, true));
+        possibleMoves.addAll(slide(this::knight2, board, myPosition, true));
+        possibleMoves.addAll(slide(this::knight3, board, myPosition, true));
+        possibleMoves.addAll(slide(this::knight4, board, myPosition, true));
+        possibleMoves.addAll(slide(this::knight5, board, myPosition, true));
+        possibleMoves.addAll(slide(this::knight6, board, myPosition, true));
+        possibleMoves.addAll(slide(this::knight7, board, myPosition, true));
+        possibleMoves.addAll(slide(this::knight8, board, myPosition, true));
         return possibleMoves;
     }
 }
