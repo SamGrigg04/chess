@@ -5,6 +5,7 @@ import java.util.Collection;
 public class QueenMovesCalculator extends MoveCalculator {
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves){
+        // Returns all possible moves the queen can make
         possibleMoves.addAll(slide(this::upMove, board, myPosition, false));
         possibleMoves.addAll(slide(this::downMove, board, myPosition, false));
         possibleMoves.addAll(slide(this::leftMove, board, myPosition, false));
