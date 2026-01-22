@@ -15,7 +15,6 @@ public class MoveCalculator {
     protected Collection<ChessPosition> upMove(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
         if (myPosition.row < 8) {
-            System.out.println("up");
             possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col));
         }
         return possibleMoves;
@@ -24,9 +23,7 @@ public class MoveCalculator {
     protected Collection<ChessPosition> downMove(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
         if (myPosition.row > 1) {
-            System.out.println("down");
             possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col));
-
         }
         return possibleMoves;
     }
@@ -34,7 +31,6 @@ public class MoveCalculator {
     protected Collection<ChessPosition> rightMove(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
         if (myPosition.col < 8) {
-            System.out.println("right");
             possibleMoves.add(new ChessPosition(myPosition.row, myPosition.col + 1));
         }
         return possibleMoves;
@@ -43,7 +39,6 @@ public class MoveCalculator {
     protected Collection<ChessPosition> leftMove(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
         if (myPosition.col > 1) {
-            System.out.println("left");
             possibleMoves.add(new ChessPosition(myPosition.row, myPosition.col - 1));
         }
         return possibleMoves;
@@ -52,7 +47,6 @@ public class MoveCalculator {
     protected Collection<ChessPosition> upRightMove(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
         if (myPosition.row < 8 && myPosition.col < 8) {
-            System.out.println("right up");
             possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col + 1));
         }
         return possibleMoves;
@@ -61,7 +55,6 @@ public class MoveCalculator {
     protected Collection<ChessPosition> upLeftMove(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
         if (myPosition.row < 8 && myPosition.col > 1) {
-            System.out.println("left up");
             possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col - 1));
         }
         return possibleMoves;
@@ -70,7 +63,6 @@ public class MoveCalculator {
     protected Collection<ChessPosition> downRightMove(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
         if (myPosition.row > 1 && myPosition.col < 8) {
-            System.out.println("right down");
             possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col + 1));
         }
         return possibleMoves;
@@ -79,7 +71,6 @@ public class MoveCalculator {
     protected Collection<ChessPosition> downLeftMove(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
         if (myPosition.row > 1 && myPosition.col > 1) {
-            System.out.println("left down");
             possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col - 1));
         }
         return possibleMoves;
@@ -93,7 +84,6 @@ public class MoveCalculator {
                 if (endPosition.row == 8) {
                     return promotionMove(myPosition, endPosition);
                 }
-                System.out.println("right up pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
         }
@@ -108,7 +98,6 @@ public class MoveCalculator {
                 if (endPosition.row == 8) {
                     return promotionMove(myPosition, endPosition);
                 }
-                System.out.println("left up pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
         }
@@ -123,7 +112,6 @@ public class MoveCalculator {
                 if (endPosition.row == 1) {
                     return promotionMove(myPosition, endPosition);
                 }
-                System.out.println("right down pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
         }
@@ -138,7 +126,6 @@ public class MoveCalculator {
                 if (endPosition.row == 1) {
                     return promotionMove(myPosition, endPosition);
                 }
-                System.out.println("left down pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
         }
@@ -151,7 +138,6 @@ public class MoveCalculator {
             ChessPosition firstStep = new ChessPosition(myPosition.row + 1, myPosition.col);
             ChessPosition endPosition = new ChessPosition(myPosition.row + 2, myPosition.col);
             if (board.getPiece(firstStep) == null && board.getPiece(endPosition) == null) {
-                System.out.println("up two pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
         }
@@ -165,7 +151,6 @@ public class MoveCalculator {
             ChessPosition firstStep = new ChessPosition(myPosition.row - 1, myPosition.col);
             ChessPosition endPosition = new ChessPosition(myPosition.row - 2, myPosition.col);
             if (board.getPiece(firstStep) == null && board.getPiece(endPosition) == null) {
-                System.out.println("down two pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
         }
@@ -180,7 +165,6 @@ public class MoveCalculator {
                 if (endPosition.row == 8) {
                     return promotionMove(myPosition, endPosition);
                 }
-                System.out.println("up pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
         }
@@ -195,7 +179,6 @@ public class MoveCalculator {
                 if (endPosition.row == 1) {
                     return promotionMove(myPosition, endPosition);
                 }
-                System.out.println("down pawn");
                 possibleMoves.add(new ChessMove(myPosition, endPosition, null));
             }
         }
@@ -222,7 +205,6 @@ public class MoveCalculator {
     protected Collection<ChessPosition> knight2(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
         if (myPosition.row < 8 && myPosition.col < 7) {
-            System.out.println("right up");
             possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col + 2));
         }
         return possibleMoves;
@@ -280,40 +262,39 @@ public class MoveCalculator {
     // Pass in a function (upMove, downMove, etc.), the board, and the position of the piece to be moved.
     // The single boolean is for the king, pawns, and knights.
     protected Collection<ChessMove> slide (Direction dir, ChessBoard board, ChessPosition myPosition, boolean single) {
-
         // The ArrayList of ChessMoves we are going to return
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-
         // Initialize the variable that's going to be iterated
         ChessPosition newEndPosition = myPosition;
-//        System.out.printf("starting position: %s \n", myPosition);
-
         // While there is a valid next move (trying to move does not return an empty container)
         while (!dir.position(newEndPosition).isEmpty()) {
-
             // Make a valid move in the passed in direction (we know it will work because of the while loop condition)
             ArrayList<ChessPosition> nextPosCollection = (ArrayList<ChessPosition>)dir.position(newEndPosition);
-
             ChessPosition potentialNextPos = nextPosCollection.getFirst();
+            // Various checks for valid moves
             if (board.getPiece(potentialNextPos) != null) {
+                // If we capture, make a move and end there
                 if (board.getPiece(myPosition).pieceColor != board.getPiece(potentialNextPos).pieceColor) {
                     possibleMoves.add(new ChessMove(myPosition, potentialNextPos, null));
                     break;
+                // If there is a friendly piece in the way, stop
                 } else if (board.getPiece(myPosition).pieceColor == board.getPiece(potentialNextPos).pieceColor) {
                     break;
+                // For sanity purposes
                 } else {
                     throw new RuntimeException("Something wonky in here");
                 }
             }
-
+            // Look at the next square in the sequence (this is the variable we iterate
+            // so that the piece keeps moving
             newEndPosition = potentialNextPos;
-
+            // Add the move to the collection
             possibleMoves.add(new ChessMove(myPosition, newEndPosition, null));
+            // If the piece does not slide, break the loop
             if (single) {break;}
         }
-            System.out.printf("%s \n", possibleMoves);
-            return possibleMoves;
+        // Return the collection of possible moves in the given direction
+        return possibleMoves;
     }
 }
-
 
