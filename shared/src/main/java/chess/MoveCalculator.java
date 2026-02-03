@@ -5,80 +5,78 @@ import java.util.Collection;
 
 public class MoveCalculator {
 
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves) {return new ArrayList<>();}
-
     @FunctionalInterface
-    interface Direction {
+    public interface Direction {
         Collection<ChessPosition> position(ChessPosition myPosition);
     }
 
-    protected Collection<ChessPosition> upMove(ChessPosition myPosition) {
+    protected Collection<ChessPosition> upMove (ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 8) {
+        if (myPosition.row <= 7) {
             possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col));
         }
         return possibleMoves;
     }
 
-    protected Collection<ChessPosition> downMove(ChessPosition myPosition) {
+    protected Collection<ChessPosition> downMove (ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 1) {
+        if (myPosition.row >= 2) {
             possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col));
         }
         return possibleMoves;
     }
 
-    protected Collection<ChessPosition> rightMove(ChessPosition myPosition) {
+    protected Collection<ChessPosition> leftMove (ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.col < 8) {
-            possibleMoves.add(new ChessPosition(myPosition.row, myPosition.col + 1));
-        }
-        return possibleMoves;
-    }
-
-    protected Collection<ChessPosition> leftMove(ChessPosition myPosition) {
-        Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.col > 1) {
+        if (myPosition.col >= 2) {
             possibleMoves.add(new ChessPosition(myPosition.row, myPosition.col - 1));
         }
         return possibleMoves;
     }
 
-    protected Collection<ChessPosition> upRightMove(ChessPosition myPosition) {
+    protected Collection<ChessPosition> rightMove (ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 8 && myPosition.col < 8) {
-            possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col + 1));
+        if (myPosition.col <= 7) {
+            possibleMoves.add(new ChessPosition(myPosition.row, myPosition.col + 1));
         }
         return possibleMoves;
     }
 
-    protected Collection<ChessPosition> upLeftMove(ChessPosition myPosition) {
+    protected Collection<ChessPosition> upLeftMove (ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 8 && myPosition.col > 1) {
+        if (myPosition.row <= 7 && myPosition.col >= 2) {
             possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col - 1));
         }
         return possibleMoves;
     }
 
-    protected Collection<ChessPosition> downRightMove(ChessPosition myPosition) {
+    protected Collection<ChessPosition> upRightMove (ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 1 && myPosition.col < 8) {
-            possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col + 1));
+        if (myPosition.row <= 7 && myPosition.col <= 7) {
+            possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col + 1));
         }
         return possibleMoves;
     }
 
-    protected Collection<ChessPosition> downLeftMove(ChessPosition myPosition) {
+    protected Collection<ChessPosition> downLeftMove (ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 1 && myPosition.col > 1) {
+        if (myPosition.row >= 2 && myPosition.col >= 2) {
             possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col - 1));
+        }
+        return possibleMoves;
+    }
+
+    protected Collection<ChessPosition> downRightMove (ChessPosition myPosition) {
+        Collection<ChessPosition> possibleMoves = new ArrayList<>();
+        if (myPosition.row >= 2 && myPosition.col <= 7) {
+            possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col + 1));
         }
         return possibleMoves;
     }
 
     protected Collection<ChessMove> upRightPawn(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 8 && myPosition.col < 8) {
+        if (myPosition.row <= 7 && myPosition.col <= 7) {
             ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col + 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                 if (endPosition.row == 8) {
@@ -92,7 +90,7 @@ public class MoveCalculator {
 
     protected Collection<ChessMove> upLeftPawn(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 8 && myPosition.col > 1) {
+        if (myPosition.row <= 7 && myPosition.col >= 2) {
             ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col - 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                 if (endPosition.row == 8) {
@@ -106,7 +104,7 @@ public class MoveCalculator {
 
     protected Collection<ChessMove> downRightPawn(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 1 && myPosition.col < 8) {
+        if (myPosition.row >= 2 && myPosition.col <= 7) {
             ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col + 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                 if (endPosition.row == 1) {
@@ -120,7 +118,7 @@ public class MoveCalculator {
 
     protected Collection<ChessMove> downLeftPawn(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 1 && myPosition.col > 1) {
+        if (myPosition.row >= 2 && myPosition.col >= 2) {
             ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col - 1);
             if (board.getPiece(endPosition) != null && board.getPiece(myPosition).pieceColor != board.getPiece(endPosition).pieceColor) {
                 if (endPosition.row == 1) {
@@ -159,7 +157,7 @@ public class MoveCalculator {
 
     protected Collection<ChessMove> upMovePawn(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 8) {
+        if (myPosition.row <= 7) {
             ChessPosition endPosition = new ChessPosition(myPosition.row + 1, myPosition.col);
             if (board.getPiece(endPosition) == null) {
                 if (endPosition.row == 8) {
@@ -173,7 +171,7 @@ public class MoveCalculator {
 
     protected Collection<ChessMove> downMovePawn(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 1) {
+        if (myPosition.row >= 2) {
             ChessPosition endPosition = new ChessPosition(myPosition.row - 1, myPosition.col);
             if (board.getPiece(endPosition) == null) {
                 if (endPosition.row == 1) {
@@ -196,7 +194,7 @@ public class MoveCalculator {
 
     protected Collection<ChessPosition> knight1(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 7 && myPosition.col < 8) {
+        if (myPosition.row <= 6 && myPosition.col <= 7) {
             possibleMoves.add(new ChessPosition(myPosition.row + 2, myPosition.col + 1));
         }
         return possibleMoves;
@@ -204,7 +202,7 @@ public class MoveCalculator {
 
     protected Collection<ChessPosition> knight2(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 8 && myPosition.col < 7) {
+        if (myPosition.row <= 7 && myPosition.col <= 6) {
             possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col + 2));
         }
         return possibleMoves;
@@ -212,7 +210,7 @@ public class MoveCalculator {
 
     protected Collection<ChessPosition> knight3(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 1 && myPosition.col < 7) {
+        if (myPosition.row >= 2 && myPosition.col <= 6) {
             possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col + 2));
         }
         return possibleMoves;
@@ -220,7 +218,7 @@ public class MoveCalculator {
 
     protected Collection<ChessPosition> knight4(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 2 && myPosition.col < 8) {
+        if (myPosition.row >= 3 && myPosition.col <= 7) {
             possibleMoves.add(new ChessPosition(myPosition.row - 2, myPosition.col + 1));
         }
         return possibleMoves;
@@ -228,7 +226,7 @@ public class MoveCalculator {
 
     protected Collection<ChessPosition> knight5(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 2 && myPosition.col > 1) {
+        if (myPosition.row >= 3 && myPosition.col >= 2) {
             possibleMoves.add(new ChessPosition(myPosition.row - 2, myPosition.col - 1));
         }
         return possibleMoves;
@@ -236,7 +234,7 @@ public class MoveCalculator {
 
     protected Collection<ChessPosition> knight6(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row > 1 && myPosition.col > 2) {
+        if (myPosition.row >= 2 && myPosition.col >= 3) {
             possibleMoves.add(new ChessPosition(myPosition.row - 1, myPosition.col - 2));
         }
         return possibleMoves;
@@ -244,7 +242,7 @@ public class MoveCalculator {
 
     protected Collection<ChessPosition> knight7(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 8 && myPosition.col > 2) {
+        if (myPosition.row <= 7 && myPosition.col >= 3) {
             possibleMoves.add(new ChessPosition(myPosition.row + 1, myPosition.col -2));
         }
         return possibleMoves;
@@ -252,7 +250,7 @@ public class MoveCalculator {
 
     protected Collection<ChessPosition> knight8(ChessPosition myPosition) {
         Collection<ChessPosition> possibleMoves = new ArrayList<>();
-        if (myPosition.row < 7 && myPosition.col > 1) {
+        if (myPosition.row <= 6 && myPosition.col >= 2) {
             possibleMoves.add(new ChessPosition(myPosition.row + 2, myPosition.col - 1));
         }
         return possibleMoves;
@@ -266,7 +264,7 @@ public class MoveCalculator {
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         // Initialize the variable that's going to be iterated
         ChessPosition newEndPosition = myPosition;
-        // While there is a valid next move (trying to move does not return an empty container)
+        // While there is a valid next move (trying to move does not return an empty container meaning we hit the edge)
         while (!dir.position(newEndPosition).isEmpty()) {
             // Make a valid move in the passed in direction (we know it will work because of the while loop condition)
             ArrayList<ChessPosition> nextPosCollection = (ArrayList<ChessPosition>)dir.position(newEndPosition);
@@ -296,5 +294,5 @@ public class MoveCalculator {
         // Return the collection of possible moves in the given direction
         return possibleMoves;
     }
-}
 
+}

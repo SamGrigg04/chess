@@ -3,8 +3,6 @@ package chess;
 import java.util.Collection;
 
 public class KingMovesCalculator extends MoveCalculator {
-
-    @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition, Collection<ChessMove> possibleMoves){
         // Tries all possible moves the king could make (not taking into account putting the king in
         // check or checkmate)
