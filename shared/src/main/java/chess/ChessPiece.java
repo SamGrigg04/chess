@@ -58,6 +58,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        PieceType type = board.getPiece(myPosition).getPieceType();
         Collection<ChessMove> possibleMoves = new ArrayList<>();
         if (type == ChessPiece.PieceType.KING) {
             return new KingMovesCalculator().pieceMoves(board, myPosition, possibleMoves);
