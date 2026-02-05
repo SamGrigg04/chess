@@ -100,8 +100,14 @@ public class ChessGame {
      * call validMoves. if empty, checkmate (and your turn) (and in check already)
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return getTeamTurn() == teamColor;
+        if (getTeamTurn() == teamColor) {
+            Collection<ChessMove> allValidMoves = new ArrayList<>();
+            checkAllTeamMoves(teamColor, allValidMoves);
+            return (allValidMoves.isEmpty() && isInCheck(teamColor));
+        }
+        return false;
     }
+
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
@@ -113,17 +119,26 @@ public class ChessGame {
      * call validMoves. if empty and not in check, true
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        Collection<ChessMove> allValidMoves = new ArrayList<>();
+        if (getTeamTurn() == teamColor) {
+            Collection<ChessMove> allValidMoves = new ArrayList<>();
+            checkAllTeamMoves(teamColor, allValidMoves); //TODO: do i need to do allValidMoves = ___? If so, change function type from void
+            return (allValidMoves.isEmpty() && !isInCheck(teamColor));
+        }
+        return false;
+    }
+
+
+    private void checkAllTeamMoves(TeamColor teamColor, Collection<ChessMove> allValidMoves) {
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPiece currentPiece = board.getPiece(new ChessPosition(row, col));
-                if (currentPiece != null && currentPiece.pieceColor != teamColor) {
+                if (currentPiece != null && currentPiece.pieceColor == teamColor) {
                     allValidMoves.addAll(validMoves(new ChessPosition(row, col)));
                 }
             }
         }
-        return allValidMoves.isEmpty();
     }
+
 
     /**
      * Sets this game's chessboard with a given board
