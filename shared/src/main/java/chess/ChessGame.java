@@ -163,7 +163,22 @@ public class ChessGame {
         return isInCheckmateOnBoard(teamColor, this.board);
     }
 
-    private ChessPosition getKingPosition(TeamColor teamColor) {
+    private boolean isInCheckmateOnBoard(TeamColor teamColor, ChessBoard board) {
+        if (getTeamTurn() != teamColor || !isInCheck(teamColor)) { return false; }
+
+        for (ChessMove move : checkAllTeamMoves(teamColor)) {
+            ChessBoard clone = board.clone();
+            ChessPiece piece = clone.getPiece(move.startPosition);
+            executeMove(clone, move, piece);
+
+            if (!isInCheck(teamColor)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private ChessPosition getKingPosition(ChessBoard board, TeamColor teamColor) {
         ChessPosition kingPosition = null;
         for (int row = 1; row <= 8; row++) {
             if (kingPosition != null) { break; }
