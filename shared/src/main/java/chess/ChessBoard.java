@@ -119,7 +119,7 @@ public class ChessBoard implements Cloneable {
     }
 
     private ChessPiece[] cloneRow(ChessPiece[] row) {
-        if (row == null) return null;
+        if (row == null) { return null; }
 
         ChessPiece[] result = new ChessPiece[row.length];
         for (int j = 0; j < row.length; j++) {
