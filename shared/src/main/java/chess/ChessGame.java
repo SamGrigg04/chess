@@ -130,24 +130,7 @@ public class ChessGame {
      * ends where your king is, you're in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        TeamColor enemyColor;
-        if (teamColor == TeamColor.BLACK) {
-            enemyColor = TeamColor.WHITE;
-        } else if (teamColor == TeamColor.WHITE) {
-            enemyColor = TeamColor.BLACK;
-        } else {
-            throw new RuntimeException("no team color???");
-        }
-
-        ChessPosition kingPosition = getKingPosition(teamColor);
-
-        Collection<ChessMove> allEnemyMoves = checkAllTeamMoves(enemyColor, new ArrayList<>());
-        for (ChessMove move : allEnemyMoves) {
-            if (move.endPosition.equals(kingPosition)) {
-                return true;
-            }
-        }
-        return false;
+        return isInCheckOnBoard(teamColor, this.board);
     }
 
     private boolean isInCheckOnBoard(TeamColor teamColor, ChessBoard board) {
