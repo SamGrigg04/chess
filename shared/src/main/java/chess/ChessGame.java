@@ -50,11 +50,11 @@ public class ChessGame {
      * @param startPosition the piece to get valid moves for
      * @return Set of valid moves for requested piece, or null if no piece at
      * startPosition
-     *
+     * <p>
      * *2*
      * Take all of your starting moves, and after each move call inCheck. If it returns true,
      * you're good. If not, throw away the move.
-     *
+     * <p>
      * Iterate through all your valid moves cloning the board each time.
      * If they work there, return them. *Need to make ChessBoard clonable*
      */
@@ -124,7 +124,7 @@ public class ChessGame {
      *
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
-     *
+     * <p>
      * *1*
      * check all opponent moves. if the endPosition on any of the moves
      * ends where your king is, you're in check

@@ -97,35 +97,37 @@ public class ChessBoard implements Cloneable {
         return Arrays.deepHashCode(chessBoard);
     }
 
-    //TODO: Make sure this clone thing actually works
     @Override
     public ChessBoard clone() {
         try {
-            // 1. Shallow copy the ChessBoard object
             ChessBoard cloned = (ChessBoard) super.clone();
-
-            // 2. Create the new outer array (size 9)
-            cloned.chessBoard = new ChessPiece[this.chessBoard.length][];
-
-            for (int i = 0; i < this.chessBoard.length; i++) {
-                if (this.chessBoard[i] != null) {
-                    // 3. Create the new inner array (size 9)
-                    cloned.chessBoard[i] = new ChessPiece[this.chessBoard[i].length];
-
-                    for (int j = 0; j < this.chessBoard[i].length; j++) {
-                        // 4. Copy each piece using its own clone method
-                        if (this.chessBoard[i][j] != null) {
-                            cloned.chessBoard[i][j] = this.chessBoard[i][j].clone();
-                        }
-                    }
-                }
-            }
+            cloned.chessBoard = cloneBoard(this.chessBoard);
             return cloned;
         } catch (CloneNotSupportedException e) {
-            // Since we implement Cloneable, this won't happen
-            throw new AssertionError("Clone failed");
+            throw new AssertionError("Clone failed", e);
         }
     }
+
+    private ChessPiece[][] cloneBoard(ChessPiece[][] board) {
+        ChessPiece[][] result = new ChessPiece[board.length][];
+
+        for (int i = 0; i < board.length; i++) {
+            result[i] = cloneRow(board[i]);
+        }
+
+        return result;
+    }
+
+    private ChessPiece[] cloneRow(ChessPiece[] row) {
+        if (row == null) return null;
+
+        ChessPiece[] result = new ChessPiece[row.length];
+        for (int j = 0; j < row.length; j++) {
+            result[j] = row[j] == null ? null : row[j].clone();
+        }
+        return result;
+    }
+
 
     @Override
     public String toString() {
