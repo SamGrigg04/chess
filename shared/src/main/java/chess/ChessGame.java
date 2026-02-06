@@ -150,6 +150,27 @@ public class ChessGame {
         return false;
     }
 
+    private boolean isInCheckOnBoard(TeamColor teamColor, ChessBoard board) {
+        TeamColor enemyColor;
+        if (teamColor == TeamColor.BLACK) {
+            enemyColor = TeamColor.WHITE;
+        } else if (teamColor == TeamColor.WHITE) {
+            enemyColor = TeamColor.BLACK;
+        } else {
+            throw new RuntimeException("no team color???");
+        }
+
+        ChessPosition kingPosition = getKingPosition(board, teamColor);
+
+        Collection<ChessMove> allEnemyMoves = checkAllTeamMoves(enemyColor);
+        for (ChessMove move : allEnemyMoves) {
+            if (move.endPosition.equals(kingPosition)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     /**
      * Determines if the given team is in checkmate
