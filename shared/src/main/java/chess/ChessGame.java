@@ -17,7 +17,7 @@ public class ChessGame {
     ChessBoard board = new ChessBoard();
 
     public ChessGame() {
-
+        this.board.resetBoard();
     }
 
     /**
@@ -59,8 +59,12 @@ public class ChessGame {
      * If they work there, return them. *Need to make ChessBoard clonable*
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
-//        if the collection is empty, call isInCheckmate.
+        ChessBoard board = getBoard();
+        ChessPiece piece = board.getPiece(startPosition);
+        if (piece == null) { return null; }
+
+        ChessBoard clonedBoard = board.clone();
+        return piece.pieceMoves(clonedBoard, startPosition);
     }
 
     /**
@@ -72,9 +76,31 @@ public class ChessGame {
      * invalid if not a validMove or not your turn
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        if (validMoves(move.startPosition).isEmpty() || getTeamTurn() != getBoard().getPiece(move.startPosition).pieceColor) {
+        ChessPiece currentPiece = getBoard().getPiece(move.startPosition);
+        TeamColor teamColor = currentPiece.pieceColor;
+        if (validMoves(move.startPosition) == null
+                || getTeamTurn() != teamColor
+                || isInCheck(teamColor)
+                || isInCheckmate(teamColor)
+                || isInStalemate(teamColor)) {
             throw new InvalidMoveException();
         }
+        getBoard().addPiece(move.endPosition, currentPiece);
+        getBoard().addPiece(move.startPosition, null);
+
+        isInCheck(teamColor);
+        isInCheckmate(teamColor);
+        isInCheckmate(teamColor);
+
+        TeamColor enemyColor;
+        if (teamColor == TeamColor.BLACK) {
+            enemyColor = TeamColor.WHITE;
+        } else if (teamColor == TeamColor.WHITE) {
+            enemyColor = TeamColor.BLACK;
+        } else {
+            throw new RuntimeException("no team color???");
+        }
+        setTeamTurn(enemyColor);
     }
 
     /**
@@ -88,7 +114,34 @@ public class ChessGame {
      * ends where your king is, you're in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        TeamColor enemyColor;
+        if (teamColor == TeamColor.BLACK) {
+            enemyColor = TeamColor.WHITE;
+        } else if (teamColor == TeamColor.WHITE) {
+            enemyColor = TeamColor.BLACK;
+        } else {
+            throw new RuntimeException("no team color???");
+        }
+
+        ChessPosition kingPosition = null;
+        for (int row = 1; row <= 8; row++) {
+            if (kingPosition != null) { break; }
+            for (int col = 1; col <= 8; col++) {
+                ChessPiece currentPiece = board.getPiece(new ChessPosition(row, col));
+                if (currentPiece != null && currentPiece.getPieceType() == ChessPiece.PieceType.KING && currentPiece.pieceColor == teamColor) {
+                    kingPosition = new ChessPosition(row, col);
+                    break;
+                }
+            }
+        }
+        
+        Collection<ChessMove> allEnemyMoves = checkAllTeamMoves(enemyColor, new ArrayList<>());
+        for (ChessMove move : allEnemyMoves) {
+            if (move.endPosition.equals(kingPosition)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -103,7 +156,7 @@ public class ChessGame {
         if (getTeamTurn() == teamColor) {
             Collection<ChessMove> allValidMoves = new ArrayList<>();
             checkAllTeamMoves(teamColor, allValidMoves);
-            return (allValidMoves.isEmpty() && isInCheck(teamColor));
+            return (allValidMoves == null || isInCheck(teamColor));
         }
         return false;
     }
@@ -121,14 +174,14 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         if (getTeamTurn() == teamColor) {
             Collection<ChessMove> allValidMoves = new ArrayList<>();
-            checkAllTeamMoves(teamColor, allValidMoves); //TODO: do i need to do allValidMoves = ___? If so, change function type from void
-            return (allValidMoves.isEmpty() && !isInCheck(teamColor));
+            checkAllTeamMoves(teamColor, allValidMoves);
+            return (allValidMoves == null && !isInCheck(teamColor));
         }
         return false;
     }
 
 
-    private void checkAllTeamMoves(TeamColor teamColor, Collection<ChessMove> allValidMoves) {
+    private Collection<ChessMove> checkAllTeamMoves(TeamColor teamColor, Collection<ChessMove> allValidMoves) {
         for (int row = 1; row <= 8; row++) {
             for (int col = 1; col <= 8; col++) {
                 ChessPiece currentPiece = board.getPiece(new ChessPosition(row, col));
@@ -137,6 +190,7 @@ public class ChessGame {
                 }
             }
         }
+        return allValidMoves;
     }
 
 
