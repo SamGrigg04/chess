@@ -77,25 +77,28 @@ public class ChessGame {
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece currentPiece = getBoard().getPiece(move.startPosition);
-        TeamColor teamColor = currentPiece.pieceColor;
-        if (validMoves(move.startPosition) == null
-                || getTeamTurn() != teamColor
-                || isInCheck(teamColor)
-                || isInCheckmate(teamColor)
-                || isInStalemate(teamColor)) {
+        Collection<ChessMove> validMoves = validMoves(move.startPosition);
+        if (validMoves == null
+                || !validMoves.contains(move)
+                || getTeamTurn() != currentPiece.pieceColor
+                || isInCheck(currentPiece.pieceColor)
+                || isInCheckmate(currentPiece.pieceColor)
+                || isInStalemate(currentPiece.pieceColor)) {
             throw new InvalidMoveException();
         }
-        getBoard().addPiece(move.endPosition, currentPiece);
-        getBoard().addPiece(move.startPosition, null);
 
-        isInCheck(teamColor);
-        isInCheckmate(teamColor);
-        isInCheckmate(teamColor);
+        if (move.promotionPiece != null) {
+            getBoard().addPiece(move.endPosition, new ChessPiece(currentPiece.pieceColor, move.promotionPiece));
+            getBoard().addPiece(move.startPosition, null);
+        } else {
+            getBoard().addPiece(move.endPosition, currentPiece);
+            getBoard().addPiece(move.startPosition, null);
+        }
 
         TeamColor enemyColor;
-        if (teamColor == TeamColor.BLACK) {
+        if (currentPiece.pieceColor == TeamColor.BLACK) {
             enemyColor = TeamColor.WHITE;
-        } else if (teamColor == TeamColor.WHITE) {
+        } else if (currentPiece.pieceColor == TeamColor.WHITE) {
             enemyColor = TeamColor.BLACK;
         } else {
             throw new RuntimeException("no team color???");
