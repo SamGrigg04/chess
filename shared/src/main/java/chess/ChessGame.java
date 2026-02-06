@@ -160,32 +160,7 @@ public class ChessGame {
      * call validMoves. if empty, checkmate (and your turn) (and in check already)
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        if (getTeamTurn() == teamColor) {
-            Collection<ChessMove> allValidMoves = new ArrayList<>();
-            checkAllTeamMoves(teamColor, allValidMoves);
-            if (allValidMoves.isEmpty()) {
-                return false;
-            }
-            Collection<ChessMove> validKingMoves = new ArrayList<>();
-            if (isInCheck(teamColor)) {
-                ChessPosition kingPosition = getKingPosition(teamColor);
-                for (ChessMove move : allValidMoves) {
-//                    System.out.println("Start Position: " + move.startPosition + "\n King Position: " + kingPosition);
-                    if (move.startPosition.equals(kingPosition)) {
-                        validKingMoves.add(move);
-                    }
-                }
-                for (ChessMove move : validKingMoves) {
-                    try {
-                        makeMove(move);
-                        return false;
-                    } catch (InvalidMoveException _) {}
-                }
-                return true;
-
-            }
-        }
-        return false;
+        return isInCheckmateOnBoard(teamColor, this.board);
     }
 
     private ChessPosition getKingPosition(TeamColor teamColor) {
