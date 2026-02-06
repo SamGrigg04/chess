@@ -215,9 +215,19 @@ public class ChessGame {
      */
     public boolean isInStalemate(TeamColor teamColor) {
         if (getTeamTurn() == teamColor) {
-            Collection<ChessMove> allValidMoves = new ArrayList<>();
-            checkAllTeamMoves(teamColor, allValidMoves);
-            return (allValidMoves.isEmpty() && !isInCheck(teamColor));
+            for (int row = 1; row <= 8; row++) {
+                for (int col = 1; col <= 8; col++) {
+                    ChessPosition pos = new ChessPosition(row, col);
+                    ChessPiece piece = board.getPiece(pos);
+
+                    if (piece != null && piece.pieceColor == teamColor) {
+                        Collection<ChessMove> moves = validMoves(pos);
+                        if (moves != null && !moves.isEmpty()) {
+                            return false;
+                        }
+                    }
+                }
+            }
         }
         return false;
     }
