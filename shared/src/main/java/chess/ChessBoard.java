@@ -101,16 +101,36 @@ public class ChessBoard implements Cloneable {
     @Override
     public ChessBoard clone() {
         try {
-            ChessBoard cloned = (ChessBoard) super.clone();    // copy the object
-            cloned.chessBoard = new ChessPiece[this.chessBoard.length][];  // clone the outer array
-            for (int i = 0; i < this.chessBoard.length; i++) {  // clone the inner array
+            // 1. Shallow copy the ChessBoard object
+            ChessBoard cloned = (ChessBoard) super.clone();
+
+            // 2. Create the new outer array (size 9)
+            cloned.chessBoard = new ChessPiece[this.chessBoard.length][];
+
+            for (int i = 0; i < this.chessBoard.length; i++) {
                 if (this.chessBoard[i] != null) {
-                    cloned.chessBoard[i] = this.chessBoard[i].clone();
+                    // 3. Create the new inner array (size 9)
+                    cloned.chessBoard[i] = new ChessPiece[this.chessBoard[i].length];
+
+                    for (int j = 0; j < this.chessBoard[i].length; j++) {
+                        // 4. Copy each piece using its own clone method
+                        if (this.chessBoard[i][j] != null) {
+                            cloned.chessBoard[i][j] = this.chessBoard[i][j].clone();
+                        }
+                    }
                 }
             }
             return cloned;
         } catch (CloneNotSupportedException e) {
-            throw new AssertionError("Your clone failed lol");
+            // Since we implement Cloneable, this won't happen
+            throw new AssertionError("Clone failed");
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "chessBoard=" + Arrays.toString(chessBoard) +
+                '}';
     }
 }
