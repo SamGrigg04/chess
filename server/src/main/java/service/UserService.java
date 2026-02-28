@@ -7,6 +7,7 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
+import model.AuthData;
 import model.UserData;
 
 import java.util.Objects;
@@ -46,10 +47,10 @@ public class UserService {
 
         UserData userData = userDAO.getUser(username);
         if (userData == null) {
-            throw new NotRegisteredException("unauthorized");
+            throw new UnauthorizedException("unauthorized");
         }
         if (!Objects.equals(userData.password(), password)) {
-            throw new IncorrectPasswordException("unauthorized");
+            throw new UnauthorizedException("unauthorized");
         }
 
         String authToken = generateToken();
@@ -58,7 +59,13 @@ public class UserService {
         return new AuthResult(username, authToken);
     }
 
-    public void logout() { }
+    public void logout(String authToken) throws DataAccessException {
+        AuthData authData = authDAO.getAuth(authToken);
+        if (!Objects.equals(authData.authToken(), authToken)) {
+            throw new UnauthorizedException("unauthorized");
+        }
+        authDAO.deleteAuth(authToken);
+    }
 
 
     public static String generateToken() {

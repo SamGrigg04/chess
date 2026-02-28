@@ -5,8 +5,7 @@ import Result.AuthResult;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import service.AlreadyTakenException;
-import service.IncorrectPasswordException;
-import service.NotRegisteredException;
+import service.UnauthorizedException;
 import service.UserService;
 
 import java.util.HashMap;
@@ -63,7 +62,7 @@ public class UserHandler {
         AuthResult result;
         try {
             result = userService.login(body);
-        } catch (NotRegisteredException | IncorrectPasswordException e) {
+        } catch (UnauthorizedException e) {
             message.put("message", "Error: unauthorized");
             ctx.status(401).json(message);
             return;
@@ -79,8 +78,22 @@ public class UserHandler {
     }
 
     public void logout(Context ctx) {
+        HashMap<String, String> message = new HashMap<>();
+        String authToken = ctx.header("authorization");
 
-        ctx.status(200).json(new HashMap<>());
+        try {
+            userService.logout(authToken);
+        } catch (UnauthorizedException e) {
+            message.put("message", "Error: unauthorized");
+            ctx.status(401).json(message);
+            return;
+        } catch (DataAccessException e) {
+            message.put("message", "internal DAO failure");
+            ctx.status(500).json(message);
+            return;
+        }
+
+        ctx.status(200).json(message);
     }
 
 }

@@ -32,7 +32,7 @@ public class MemoryAuthDAO implements AuthDAO {
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-
+        authTokens.remove(authToken);
     }
 
     @Override
