@@ -1,5 +1,6 @@
 package service;
 
+import Request.LoginRequest;
 import Request.RegisterRequest;
 import Result.AuthResult;
 import dataaccess.AuthDAO;
@@ -36,6 +37,11 @@ public class UserService {
 
         return new AuthResult(username, authToken);
     }
+
+    public void login(LoginRequest loginRequest) { }
+
+    public void logout() { }
+
 
     public static String generateToken() {
         return UUID.randomUUID().toString();

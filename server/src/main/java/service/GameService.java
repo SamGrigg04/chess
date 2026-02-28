@@ -1,5 +1,9 @@
 package service;
 
+import Request.CreateRequest;
+import Request.JoinRequest;
+import Result.CreateResult;
+import Result.ListResult;
 import dataaccess.AuthDAO;
 import dataaccess.GameDAO;
 import dataaccess.UserDAO;
@@ -15,7 +19,13 @@ public class GameService {
         this.userDAO = userDAO;
     }
 
-    public void listGames() {
+    public ListResult listGames() {
+        return null;
+    }
 
+    public void joinGame(JoinRequest joinRequest) {}
+
+    public CreateResult createGame(CreateRequest createRequest) {
+        return null;
     }
 }
