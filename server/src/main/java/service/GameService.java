@@ -33,8 +33,16 @@ public class GameService {
         return new ListResult(gameDAO.listGames());
     }
 
-    public CreateResult createGame(CreateRequest createRequest) {
-        return null;
+    public CreateResult createGame(CreateRequest createRequest, String authToken) throws DataAccessException {
+        AuthData authData = authDAO.getAuth(authToken);
+        if (!Objects.equals(authData.authToken(), authToken)) {
+            throw new UnauthorizedException("unauthorized");
+        }
+
+        String gameName = createRequest.gameName();
+        Integer gameID = gameDAO.createGame(gameName);
+
+        return new CreateResult(gameID);
     }
 
     public void joinGame(JoinRequest joinRequest) {}
