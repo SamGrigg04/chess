@@ -9,6 +9,7 @@ import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.UserData;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class UserService {
@@ -29,8 +30,9 @@ public class UserService {
 
         UserData userData = userDAO.getUser(username);
         if (userData != null) {
-            throw new AlreadyTakenException("Username already taken");
+            throw new AlreadyTakenException("username already taken");
         }
+
         userDAO.createUser(username, password, email);
         String authToken = generateToken();
         authDAO.createAuth(authToken, username);
@@ -38,7 +40,23 @@ public class UserService {
         return new AuthResult(username, authToken);
     }
 
-    public void login(LoginRequest loginRequest) { }
+    public AuthResult login(LoginRequest loginRequest) throws DataAccessException {
+        String username = loginRequest.username();
+        String password = loginRequest.password();
+
+        UserData userData = userDAO.getUser(username);
+        if (userData == null) {
+            throw new NotRegisteredException("unauthorized");
+        }
+        if (!Objects.equals(userData.password(), password)) {
+            throw new IncorrectPasswordException("unauthorized");
+        }
+
+        String authToken = generateToken();
+        authDAO.createAuth(authToken, username);
+
+        return new AuthResult(username, authToken);
+    }
 
     public void logout() { }
 
