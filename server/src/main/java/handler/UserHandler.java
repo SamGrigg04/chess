@@ -20,7 +20,9 @@ public class UserHandler {
         HashMap<String, String> message = new HashMap<>();
         RegisterRequest body = ctx.bodyAsClass(RegisterRequest.class);
 
-        if (body.username().isEmpty() || body.password().isEmpty() || body.email().isEmpty()) {
+        boolean emptyFields = body.username().isEmpty() || body.password().isEmpty() || body.email().isEmpty();
+        boolean nullFields = body.username() == null || body.password() == null || body.email() == null;
+        if (emptyFields || nullFields) {
             message.put("message", "Error: bad request");
             ctx.status(400).json(message);
             return;
@@ -30,12 +32,12 @@ public class UserHandler {
         try {
             result = userService.register(body);
         } catch (AlreadyTakenException e) {
-            message.put("message", "Error: username already taken");
+            message.put("message", "Error: already taken");
             ctx.status(403).json(message);
             return;
         } catch (DataAccessException e) {
-            message.put("message", "Error: bad request");
-            ctx.status(400).json(message);
+            message.put("message", "internal DAO failure");
+            ctx.status(500).json(message);
             return;
         }
 
