@@ -52,6 +52,10 @@ public class UserService {
         }
 
         String authToken = generateToken();
+        // avoid duplicates
+        while (authDAO.getAuth(authToken) != null) {
+            authToken = generateToken();
+        }
         authDAO.createAuth(authToken, username);
 
         return new AuthResult(username, authToken);
