@@ -23,7 +23,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData getGame(Integer GameID) throws DataAccessException {
+    public GameData getGame(Integer GameID) {
         for (Integer key : games.keySet()) {
             if (Objects.equals(games.get(key).gameID(), GameID)) {
                 return games.get(key);

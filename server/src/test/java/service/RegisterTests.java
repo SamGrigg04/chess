@@ -16,7 +16,7 @@ public class RegisterTests {
         var gameDAO = new MemoryGameDAO();
         var userDAO = new MemoryUserDAO();
 
-        var userService = new UserService(authDAO, gameDAO, userDAO);
+        var userService = new UserService(authDAO, userDAO);
 
         AuthResult result = userService.register(new RegisterRequest("bob", "psw", "b@mail.com"));
 
@@ -33,7 +33,7 @@ public class RegisterTests {
         var gameDAO = new MemoryGameDAO();
         var userDAO = new MemoryUserDAO();
 
-        var userService = new UserService(authDAO, gameDAO, userDAO);
+        var userService = new UserService(authDAO, userDAO);
         userService.register(new RegisterRequest("taken", "pw", "t@mail.com"));
 
         Assertions.assertThrows(AlreadyTakenException.class,

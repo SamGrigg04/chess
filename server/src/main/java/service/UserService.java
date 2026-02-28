@@ -5,7 +5,6 @@ import Request.RegisterRequest;
 import Result.AuthResult;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
-import dataaccess.GameDAO;
 import dataaccess.UserDAO;
 import model.AuthData;
 import model.UserData;
@@ -17,7 +16,7 @@ public class UserService {
     private final AuthDAO authDAO;
     private final UserDAO userDAO;
 
-    public UserService(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
+    public UserService(AuthDAO authDAO, UserDAO userDAO) {
         this.authDAO = authDAO;
         this.userDAO = userDAO;
     }

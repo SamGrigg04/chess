@@ -18,8 +18,8 @@ public class Server {
         MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
 
-        var userHandler = new UserHandler(new UserService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
-        var gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
+        var userHandler = new UserHandler(new UserService(memoryAuthDAO, memoryUserDAO));
+        var gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO));
         var clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
 
 

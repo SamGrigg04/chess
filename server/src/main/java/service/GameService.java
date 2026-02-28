@@ -2,29 +2,23 @@ package service;
 
 import Request.CreateRequest;
 import Request.JoinRequest;
-import Result.AuthResult;
 import Result.CreateResult;
 import Result.ListResult;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.UserDAO;
 import model.AuthData;
 import model.GameData;
-import model.UserData;
 
-import java.util.Collection;
 import java.util.Objects;
 
 public class GameService {
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
-    private final UserDAO userDAO;
 
-    public GameService(AuthDAO authDAO, GameDAO gameDAO, UserDAO userDAO) {
+    public GameService(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
-        this.userDAO = userDAO;
     }
 
     public ListResult listGames(String authToken) throws DataAccessException {

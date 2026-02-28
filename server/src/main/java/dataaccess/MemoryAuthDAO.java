@@ -10,13 +10,13 @@ public class MemoryAuthDAO implements AuthDAO {
     private final Map<String, AuthData> authTokens = new HashMap<>();
 
     @Override
-    public void createAuth(String authToken, String username) throws DataAccessException {
+    public void createAuth(String authToken, String username) {
         AuthData newAuth = new AuthData(authToken, username);
         authTokens.put(authToken, newAuth);
     }
 
     @Override
-    public AuthData getAuth(String authToken) throws DataAccessException {
+    public AuthData getAuth(String authToken) {
         for (String key : authTokens.keySet()) {
             if (Objects.equals(authTokens.get(key).authToken(), authToken)) {
                 return authTokens.get(key);
@@ -26,7 +26,7 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void deleteAuth(String authToken) throws DataAccessException {
+    public void deleteAuth(String authToken) {
         authTokens.remove(authToken);
     }
 
