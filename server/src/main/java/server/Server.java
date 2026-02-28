@@ -8,6 +8,8 @@ import handler.ClearHandler;
 import handler.GameHandler;
 import handler.UserHandler;
 import service.ClearService;
+import service.GameService;
+import service.UserService;
 
 public class Server {
 
@@ -18,8 +20,8 @@ public class Server {
         MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
         MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
 
-        var userHandler = new UserHandler();
-        var gameHandler = new GameHandler();
+        var userHandler = new UserHandler(new UserService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
+        var gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
         var clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
 
 
