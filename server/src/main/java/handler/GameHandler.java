@@ -51,8 +51,22 @@ public class GameHandler {
             return;
         }
 
-        int gameID = 1234;
-        ctx.status(200).json(gameID);
+        CreateResult result;
+        try {
+            result = gameService.createGame(body, authToken);
+        } catch (UnauthorizedException e) {
+            message.put("message", "Error: unauthorized");
+            ctx.status(401).json(message);
+            return;
+        } catch (DataAccessException e) {
+            message.put("message", "internal DAO failure");
+            ctx.status(500).json(message);
+            return;
+        }
+
+        HashMap<String, Integer> message2 = new HashMap<>();
+        message2.put("gameID", result.gameID());
+        ctx.status(200).json(message2);
     }
 
     public void joinGame(Context ctx) {
