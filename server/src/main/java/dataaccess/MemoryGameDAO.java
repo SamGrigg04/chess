@@ -9,19 +9,21 @@ public class MemoryGameDAO implements GameDAO {
     private final Map<Integer, GameData> games = new HashMap<>();
 
     @Override
-    public void createGame(String gameName) throws DataAccessException {
-        int gameID = Integer.parseInt(generateID());
+    public Integer createGame(String gameName) throws DataAccessException {
+        int gameID = generateID();
         // so they're all unique
         while (games.containsKey(gameID)) {
-            gameID = Integer.parseInt(generateID());
+            gameID = generateID();
         }
 
         GameData gameData = new GameData(gameID, "", "", gameName, new ChessGame());
         games.put(gameID, gameData);
+
+        return gameID;
     }
 
     @Override
-    public GameData getGame(int GameID) throws DataAccessException {
+    public GameData getGame(Integer GameID) throws DataAccessException {
         return null;
     }
 
@@ -35,12 +37,18 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int GameID) throws DataAccessException {
+    public void updateGame(Integer GameID, String playerColor, String username) throws DataAccessException {
+        GameData currentGame = getGame(GameID);
+        if (Objects.equals(playerColor, "WHITE")) {
+            currentGame = new GameData(GameID, username, currentGame.blackUsername(), currentGame.gameName(), currentGame.game());
+        } else if (Objects.equals(playerColor, "BLACK")) {
+            currentGame = new GameData(GameID, currentGame.whiteUsername(), username, currentGame.gameName(), currentGame.game());
+        }
 
     }
 
     @Override
-    public void deleteGame(int GameID) throws DataAccessException {
+    public void deleteGame(Integer GameID) throws DataAccessException {
 
     }
 
@@ -49,7 +57,7 @@ public class MemoryGameDAO implements GameDAO {
         games.clear();
     }
 
-    public static String generateID() {
-        return UUID.randomUUID().toString();
+    public static int generateID() {
+        return new Random().nextInt(1000, 10000);
     }
 }
