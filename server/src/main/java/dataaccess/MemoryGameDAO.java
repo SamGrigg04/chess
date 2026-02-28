@@ -3,9 +3,13 @@ package dataaccess;
 import model.GameData;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO {
+    private final Map<Integer, GameData> games = new HashMap<>();
+
     @Override
     public void createGame(String gameName) throws DataAccessException {
 
@@ -29,5 +33,10 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public void deleteGame(int GameID) throws DataAccessException {
 
+    }
+
+    @Override
+    public void clear() {
+        games.clear();
     }
 }
