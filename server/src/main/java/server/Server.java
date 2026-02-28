@@ -1,18 +1,26 @@
 package server;
 
+import dataaccess.MemoryAuthDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryUserDAO;
 import io.javalin.*;
 import handler.ClearHandler;
 import handler.GameHandler;
 import handler.UserHandler;
+import service.ClearService;
 
 public class Server {
 
     private final Javalin javalin;
 
     public Server() {
+        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+        MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
+        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+
         var userHandler = new UserHandler();
         var gameHandler = new GameHandler();
-        var clearHandler = new ClearHandler();
+        var clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
 
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
