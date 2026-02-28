@@ -29,7 +29,7 @@ public class UserService {
 
         UserData userData = userDAO.getUser(username);
         if (userData != null) {
-            throw new AlreadyTakenException("username already taken");
+            throw new AlreadyTakenException("already taken");
         }
 
         userDAO.createUser(username, password, email);
