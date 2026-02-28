@@ -1,8 +1,13 @@
 package handler;
 
+import Result.ListResult;
+import dataaccess.DataAccessException;
 import io.javalin.http.Context;
+import model.GameData;
 import service.GameService;
+import service.UnauthorizedException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameHandler {
@@ -14,21 +19,39 @@ public class GameHandler {
 
     // All the .json(X) should be hashMaps
     public void listGames(Context ctx) {
-        gameService.listGames();
+        HashMap<String, String> message = new HashMap<>();
+        String authToken = ctx.header("authorization");
 
-        String gameList = "temp";
-        ctx.status(200).json(gameList);
-    }
+        ListResult listResult;
+        try {
+            listResult = gameService.listGames(authToken);
+        } catch (UnauthorizedException e) {
+            message.put("message", "Error: unauthorized");
+            ctx.status(401).json(message);
+            return;
+        } catch (DataAccessException e) {
+            message.put("message", "internal DAO failure");
+            ctx.status(500).json(message);
+            return;
+        }
 
-    public void joinGame(Context ctx) {
-
-        ctx.status(200).json(new HashMap<>());
+        HashMap<String, ArrayList<GameData>> message2 = new HashMap<>();
+        message2.put("games", (ArrayList<GameData>) listResult.games());
+        ctx.status(200).json(message2);
     }
 
     public void createGame(Context ctx) {
 
         int gameID = 1234;
         ctx.status(200).json(gameID);
+    }
+
+    public void joinGame(Context ctx) {
+        HashMap<String, String> message = new HashMap<>();
+        String authToken = ctx.header("authorization");
+
+
+        ctx.status(200).json(message);
     }
 
 }
