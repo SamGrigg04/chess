@@ -7,6 +7,7 @@ import io.javalin.*;
 import handler.ClearHandler;
 import handler.GameHandler;
 import handler.UserHandler;
+import service.AlreadyTakenException;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -39,6 +40,8 @@ public class Server {
 
         javalin.exception(Exception.class, (e, ctx) ->
                 ctx.status(500).json(new ErrorResponse("Error: " + e.getMessage())));
+        javalin.exception(AlreadyTakenException.class, (e, ctx) ->
+                ctx.status(403).json(new ErrorResponse(e.getMessage())));
 
         // Register your endpoints and exception handlers here.
 
