@@ -14,4 +14,8 @@ public class GameService {
         this.gameDAO = gameDAO;
         this.userDAO = userDAO;
     }
+
+    public void listGames() {
+
+    }
 }
