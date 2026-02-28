@@ -1,4 +1,5 @@
 ```mermaid
+%%{init: {'theme':'base','themeVariables': {'textColor':'#000000','primaryTextColor':'#000000','secondaryTextColor':'#000000','tertiaryTextColor':'#000000','lineColor':'#000000','signalColor':'#000000','actorTextColor':'#000000','actorBorder':'#000000','actorBkg':'#ffffff','labelBoxBkgColor':'#ffffff','labelTextColor':'#000000','sequenceNumberColor':'#000000','noteTextColor':'#000000','noteBorderColor':'#000000'}}}%%
 sequenceDiagram
     actor Client
     participant Server
