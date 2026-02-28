@@ -41,6 +41,15 @@ public class GameHandler {
     }
 
     public void createGame(Context ctx) {
+        HashMap<String, String> message = new HashMap<>();
+        String authToken = ctx.header("authorization");
+        CreateRequest body = ctx.bodyAsClass(CreateRequest.class);
+
+        if (body.gameName() == null || body.gameName().isEmpty()) {
+            message.put("message", "Error: bad request");
+            ctx.status(400).json(message);
+            return;
+        }
 
         int gameID = 1234;
         ctx.status(200).json(gameID);
