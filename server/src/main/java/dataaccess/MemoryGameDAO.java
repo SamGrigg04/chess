@@ -9,7 +9,7 @@ public class MemoryGameDAO implements GameDAO {
     private final Map<Integer, GameData> games = new HashMap<>();
 
     @Override
-    public Integer createGame(String gameName) throws DataAccessException {
+    public Integer createGame(String gameName) {
         int gameID = generateID();
         // so they're all unique
         while (games.containsKey(gameID)) {
@@ -24,6 +24,11 @@ public class MemoryGameDAO implements GameDAO {
 
     @Override
     public GameData getGame(Integer GameID) throws DataAccessException {
+        for (Integer key : games.keySet()) {
+            if (Objects.equals(games.get(key).gameID(), GameID)) {
+                return games.get(key);
+            }
+        }
         return null;
     }
 
@@ -44,11 +49,6 @@ public class MemoryGameDAO implements GameDAO {
         } else if (Objects.equals(playerColor, "BLACK")) {
             currentGame = new GameData(GameID, currentGame.whiteUsername(), username, currentGame.gameName(), currentGame.game());
         }
-
-    }
-
-    @Override
-    public void deleteGame(Integer GameID) throws DataAccessException {
 
     }
 
