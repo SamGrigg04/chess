@@ -41,6 +41,8 @@ public class Server {
                 ctx.status(403).json(new ErrorResponse(e.getMessage())));
         javalin.exception(UnauthorizedException.class, (e, ctx) ->
                 ctx.status(401).json(new ErrorResponse(e.getMessage())));
+        javalin.exception(NoGameException.class, (e, ctx) ->
+                ctx.status(400).json(new ErrorResponse(e.getMessage())));
 
         // Register your endpoints and exception handlers here.
 
