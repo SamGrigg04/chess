@@ -9,6 +9,7 @@ import io.javalin.http.Context;
 import model.GameData;
 import service.AlreadyTakenException;
 import service.GameService;
+import service.NoGameException;
 import service.UnauthorizedException;
 
 import java.util.ArrayList;
@@ -86,6 +87,10 @@ public class GameHandler {
         CreateResult result;
         try {
             result = gameService.joinGame(body, authToken);
+        } catch (NoGameException e) {
+            message.put("message", "Error: bad request");
+            ctx.status(400).json(message);
+            return;
         } catch (UnauthorizedException e) {
             message.put("message", "Error: unauthorized");
             ctx.status(401).json(message);

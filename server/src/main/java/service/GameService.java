@@ -23,7 +23,7 @@ public class GameService {
 
     public ListResult listGames(String authToken) throws DataAccessException {
         AuthData authData = authDAO.getAuth(authToken);
-        if (!Objects.equals(authData.authToken(), authToken)) {
+        if (authData == null || !Objects.equals(authData.authToken(), authToken)) {
             throw new UnauthorizedException("unauthorized");
         }
         return new ListResult(gameDAO.listGames());
@@ -31,7 +31,7 @@ public class GameService {
 
     public CreateResult createGame(CreateRequest createRequest, String authToken) throws DataAccessException {
         AuthData authData = authDAO.getAuth(authToken);
-        if (!Objects.equals(authData.authToken(), authToken)) {
+        if (authData == null || !Objects.equals(authData.authToken(), authToken)) {
             throw new UnauthorizedException("unauthorized");
         }
 
