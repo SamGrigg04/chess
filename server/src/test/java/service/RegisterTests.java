@@ -3,7 +3,6 @@ package service;
 import Request.RegisterRequest;
 import Result.AuthResult;
 import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
 import dataaccess.MemoryUserDAO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

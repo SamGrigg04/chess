@@ -42,7 +42,7 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(Integer GameID, String playerColor, String username) throws DataAccessException {
+    public void updateGame(Integer GameID, String playerColor, String username) {
         GameData currentGame = getGame(GameID);
         if (Objects.equals(playerColor, "WHITE")) {
             currentGame = new GameData(GameID, username, currentGame.blackUsername(), currentGame.gameName(), currentGame.game());
