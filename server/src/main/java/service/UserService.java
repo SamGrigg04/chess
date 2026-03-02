@@ -2,7 +2,7 @@ package service;
 
 import Request.LoginRequest;
 import Request.RegisterRequest;
-import Result.AuthResult;
+import result.AuthResult;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;

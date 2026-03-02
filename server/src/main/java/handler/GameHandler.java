@@ -2,8 +2,8 @@ package handler;
 
 import Request.CreateRequest;
 import Request.JoinRequest;
-import Result.CreateResult;
-import Result.ListResult;
+import result.CreateResult;
+import result.ListResult;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import model.GameData;
@@ -77,7 +77,7 @@ public class GameHandler {
         String authToken = ctx.header("authorization");
         JoinRequest body = ctx.bodyAsClass(JoinRequest.class);
 
-        if (body.playerColor() == null || body.GameID() == null || body.playerColor().isEmpty()) {
+        if (body.playerColor() == null || body.gameID() == null || body.playerColor().isEmpty()) {
             message.put("message", "Error: bad request");
             ctx.status(400).json(message);
             return;

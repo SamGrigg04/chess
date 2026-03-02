@@ -1,7 +1,7 @@
 package service;
 
 import Request.RegisterRequest;
-import Result.AuthResult;
+import result.AuthResult;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
 import org.junit.jupiter.api.Assertions;

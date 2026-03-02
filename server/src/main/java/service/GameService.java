@@ -2,8 +2,8 @@ package service;
 
 import Request.CreateRequest;
 import Request.JoinRequest;
-import Result.CreateResult;
-import Result.ListResult;
+import result.CreateResult;
+import result.ListResult;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -44,7 +44,7 @@ public class GameService {
     public CreateResult joinGame(JoinRequest joinRequest, String authToken) throws DataAccessException {
         AuthData authData = authDAO.getAuth(authToken);
         String playerColor = joinRequest.playerColor();
-        Integer gameID = joinRequest.GameID();
+        Integer gameID = joinRequest.gameID();
 
         if (!Objects.equals(authData.authToken(), authToken)) {
             throw new UnauthorizedException("unauthorized");

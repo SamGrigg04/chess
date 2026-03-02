@@ -23,9 +23,9 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData getGame(Integer GameID) {
+    public GameData getGame(Integer gameID) {
         for (Integer key : games.keySet()) {
-            if (Objects.equals(games.get(key).gameID(), GameID)) {
+            if (Objects.equals(games.get(key).gameID(),gameID)) {
                 return games.get(key);
             }
         }
@@ -42,14 +42,14 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(Integer GameID, String playerColor, String username) {
-        GameData currentGame = getGame(GameID);
+    public void updateGame(Integer gameID, String playerColor, String username) {
+        GameData currentGame = getGame(gameID);
         if (Objects.equals(playerColor, "WHITE")) {
-            currentGame = new GameData(GameID, username, currentGame.blackUsername(), currentGame.gameName(), currentGame.game());
+            currentGame = new GameData(gameID, username, currentGame.blackUsername(), currentGame.gameName(), currentGame.game());
         } else if (Objects.equals(playerColor, "BLACK")) {
-            currentGame = new GameData(GameID, currentGame.whiteUsername(), username, currentGame.gameName(), currentGame.game());
+            currentGame = new GameData(gameID, currentGame.whiteUsername(), username, currentGame.gameName(), currentGame.game());
         }
-        games.put(GameID, currentGame);
+        games.put(gameID, currentGame);
     }
 
     @Override

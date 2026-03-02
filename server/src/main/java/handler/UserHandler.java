@@ -1,7 +1,7 @@
 package handler;
 
 import Request.*;
-import Result.AuthResult;
+import result.AuthResult;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import service.AlreadyTakenException;
@@ -22,8 +22,7 @@ public class UserHandler {
         RegisterRequest body = ctx.bodyAsClass(RegisterRequest.class);
 
         boolean emptyFields = body.username().isEmpty() || body.password().isEmpty() || body.email().isEmpty();
-        boolean nullFields = body.username() == null || body.password() == null || body.email() == null;
-        if (emptyFields || nullFields) {
+        if (emptyFields) {
             message.put("message", "Error: bad request");
             ctx.status(400).json(message);
             return;
@@ -52,8 +51,7 @@ public class UserHandler {
         LoginRequest body = ctx.bodyAsClass(LoginRequest.class);
 
         boolean emptyFields = body.username().isEmpty() || body.password().isEmpty();
-        boolean nullFields = body.username() == null || body.password() == null;
-        if (emptyFields || nullFields) {
+        if (emptyFields) {
             message.put("message", "Error: bad request");
             ctx.status(400).json(message);
             return;
