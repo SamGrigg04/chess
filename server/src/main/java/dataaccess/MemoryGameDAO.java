@@ -16,7 +16,7 @@ public class MemoryGameDAO implements GameDAO {
             gameID = generateID();
         }
 
-        GameData gameData = new GameData(gameID, "", "", gameName, new ChessGame());
+        GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
         games.put(gameID, gameData);
 
         return gameID;
@@ -49,7 +49,7 @@ public class MemoryGameDAO implements GameDAO {
         } else if (Objects.equals(playerColor, "BLACK")) {
             currentGame = new GameData(GameID, currentGame.whiteUsername(), username, currentGame.gameName(), currentGame.game());
         }
-
+        games.put(GameID, currentGame);
     }
 
     @Override
