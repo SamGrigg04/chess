@@ -51,13 +51,10 @@ public class GameService {
         }
 
         GameData gameData = gameDAO.getGame(gameID);
-        if (gameData == null) {
+        if (gameData == null || Objects.equals(playerColor, "BLACK") || Objects.equals(playerColor, "WHITE")) {
             throw new NoGameException("bad request");
         }
-        if (Objects.equals(gameData.blackUsername(), playerColor)) {
-            throw new AlreadyTakenException("already taken");
-        }
-        if (Objects.equals(gameData.whiteUsername(), playerColor)) {
+        if (Objects.equals(gameData.blackUsername(), playerColor) || Objects.equals(gameData.whiteUsername(), playerColor)) {
             throw new AlreadyTakenException("already taken");
         }
 
