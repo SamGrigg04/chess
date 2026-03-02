@@ -13,7 +13,6 @@ public class RegisterTests {
     @Test
     void registerSuccess() throws Exception {
         var authDAO = new MemoryAuthDAO();
-        var gameDAO = new MemoryGameDAO();
         var userDAO = new MemoryUserDAO();
 
         var userService = new UserService(authDAO, userDAO);
@@ -30,7 +29,6 @@ public class RegisterTests {
     @Test
     void usernameAlreadyTaken() throws Exception {
         var authDAO = new MemoryAuthDAO();
-        var gameDAO = new MemoryGameDAO();
         var userDAO = new MemoryUserDAO();
 
         var userService = new UserService(authDAO, userDAO);
