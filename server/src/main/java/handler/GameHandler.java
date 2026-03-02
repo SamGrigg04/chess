@@ -1,7 +1,7 @@
 package handler;
 
-import Request.CreateRequest;
-import Request.JoinRequest;
+import request.CreateRequest;
+import request.JoinRequest;
 import result.CreateResult;
 import result.ListResult;
 import dataaccess.DataAccessException;

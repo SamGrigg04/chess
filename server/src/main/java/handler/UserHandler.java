@@ -1,6 +1,6 @@
 package handler;
 
-import Request.*;
+import request.*;
 import result.AuthResult;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;

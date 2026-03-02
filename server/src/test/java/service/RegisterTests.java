@@ -1,6 +1,6 @@
 package service;
 
-import Request.RegisterRequest;
+import request.RegisterRequest;
 import result.AuthResult;
 import dataaccess.MemoryAuthDAO;
 import dataaccess.MemoryUserDAO;
