@@ -51,7 +51,7 @@ public class GameService {
         }
 
         GameData gameData = gameDAO.getGame(gameID);
-        if (gameData == null || Objects.equals(playerColor, "BLACK") || Objects.equals(playerColor, "WHITE")) {
+        if (gameData == null || playerColor == null || (!Objects.equals(playerColor, "BLACK") && !Objects.equals(playerColor, "WHITE"))) {
             throw new NoGameException("bad request");
         }
         if (Objects.equals(gameData.blackUsername(), playerColor) || Objects.equals(gameData.whiteUsername(), playerColor)) {
