@@ -13,7 +13,7 @@ import service.UserService;
 import java.util.Map;
 
 public class UserHandler {
-    private static final Gson Serializer = new Gson();
+    private static final Gson SERIALIZER = new Gson();
     private final UserService userService;
 
     public UserHandler(UserService userService) {
@@ -21,46 +21,46 @@ public class UserHandler {
     }
 
     public void register(Context ctx) {
-        RegisterRequest body = Serializer.fromJson(ctx.body(), RegisterRequest.class);
+        RegisterRequest body = SERIALIZER.fromJson(ctx.body(), RegisterRequest.class);
 
         boolean bad = (body == null || body.username() == null || body.password() == null || body.email() == null
                 || body.username().isEmpty() || body.password().isEmpty() || body.email().isEmpty());
         if (bad) {
-            ctx.status(400).result(Serializer.toJson(Map.of("message", "Error: bad request")));
+            ctx.status(400).result(SERIALIZER.toJson(Map.of("message", "Error: bad request")));
             return;
         }
 
         try {
             AuthResult result = userService.register(body);
-            ctx.status(200).result(Serializer.toJson(Map.of(
+            ctx.status(200).result(SERIALIZER.toJson(Map.of(
                     "username", result.username(),
                     "authToken", result.authToken())));
         } catch (AlreadyTakenException e) {
-            ctx.status(403).result(Serializer.toJson(Map.of("message", "Error: already taken")));
+            ctx.status(403).result(SERIALIZER.toJson(Map.of("message", "Error: already taken")));
         } catch (DataAccessException e) {
-            ctx.status(500).result(Serializer.toJson(Map.of("message", "Error: internal server error")));
+            ctx.status(500).result(SERIALIZER.toJson(Map.of("message", "Error: internal server error")));
         }
     }
 
     public void login(Context ctx) {
-        LoginRequest body = Serializer.fromJson(ctx.body(), LoginRequest.class);
+        LoginRequest body = SERIALIZER.fromJson(ctx.body(), LoginRequest.class);
 
         boolean bad = (body == null || body.username() == null || body.password() == null
                 || body.username().isEmpty() || body.password().isEmpty());
         if (bad) {
-            ctx.status(400).result(Serializer.toJson(Map.of("message", "Error: bad request")));
+            ctx.status(400).result(SERIALIZER.toJson(Map.of("message", "Error: bad request")));
             return;
         }
 
         try {
             AuthResult result = userService.login(body);
-            ctx.status(200).result(Serializer.toJson(Map.of(
+            ctx.status(200).result(SERIALIZER.toJson(Map.of(
                     "username", result.username(),
                     "authToken", result.authToken())));
         } catch (UnauthorizedException e) {
-            ctx.status(401).result(Serializer.toJson(Map.of("message", "Error: unauthorized")));
+            ctx.status(401).result(SERIALIZER.toJson(Map.of("message", "Error: unauthorized")));
         } catch (DataAccessException e) {
-            ctx.status(500).result(Serializer.toJson(Map.of("message", "Error: internal server error")));
+            ctx.status(500).result(SERIALIZER.toJson(Map.of("message", "Error: internal server error")));
         }
     }
 
@@ -69,11 +69,11 @@ public class UserHandler {
 
         try {
             userService.logout(authToken);
-            ctx.status(200).result(Serializer.toJson(Map.of()));
+            ctx.status(200).result(SERIALIZER.toJson(Map.of()));
         } catch (UnauthorizedException e) {
-            ctx.status(401).result(Serializer.toJson(Map.of("message", "Error: unauthorized")));
+            ctx.status(401).result(SERIALIZER.toJson(Map.of("message", "Error: unauthorized")));
         } catch (DataAccessException e) {
-            ctx.status(500).result(Serializer.toJson(Map.of("message", "Error: internal server error")));
+            ctx.status(500).result(SERIALIZER.toJson(Map.of("message", "Error: internal server error")));
         }
     }
 }

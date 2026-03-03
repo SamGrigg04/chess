@@ -7,7 +7,7 @@ import service.ClearService;
 import java.util.Map;
 
 public class ClearHandler {
-    private static final Gson Serializer = new Gson();
+    private static final Gson SERIALIZER = new Gson();
     private final ClearService clearService;
 
     public ClearHandler(ClearService clearService) {
@@ -16,6 +16,6 @@ public class ClearHandler {
 
     public void clear(Context ctx) {
         clearService.clear();
-        ctx.status(200).result(Serializer.toJson(Map.of()));
+        ctx.status(200).result(SERIALIZER.toJson(Map.of()));
     }
 }
