@@ -1,16 +1,19 @@
 package handler;
 
-import request.*;
-import result.AuthResult;
+import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
+import request.LoginRequest;
+import request.RegisterRequest;
+import result.AuthResult;
 import service.AlreadyTakenException;
 import service.UnauthorizedException;
 import service.UserService;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class UserHandler {
+    private static final Gson serializer = new Gson();
     private final UserService userService;
 
     public UserHandler(UserService userService) {
@@ -18,80 +21,59 @@ public class UserHandler {
     }
 
     public void register(Context ctx) {
-        HashMap<String, String> message = new HashMap<>();
-        RegisterRequest body = ctx.bodyAsClass(RegisterRequest.class);
+        RegisterRequest body = serializer.fromJson(ctx.body(), RegisterRequest.class);
 
-        boolean emptyFields = body.username().isEmpty() || body.password().isEmpty() || body.email().isEmpty();
-        if (emptyFields) {
-            message.put("message", "Error: bad request");
-            ctx.status(400).json(message);
+        boolean bad = (body == null || body.username() == null || body.password() == null || body.email() == null
+                || body.username().isEmpty() || body.password().isEmpty() || body.email().isEmpty());
+        if (bad) {
+            ctx.status(400).result(serializer.toJson(Map.of("message", "Error: bad request")));
             return;
         }
 
-        AuthResult result;
         try {
-            result = userService.register(body);
+            AuthResult result = userService.register(body);
+            ctx.status(200).result(serializer.toJson(Map.of(
+                    "username", result.username(),
+                    "authToken", result.authToken())));
         } catch (AlreadyTakenException e) {
-            message.put("message", "Error: already taken");
-            ctx.status(403).json(message);
-            return;
+            ctx.status(403).result(serializer.toJson(Map.of("message", "Error: already taken")));
         } catch (DataAccessException e) {
-            message.put("message", "internal DAO failure");
-            ctx.status(500).json(message);
-            return;
+            ctx.status(500).result(serializer.toJson(Map.of("message", "Error: internal server error")));
         }
-
-        message.put("username", body.username());
-        message.put("authToken", result.authToken());
-        ctx.status(200).json(message);
     }
 
     public void login(Context ctx) {
-        HashMap<String, String> message = new HashMap<>();
-        LoginRequest body = ctx.bodyAsClass(LoginRequest.class);
+        LoginRequest body = serializer.fromJson(ctx.body(), LoginRequest.class);
 
-        boolean emptyFields = body.username().isEmpty() || body.password().isEmpty();
-        if (emptyFields) {
-            message.put("message", "Error: bad request");
-            ctx.status(400).json(message);
+        boolean bad = (body == null || body.username() == null || body.password() == null
+                || body.username().isEmpty() || body.password().isEmpty());
+        if (bad) {
+            ctx.status(400).result(serializer.toJson(Map.of("message", "Error: bad request")));
             return;
         }
 
-        AuthResult result;
         try {
-            result = userService.login(body);
+            AuthResult result = userService.login(body);
+            ctx.status(200).result(serializer.toJson(Map.of(
+                    "username", result.username(),
+                    "authToken", result.authToken())));
         } catch (UnauthorizedException e) {
-            message.put("message", "Error: unauthorized");
-            ctx.status(401).json(message);
-            return;
+            ctx.status(401).result(serializer.toJson(Map.of("message", "Error: unauthorized")));
         } catch (DataAccessException e) {
-            message.put("message", "internal DAO failure");
-            ctx.status(500).json(message);
-            return;
+            ctx.status(500).result(serializer.toJson(Map.of("message", "Error: internal server error")));
         }
-
-            message.put("username", body.username());
-            message.put("authToken", result.authToken());
-            ctx.status(200).json(message);
     }
 
     public void logout(Context ctx) {
-        HashMap<String, String> message = new HashMap<>();
         String authToken = ctx.header("authorization");
 
         try {
             userService.logout(authToken);
+            ctx.status(200).result(serializer.toJson(Map.of()));
         } catch (UnauthorizedException e) {
-            message.put("message", "Error: unauthorized");
-            ctx.status(401).json(message);
-            return;
+            ctx.status(401).result(serializer.toJson(Map.of("message", "Error: unauthorized")));
         } catch (DataAccessException e) {
-            message.put("message", "internal DAO failure");
-            ctx.status(500).json(message);
-            return;
+            ctx.status(500).result(serializer.toJson(Map.of("message", "Error: internal server error")));
         }
-
-        ctx.status(200).json(message);
     }
-
 }

@@ -11,39 +11,31 @@ public class MemoryGameDAO implements GameDAO {
     @Override
     public Integer createGame(String gameName) {
         int gameID = generateID();
-        // so they're all unique
         while (games.containsKey(gameID)) {
             gameID = generateID();
         }
 
         GameData gameData = new GameData(gameID, null, null, gameName, new ChessGame());
         games.put(gameID, gameData);
-
         return gameID;
     }
 
     @Override
     public GameData getGame(Integer gameID) {
-        for (Integer key : games.keySet()) {
-            if (Objects.equals(games.get(key).gameID(),gameID)) {
-                return games.get(key);
-            }
-        }
-        return null;
+        return games.get(gameID);
     }
 
     @Override
     public Collection<GameData> listGames() {
-        Collection<GameData> gameList = new ArrayList<>();
-        for (int key : games.keySet()) {
-            gameList.add(games.get(key));
-        }
-        return gameList;
+        return new ArrayList<>(games.values());
     }
 
     @Override
     public void updateGame(Integer gameID, String playerColor, String username) {
         GameData currentGame = getGame(gameID);
+        if (currentGame == null) {
+            return;
+        }
         if (Objects.equals(playerColor, "WHITE")) {
             currentGame = new GameData(gameID, username, currentGame.blackUsername(), currentGame.gameName(), currentGame.game());
         } else if (Objects.equals(playerColor, "BLACK")) {

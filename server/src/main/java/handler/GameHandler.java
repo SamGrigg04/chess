@@ -1,21 +1,21 @@
 package handler;
 
+import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import io.javalin.http.Context;
 import request.CreateRequest;
 import request.JoinRequest;
 import result.CreateResult;
 import result.ListResult;
-import dataaccess.DataAccessException;
-import io.javalin.http.Context;
-import model.GameData;
 import service.AlreadyTakenException;
 import service.GameService;
 import service.NoGameException;
 import service.UnauthorizedException;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Map;
 
 public class GameHandler {
+    private static final Gson serializer = new Gson();
     private final GameService gameService;
 
     public GameHandler(GameService gameService) {
@@ -23,91 +23,59 @@ public class GameHandler {
     }
 
     public void listGames(Context ctx) {
-        HashMap<String, String> message = new HashMap<>();
         String authToken = ctx.header("authorization");
 
-        ListResult result;
         try {
-            result = gameService.listGames(authToken);
+            ListResult result = gameService.listGames(authToken);
+            ctx.status(200).result(serializer.toJson(Map.of("games", result.games())));
         } catch (UnauthorizedException e) {
-            message.put("message", "Error: unauthorized");
-            ctx.status(401).json(message);
-            return;
+            ctx.status(401).result(serializer.toJson(Map.of("message", "Error: unauthorized")));
         } catch (DataAccessException e) {
-            message.put("message", "internal DAO failure");
-            ctx.status(500).json(message);
-            return;
+            ctx.status(500).result(serializer.toJson(Map.of("message", "Error: internal server error")));
         }
-
-        HashMap<String, ArrayList<GameData>> message2 = new HashMap<>();
-        message2.put("games", (ArrayList<GameData>) result.games());
-        ctx.status(200).json(message2);
     }
 
     public void createGame(Context ctx) {
-        HashMap<String, String> message = new HashMap<>();
         String authToken = ctx.header("authorization");
-        CreateRequest body = ctx.bodyAsClass(CreateRequest.class);
+        CreateRequest body = serializer.fromJson(ctx.body(), CreateRequest.class);
 
-        if (body.gameName() == null || body.gameName().isEmpty()) {
-            message.put("message", "Error: bad request");
-            ctx.status(400).json(message);
+        boolean bad = (body == null || body.gameName() == null || body.gameName().isEmpty());
+        if (bad) {
+            ctx.status(400).result(serializer.toJson(Map.of("message", "Error: bad request")));
             return;
         }
 
-        CreateResult result;
         try {
-            result = gameService.createGame(body, authToken);
+            CreateResult result = gameService.createGame(body, authToken);
+            ctx.status(200).result(serializer.toJson(Map.of("gameID", result.gameID())));
         } catch (UnauthorizedException e) {
-            message.put("message", "Error: unauthorized");
-            ctx.status(401).json(message);
-            return;
+            ctx.status(401).result(serializer.toJson(Map.of("message", "Error: unauthorized")));
         } catch (DataAccessException e) {
-            message.put("message", "internal DAO failure");
-            ctx.status(500).json(message);
-            return;
+            ctx.status(500).result(serializer.toJson(Map.of("message", "Error: internal server error")));
         }
-
-        HashMap<String, Integer> message2 = new HashMap<>();
-        message2.put("gameID", result.gameID());
-        ctx.status(200).json(message2);
     }
 
     public void joinGame(Context ctx) {
-        HashMap<String, String> message = new HashMap<>();
         String authToken = ctx.header("authorization");
-        JoinRequest body = ctx.bodyAsClass(JoinRequest.class);
+        JoinRequest body = serializer.fromJson(ctx.body(), JoinRequest.class);
 
-        if (body.playerColor() == null || body.gameID() == null || body.playerColor().isEmpty()) {
-            message.put("message", "Error: bad request");
-            ctx.status(400).json(message);
+        boolean bad = (body == null || body.playerColor() == null || body.gameID() == null || body.playerColor().isEmpty());
+        if (bad) {
+            ctx.status(400).result(serializer.toJson(Map.of("message", "Error: bad request")));
             return;
         }
 
-        CreateResult result;
         try {
-            result = gameService.joinGame(body, authToken);
+            gameService.joinGame(body, authToken);
+            ctx.status(200).result(serializer.toJson(Map.of()));
         } catch (NoGameException e) {
-            message.put("message", "Error: bad request");
-            ctx.status(400).json(message);
-            return;
+            ctx.status(400).result(serializer.toJson(Map.of("message", "Error: bad request")));
         } catch (UnauthorizedException e) {
-            message.put("message", "Error: unauthorized");
-            ctx.status(401).json(message);
-            return;
+            ctx.status(401).result(serializer.toJson(Map.of("message", "Error: unauthorized")));
         } catch (AlreadyTakenException e) {
-            message.put("message", "Error: already taken");
-            ctx.status(403).json(message);
-            return;
+            ctx.status(403).result(serializer.toJson(Map.of("message", "Error: already taken")));
         } catch (DataAccessException e) {
-            message.put("message", "internal DAO failure");
-            ctx.status(500).json(message);
-            return;
+            ctx.status(500).result(serializer.toJson(Map.of("message", "Error: internal server error")));
         }
-
-        HashMap<String, Integer> message2 = new HashMap<>();
-        message2.put("gameID", result.gameID());
-        ctx.status(200).json(message2);
     }
-
 }

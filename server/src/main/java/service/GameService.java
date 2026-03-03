@@ -1,14 +1,14 @@
 package service;
 
-import request.CreateRequest;
-import request.JoinRequest;
-import result.CreateResult;
-import result.ListResult;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.AuthData;
 import model.GameData;
+import request.CreateRequest;
+import request.JoinRequest;
+import result.CreateResult;
+import result.ListResult;
 
 import java.util.Objects;
 
@@ -37,31 +37,31 @@ public class GameService {
 
         String gameName = createRequest.gameName();
         Integer gameID = gameDAO.createGame(gameName);
-
         return new CreateResult(gameID);
     }
 
-    public CreateResult joinGame(JoinRequest joinRequest, String authToken) throws DataAccessException {
+    public void joinGame(JoinRequest joinRequest, String authToken) throws DataAccessException {
         AuthData authData = authDAO.getAuth(authToken);
-        String playerColor = joinRequest.playerColor();
-        Integer gameID = joinRequest.gameID();
-
-        if (!Objects.equals(authData.authToken(), authToken)) {
+        if (authData == null || !Objects.equals(authData.authToken(), authToken)) {
             throw new UnauthorizedException("unauthorized");
         }
 
+        String playerColor = joinRequest.playerColor();
+        Integer gameID = joinRequest.gameID();
+
         GameData gameData = gameDAO.getGame(gameID);
-        if (gameData == null || playerColor == null || (!Objects.equals(playerColor, "BLACK") && !Objects.equals(playerColor, "WHITE"))) {
+        if (gameData == null || playerColor == null ||
+                (!Objects.equals(playerColor, "BLACK") && !Objects.equals(playerColor, "WHITE"))) {
             throw new NoGameException("bad request");
         }
-        if (Objects.equals(gameData.blackUsername(), playerColor) || Objects.equals(gameData.whiteUsername(), playerColor)) {
+
+        if (Objects.equals(playerColor, "WHITE") && gameData.whiteUsername() != null) {
+            throw new AlreadyTakenException("already taken");
+        }
+        if (Objects.equals(playerColor, "BLACK") && gameData.blackUsername() != null) {
             throw new AlreadyTakenException("already taken");
         }
 
-        String username = authData.username();
-        gameDAO.updateGame(gameID, playerColor, username);
-
-        return new CreateResult(gameID);
+        gameDAO.updateGame(gameID, playerColor, authData.username());
     }
-
 }
