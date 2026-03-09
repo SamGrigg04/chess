@@ -19,7 +19,7 @@ void storeUserPassword(String username, String clearTextPassword) {
    return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
    }
 ```
-### Storing a chess game in MySQL:
+### Storing a chess game in MySQL (createGame and joinGame):
  1. Select the game’s state (JSON string) from the database
  2. Deserialize the JSON string to a ChessGame Java object
  3. Update the state of the ChessGame object
