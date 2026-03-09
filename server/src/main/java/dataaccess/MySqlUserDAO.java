@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import service.AlreadyTakenException;
 import service.ResponseException;
 
@@ -13,8 +14,29 @@ public class MySqlUserDAO implements UserDAO {
         configureDatabase();
     }
 
+    private void storeUserPassword(String username, String clearTextPassword) {
+        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
+
+        // write the hashed password in database along with the user's other information
+        writeHashedPasswordToDatabase(username, hashedPassword);
+    }
+    private void writeHashedPasswordToDatabase(String username, String hashedPassword) {
+
+    }
+
     @Override
     public UserData getUser(String username) throws DataAccessException {
+        return null;
+    }
+
+    private boolean verifyUser(String username, String providedClearTextPassword) {
+        // read the previously hashed password from the database
+        var hashedPassword = readHashedPasswordFromDatabase(username);
+
+        return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
+    }
+
+    private String readHashedPasswordFromDatabase(String username) {
         return null;
     }
 
