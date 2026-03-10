@@ -1,12 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.MemoryAuthDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryUserDAO;
-import handler.ClearHandler;
-import handler.GameHandler;
-import handler.UserHandler;
+import dataaccess.*;
+import handler.*;
 import io.javalin.Javalin;
 import service.*;
 
@@ -17,13 +13,31 @@ public class Server {
     private final Javalin javalin;
 
     public Server() {
-        MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
-        MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
-        MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
 
-        var userHandler = new UserHandler(new UserService(memoryAuthDAO, memoryUserDAO));
-        var gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO));
-        var clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
+        // CHANGE THIS LINE TO SWITCH FROM LOCAL TO DATABASE
+        boolean useLocalStorage = false;
+
+        UserHandler userHandler;
+        GameHandler gameHandler;
+        ClearHandler clearHandler;
+
+        if (useLocalStorage) {
+            MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
+            MemoryGameDAO memoryGameDAO = new MemoryGameDAO();
+            MemoryUserDAO memoryUserDAO = new MemoryUserDAO();
+
+            userHandler = new UserHandler(new UserService(memoryAuthDAO, memoryUserDAO));
+            gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO));
+            clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
+        } else {
+            MySqlAuthDAO mySqlAuthDAO = new MySqlAuthDAO();
+            MySqlGameDAO mySqlGameDAO = new MySqlGameDAO();
+            MySqlUserDAO mySqlUserDAO = new MySqlUserDAO();
+
+            userHandler = new UserHandler(new UserService(mySqlAuthDAO, mySqlUserDAO));
+            gameHandler = new GameHandler(new GameService(mySqlAuthDAO, mySqlGameDAO));
+            clearHandler = new ClearHandler(new ClearService(mySqlAuthDAO, mySqlGameDAO, mySqlUserDAO));
+        }
 
         var serializer = new Gson();
 
