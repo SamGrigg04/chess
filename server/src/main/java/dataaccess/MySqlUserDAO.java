@@ -3,7 +3,6 @@ package dataaccess;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import service.AlreadyTakenException;
-import service.ResponseException;
 
 import java.sql.SQLException;
 
@@ -45,6 +44,7 @@ public class MySqlUserDAO implements UserDAO {
 
     }
 
+    //TODO: put in other directory?
     private final String[] createUserTable = {
             """
         CREATE TABLE IF NOT EXISTS user (
@@ -56,7 +56,8 @@ public class MySqlUserDAO implements UserDAO {
         """
     };
 
-    private void configureDatabase() throws ResponseException, DataAccessException {
+    //TODO: put in other directory? Serialize error message
+    private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createUserTable) {
@@ -65,7 +66,7 @@ public class MySqlUserDAO implements UserDAO {
                 }
             }
         } catch (SQLException e) {
-            throw new ResponseException(String.format("Unable to configure database: %s", e.getMessage()));
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
         }
     }
 
