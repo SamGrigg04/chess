@@ -10,7 +10,6 @@ public class MySqlUserDAO implements UserDAO {
     @Override
     public void createUser(String username, String password, String email) throws AlreadyTakenException, DataAccessException {
         // Hash password
-        configureDatabase();
     }
 
     private void storeUserPassword(String username, String clearTextPassword) {
@@ -40,8 +39,15 @@ public class MySqlUserDAO implements UserDAO {
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws DataAccessException {
+        var statement = "TRUNCATE TABLE user";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+        }
     }
 
     public void setupUserTable() throws DataAccessException {
@@ -61,7 +67,6 @@ public class MySqlUserDAO implements UserDAO {
 
     //TODO: put in other directory? Serialize error message
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createUserTable) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
