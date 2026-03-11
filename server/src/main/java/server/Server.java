@@ -40,6 +40,7 @@ public class Server {
 
             try {
                 DatabaseManager.createDatabase();
+                mySqlUserDAO.setupUserTable();
                 mySqlAuthDAO.setupAuthTable();
                 mySqlGameDAO.setupGameTable();
                 mySqlUserDAO.setupUserTable();
