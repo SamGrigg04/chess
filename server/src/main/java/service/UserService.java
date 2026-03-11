@@ -33,7 +33,7 @@ public class UserService {
             throw new AlreadyTakenException("already taken");
         }
 
-        userDAO.createUser(username, hashedPassword, email);
+        userDAO.createUser(username, password, email);
         String authToken = generateToken();
         authDAO.createAuth(authToken, username);
 
