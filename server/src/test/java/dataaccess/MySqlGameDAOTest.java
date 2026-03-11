@@ -104,7 +104,7 @@ public class MySqlGameDAOTest {
     }
 
     @Test
-    void setupGamePositive() {
+    void setupGameTableTest() {
         assertDoesNotThrow(gameDAO::setupGameTable);
     }
 
