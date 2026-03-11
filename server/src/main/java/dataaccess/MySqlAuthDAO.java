@@ -29,7 +29,7 @@ public class MySqlAuthDAO implements AuthDAO {
                 preparedStatement.setString(1, authToken);
                 try (var result = preparedStatement.executeQuery()) {
                     if (result.next()) {
-                        return new AuthData(result.getString("authToken"), result.getString("username"));
+                        return new AuthData(result.getString("auth_token"), result.getString("username"));
                     }
                     return null;
                 }
