@@ -22,14 +22,12 @@ public class MySqlGameDAO implements GameDAO {
                 preparedStatement.setString(2, json);
                 preparedStatement.executeUpdate();
 
-                try (var keys = preparedStatement.getGeneratedKeys()) {
-                    if (keys.next()) {
-                        return keys.getInt(1);
-                    }
-                    throw new DataAccessException("Unable to read game_id");
+            try (var keys = preparedStatement.getGeneratedKeys()) {
+                if (keys.next()) {
+                    return keys.getInt(1);
                 }
+                throw new DataAccessException("Unable to read game_id");
             }
-
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
         }
