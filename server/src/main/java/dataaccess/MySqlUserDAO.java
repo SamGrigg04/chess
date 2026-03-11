@@ -51,10 +51,22 @@ public class MySqlUserDAO implements UserDAO {
 
     @Override
     public void clear() throws DataAccessException {
-        var statement = "TRUNCATE TABLE user";
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.executeUpdate();
+        // So it turns out that since there are foreign keys,
+        // this one doesn't like to delete. So you have to tell
+        // it to ignore that and delete anyway
+        try (var conn = DatabaseManager.getConnection();
+             var statement = conn.createStatement()) {
+            conn.setAutoCommit(false); // makes it so execute happens when I say, not immediately
+            try {
+                // Is this a transaction?
+                statement.execute("SET FOREIGN_KEY_CHECKS=0");
+                statement.execute("TRUNCATE TABLE user");
+                statement.execute("SET FOREIGN_KEY_CHECKS=1");
+                conn.commit(); // Do all the executes now
+            } catch (SQLException e) {
+                // if something goes wrong, undo everything
+                conn.rollback();
+                throw e;
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
