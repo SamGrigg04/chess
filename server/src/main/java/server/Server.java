@@ -40,7 +40,7 @@ public class Server {
 
             try {
                 DatabaseManager.createDatabase();
-                mySqlUserDAO.setupUserTable();
+                mySqlUserDAO.setupUserTable(); // This one has to be first since it is referenced by auth
                 mySqlAuthDAO.setupAuthTable();
                 mySqlGameDAO.setupGameTable();
             } catch (DataAccessException e) {
