@@ -14,7 +14,6 @@ public class MySqlGameDAO implements GameDAO {
     @Override
     public Integer createGame(String gameName) throws DataAccessException {
         var statement = "INSERT INTO game (game_name, game_state) VALUES (?, ?)";
-        var statement2 = "SELECT game_id FROM game WHERE game_name=?";
         String json = new Gson().toJson(new ChessGame());
 
         try (var conn = DatabaseManager.getConnection()) {
@@ -22,13 +21,15 @@ public class MySqlGameDAO implements GameDAO {
                 preparedStatement.setString(1, gameName);
                 preparedStatement.setString(2, json);
                 preparedStatement.executeUpdate();
-            }
-            try (var preparedStatement = conn.prepareStatement(statement2)) {
-                preparedStatement.setString(1, gameName);
-                var result = preparedStatement.executeQuery();
 
-                return result.getInt("game_id");
+                try (var keys = preparedStatement.getGeneratedKeys()) {
+                    if (keys.next()) {
+                        return keys.getInt(1);
+                    }
+                    throw new DataAccessException("Unable to read game_id");
+                }
             }
+
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
         }
@@ -41,15 +42,18 @@ public class MySqlGameDAO implements GameDAO {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setInt(1, gameID);
-                var result = preparedStatement.executeQuery();
-
-                return new GameData(
-                        result.getInt("game_id"),
-                        result.getString("white_username"), // could be null
-                        result.getString("black_username"), // could be null
-                        result.getString("game_name"),
-                        new Gson().fromJson(result.getString("game_state"), ChessGame.class)
-                );
+                try (var result = preparedStatement.executeQuery()) {
+                    if (result.next()) {
+                        return new GameData(
+                                result.getInt("game_id"),
+                                result.getString("white_username"), // could be null
+                                result.getString("black_username"), // could be null
+                                result.getString("game_name"),
+                                new Gson().fromJson(result.getString("game_state"), ChessGame.class)
+                        );
+                    }
+                    return null;
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
@@ -83,20 +87,18 @@ public class MySqlGameDAO implements GameDAO {
 
     @Override
     public void updateGame(Integer gameID, String playerColor, String username) throws DataAccessException {
-        var statement = "UPDATE game SET ? = ? WHERE game_id=?";
-        String playerUsernameColor = "";
+        var statement = " ";
 
         if (Objects.equals(playerColor, "WHITE")) {
-            playerUsernameColor = "white_username";
+            statement = "UPDATE game SET white_username = ? WHERE game_id=?";
         } else if (Objects.equals(playerColor, "BLACK")) {
-            playerUsernameColor = "black_username";
+            statement = "UPDATE game SET black_username = ? WHERE game_id=?";
         }
         
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.setString(1, playerUsernameColor);
-                preparedStatement.setString(2, playerColor);
-                preparedStatement.setInt(3, gameID);
+                preparedStatement.setString(1, username);
+                preparedStatement.setInt(2, gameID);
                 preparedStatement.executeUpdate();
             }
         } catch (SQLException e) {
