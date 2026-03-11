@@ -9,33 +9,45 @@ import java.sql.SQLException;
 public class MySqlUserDAO implements UserDAO {
     @Override
     public void createUser(String username, String password, String email) throws AlreadyTakenException, DataAccessException {
-        // Hash password
-    }
+        var statement = "INSERT INTO user VALUES (?, ?, ?)";
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-    private void storeUserPassword(String username, String clearTextPassword) {
-        String hashedPassword = BCrypt.hashpw(clearTextPassword, BCrypt.gensalt());
-
-        // write the hashed password in database along with the user's other information
-        writeHashedPasswordToDatabase(username, hashedPassword);
-    }
-    private void writeHashedPasswordToDatabase(String username, String hashedPassword) {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.setString(2, hashedPassword);
+                preparedStatement.setString(3, email);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+        }
 
     }
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        return null;
-    }
+        var statement = "SELECT * FROM user WHERE username=?";
 
-    private boolean verifyUser(String username, String providedClearTextPassword) {
-        // read the previously hashed password from the database
-        var hashedPassword = readHashedPasswordFromDatabase(username);
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, username);
+                preparedStatement.executeQuery();
+                    try (var result = preparedStatement.executeQuery()) {
+                        if (result.next()) {
+                            return new UserData(
+                                    result.getString("username"),
+                                    result.getString("password"),
+                                    result.getString("email")
+                            );
+                        }
+                        return null;
+                    }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+        }
 
-        return BCrypt.checkpw(providedClearTextPassword, hashedPassword);
-    }
-
-    private String readHashedPasswordFromDatabase(String username) {
-        return null;
     }
 
     @Override
@@ -65,7 +77,6 @@ public class MySqlUserDAO implements UserDAO {
         """
     };
 
-    //TODO: put in other directory? Serialize error message
     private void configureDatabase() throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createUserTable) {
