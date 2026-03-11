@@ -42,18 +42,19 @@ public class MySqlGameDAO implements GameDAO {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setInt(1, gameID);
-                try (var result = preparedStatement.executeQuery()) {
-                    if (result.next()) {
-                        return new GameData(
-                                result.getInt("game_id"),
-                                result.getString("white_username"), // could be null
-                                result.getString("black_username"), // could be null
-                                result.getString("game_name"),
-                                new Gson().fromJson(result.getString("game_state"), ChessGame.class)
-                        );
+                preparedStatement.executeQuery();
+                    try (var keys = preparedStatement.getGeneratedKeys()) {
+                        if (keys.next()) {
+                            return new GameData(
+                                    keys.getInt(1),
+                                    keys.getString(2),
+                                    keys.getString(3),
+                                    keys.getString(4),
+                                    new Gson().fromJson(keys.getString(5), ChessGame.class)
+                                    );
+                        }
+                        throw new DataAccessException("Unable to read game_id");
                     }
-                    return null;
-                }
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
