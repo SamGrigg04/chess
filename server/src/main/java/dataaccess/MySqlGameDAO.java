@@ -16,11 +16,14 @@ public class MySqlGameDAO implements GameDAO {
         var statement = "INSERT INTO game (game_name, game_state) VALUES (?, ?)";
         String json = new Gson().toJson(new ChessGame());
 
-        try (var conn = DatabaseManager.getConnection()) {
-            try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.setString(1, gameName);
-                preparedStatement.setString(2, json);
-                preparedStatement.executeUpdate();
+        try (var conn = DatabaseManager.getConnection();
+             // RETURN_GENERATED_KEYS allows us to call .getGeneratedKeys to get
+             // a ResultSet that contains the generated columns (game_id) for the
+             // inserted rows
+             var preparedStatement = conn.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS)) {
+            preparedStatement.setString(1, gameName);
+            preparedStatement.setString(2, json);
+            preparedStatement.executeUpdate();
 
             try (var keys = preparedStatement.getGeneratedKeys()) {
                 if (keys.next()) {
