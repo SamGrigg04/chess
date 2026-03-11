@@ -36,6 +36,10 @@ public class MySqlGameDAO implements GameDAO {
 
     }
 
+    public void setupGameTable() throws DataAccessException {
+        configureDatabase();
+    }
+
     private final String[] createGameTable = {
         """
         CREATE TABLE IF NOT EXISTS game (

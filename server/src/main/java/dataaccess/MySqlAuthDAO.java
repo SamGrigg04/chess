@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class MySqlAuthDAO implements AuthDAO {
     @Override
     public void createAuth(String authToken, String username) throws DataAccessException {
-        configureDatabase();
+
     }
 
     @Override
@@ -24,6 +24,10 @@ public class MySqlAuthDAO implements AuthDAO {
     @Override
     public void clear() {
 
+    }
+
+    public void setupAuthTable() throws DataAccessException {
+        configureDatabase();
     }
 
     private final String[] createAuthTable = {

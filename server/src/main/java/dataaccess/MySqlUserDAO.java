@@ -44,6 +44,10 @@ public class MySqlUserDAO implements UserDAO {
 
     }
 
+    public void setupUserTable() throws DataAccessException {
+        configureDatabase();
+    }
+
     private final String[] createUserTable = {
         """
         CREATE TABLE IF NOT EXISTS user (
