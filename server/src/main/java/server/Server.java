@@ -34,21 +34,22 @@ public class Server {
             gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO));
             clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
         } else {
-            //TODO: Create database and tables here? Probably call methods from Database Manager
-            try {
-                DatabaseManager.createDatabase();
-            } catch (DataAccessException e) {
-
-            }
-
             MySqlAuthDAO mySqlAuthDAO = new MySqlAuthDAO();
             MySqlGameDAO mySqlGameDAO = new MySqlGameDAO();
             MySqlUserDAO mySqlUserDAO = new MySqlUserDAO();
 
+            try {
+                DatabaseManager.createDatabase();
+                mySqlAuthDAO.setupAuthTable();
+                mySqlGameDAO.setupGameTable();
+                mySqlUserDAO.setupUserTable();
+            } catch (DataAccessException e) {
+                throw new RuntimeException("Error: ", e);
+            }
+
             userHandler = new UserHandler(new UserService(mySqlAuthDAO, mySqlUserDAO));
             gameHandler = new GameHandler(new GameService(mySqlAuthDAO, mySqlGameDAO));
             clearHandler = new ClearHandler(new ClearService(mySqlAuthDAO, mySqlGameDAO, mySqlUserDAO));
-
         }
 
 
