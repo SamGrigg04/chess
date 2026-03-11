@@ -88,7 +88,7 @@ public class MySqlGameDAO implements GameDAO {
 
     @Override
     public void updateGame(Integer gameID, String playerColor, String username) throws DataAccessException {
-        var statement = " ";
+        String statement;
 
         if (Objects.equals(playerColor, "WHITE")) {
             statement = "UPDATE game SET white_username = ? WHERE game_id=?";
