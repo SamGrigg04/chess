@@ -27,10 +27,9 @@ public class MySqlAuthDAO implements AuthDAO {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, authToken);
-                preparedStatement.executeQuery();
-                try (var keys = preparedStatement.getGeneratedKeys()) {
-                    if (keys.next()) {
-                        return new AuthData(keys.getString("authToken"), keys.getString("username"));
+                try (var result = preparedStatement.executeQuery()) {
+                    if (result.next()) {
+                        return new AuthData(result.getString("authToken"), result.getString("username"));
                     }
                     return null;
                 }
@@ -42,7 +41,7 @@ public class MySqlAuthDAO implements AuthDAO {
 
     @Override
     public void deleteAuth(String authToken) throws DataAccessException {
-        var statement = "DELETE auth_token FROM auth WHERE auth_token=?";
+        var statement = "DELETE FROM auth WHERE auth_token=?";
 
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {

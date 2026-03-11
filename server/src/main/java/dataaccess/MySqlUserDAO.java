@@ -32,17 +32,16 @@ public class MySqlUserDAO implements UserDAO {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
                 preparedStatement.setString(1, username);
-                preparedStatement.executeQuery();
-                    try (var result = preparedStatement.executeQuery()) {
-                        if (result.next()) {
-                            return new UserData(
-                                    result.getString("username"),
-                                    result.getString("password"),
-                                    result.getString("email")
-                            );
-                        }
-                        return null;
+                try (var result = preparedStatement.executeQuery()) {
+                    if (result.next()) {
+                        return new UserData(
+                                result.getString("username"),
+                                result.getString("password"),
+                                result.getString("email")
+                        );
                     }
+                    return null;
+                }
             }
         } catch (SQLException e) {
             throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
