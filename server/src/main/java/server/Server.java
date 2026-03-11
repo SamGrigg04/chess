@@ -14,12 +14,16 @@ public class Server {
 
     public Server() {
 
+        var serializer = new Gson();
+
         // CHANGE THIS VALUE TO SWITCH FROM LOCAL TO DATABASE
         boolean useLocalStorage = false;
 
         UserHandler userHandler;
         GameHandler gameHandler;
         ClearHandler clearHandler;
+
+        javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         if (useLocalStorage) {
             MemoryAuthDAO memoryAuthDAO = new MemoryAuthDAO();
@@ -30,6 +34,13 @@ public class Server {
             gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO));
             clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
         } else {
+            //TODO: Create database and tables here? Probably call methods from Database Manager
+            try {
+                DatabaseManager.createDatabase();
+            } catch (DataAccessException e) {
+
+            }
+
             MySqlAuthDAO mySqlAuthDAO = new MySqlAuthDAO();
             MySqlGameDAO mySqlGameDAO = new MySqlGameDAO();
             MySqlUserDAO mySqlUserDAO = new MySqlUserDAO();
@@ -38,12 +49,8 @@ public class Server {
             gameHandler = new GameHandler(new GameService(mySqlAuthDAO, mySqlGameDAO));
             clearHandler = new ClearHandler(new ClearService(mySqlAuthDAO, mySqlGameDAO, mySqlUserDAO));
 
-            //TODO: Create database and tables here? Probably call methods from Database Manager
         }
 
-        var serializer = new Gson();
-
-        javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
         javalin.post("/user", userHandler::register);
         javalin.post("/session", userHandler::login);

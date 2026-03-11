@@ -12,6 +12,7 @@ import java.util.List;
 public class MySqlGameDAO implements GameDAO {
     @Override
     public Integer createGame(String gameName) throws DataAccessException {
+        configureDatabase();
         return 0;
     }
 
@@ -34,6 +35,34 @@ public class MySqlGameDAO implements GameDAO {
     public void clear() {
 
     }
+
+    private final String[] createGameTable = {
+        """
+        CREATE TABLE IF NOT EXISTS game (
+            game_id INT AUTO_INCREMENT NOT NULL,
+            game_name VARCHAR(255) NOT NULL,
+            white_username VARCHAR(255),
+            black_username VARCHAR(255),
+            game_state JSON NOT NULL,
+            PRIMARY KEY (game_id)
+        )
+        """
+    };
+
+    //TODO: put in other directory? Serialize error message
+    private void configureDatabase() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : createGameTable) {
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+        }
+    }
+
 
 //    private ChessGame readChessGame(ResultSet rs) throws SQLException {
 //        var chessBoard = rs.getArray("chessBoard");
