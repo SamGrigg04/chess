@@ -1,6 +1,7 @@
 "# My Notes ;)"
  - [ ] Wrap calls to get a connection with ```try-with-resources``` blocks
- - [ ] On startup, code should create databases and tables based on config values in ```db.properties```. There is code in ```DatabaseManager``` that you can use
+ - [ ] On startup, code should create databases and tables based on config values in ```db.properties```. There is code 
+in ```DatabaseManager``` that you can use
  - [ ] When a password is provided by a user, hash it before storing it (register and login)
 ``` java
 void storeUserPassword(String username, String clearTextPassword) {

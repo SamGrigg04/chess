@@ -14,7 +14,7 @@ public class Server {
 
     public Server() {
 
-        // CHANGE THIS LINE TO SWITCH FROM LOCAL TO DATABASE
+        // CHANGE THIS VALUE TO SWITCH FROM LOCAL TO DATABASE
         boolean useLocalStorage = false;
 
         UserHandler userHandler;
@@ -37,6 +37,8 @@ public class Server {
             userHandler = new UserHandler(new UserService(mySqlAuthDAO, mySqlUserDAO));
             gameHandler = new GameHandler(new GameService(mySqlAuthDAO, mySqlGameDAO));
             clearHandler = new ClearHandler(new ClearService(mySqlAuthDAO, mySqlGameDAO, mySqlUserDAO));
+
+            //TODO: Create database and tables here? Probably call methods from Database Manager
         }
 
         var serializer = new Gson();
