@@ -2,13 +2,13 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Objects;
 
 public class MySqlGameDAO implements GameDAO {
     @Override
@@ -57,13 +57,51 @@ public class MySqlGameDAO implements GameDAO {
     }
 
     @Override
-    public Collection<GameData> listGames() {
-        return List.of();
+    public Collection<GameData> listGames() throws DataAccessException {
+        var statement = "SELECT * FROM game";
+        ArrayList<GameData> gameList = new ArrayList<>();
+
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                try (ResultSet result = preparedStatement.executeQuery()) {
+                    while (result.next()) {
+                        gameList.add(new GameData(
+                                result.getInt("game_id"),
+                                result.getString("white_username"), // could be null
+                                result.getString("black_username"), // could be null
+                                result.getString("game_name"),
+                                new Gson().fromJson(result.getString("game_state"), ChessGame.class)
+                        ));
+                    }
+                    return gameList;
+                }
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+        }
     }
 
     @Override
     public void updateGame(Integer gameID, String playerColor, String username) throws DataAccessException {
+        var statement = "UPDATE game SET ? = ? WHERE game_id=?";
+        String playerUsernameColor = "";
 
+        if (Objects.equals(playerColor, "WHITE")) {
+            playerUsernameColor = "white_username";
+        } else if (Objects.equals(playerColor, "BLACK")) {
+            playerUsernameColor = "black_username";
+        }
+        
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, playerUsernameColor);
+                preparedStatement.setString(2, playerColor);
+                preparedStatement.setInt(3, gameID);
+                preparedStatement.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+        }
     }
 
     @Override
