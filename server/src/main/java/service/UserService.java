@@ -26,8 +26,6 @@ public class UserService {
         String username = registerRequest.username();
         String password = registerRequest.password();
         String email = registerRequest.email();
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-
         UserData userData = userDAO.getUser(username);
         if (userData != null) {
             throw new AlreadyTakenException("already taken");
