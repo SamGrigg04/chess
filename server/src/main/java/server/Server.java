@@ -43,7 +43,6 @@ public class Server {
                 mySqlUserDAO.setupUserTable();
                 mySqlAuthDAO.setupAuthTable();
                 mySqlGameDAO.setupGameTable();
-                mySqlUserDAO.setupUserTable();
             } catch (DataAccessException e) {
                 throw new RuntimeException("Error: ", e);
             }
