@@ -2,6 +2,7 @@ package dataaccess;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import model.AuthData;
 import model.GameData;
 
 import java.sql.ResultSet;
@@ -12,13 +13,47 @@ import java.util.List;
 public class MySqlGameDAO implements GameDAO {
     @Override
     public Integer createGame(String gameName) throws DataAccessException {
-        configureDatabase();
-        return 0;
+        var statement = "INSERT INTO game (game_name, game_state) VALUES (?, ?)";
+        var statement2 = "SELECT game_id FROM game WHERE game_name=?";
+        String json = new Gson().toJson(new ChessGame());
+
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setString(1, gameName);
+                preparedStatement.setString(2, json);
+                preparedStatement.executeUpdate();
+            }
+            try (var preparedStatement = conn.prepareStatement(statement2)) {
+                preparedStatement.setString(1, gameName);
+                var result = preparedStatement.executeQuery();
+
+                return result.getInt("game_id");
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+        }
     }
 
     @Override
     public GameData getGame(Integer gameID) throws DataAccessException {
-        return null;
+        var statement = "SELECT * FROM game WHERE game_id=?";
+
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement(statement)) {
+                preparedStatement.setInt(1, gameID);
+                var result = preparedStatement.executeQuery();
+
+                return new GameData(
+                        result.getInt("game_id"),
+                        result.getString("white_username"), // could be null
+                        result.getString("black_username"), // could be null
+                        result.getString("game_name"),
+                        new Gson().fromJson(result.getString("game_state"), ChessGame.class)
+                );
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
+        }
     }
 
     @Override
@@ -41,7 +76,7 @@ public class MySqlGameDAO implements GameDAO {
     }
 
     private final String[] createGameTable = {
-        """
+            """
         CREATE TABLE IF NOT EXISTS game (
             game_id INT AUTO_INCREMENT NOT NULL,
             game_name VARCHAR(255) NOT NULL,
@@ -53,9 +88,7 @@ public class MySqlGameDAO implements GameDAO {
         """
     };
 
-    //TODO: put in other directory? Serialize error message
     private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createGameTable) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
@@ -67,11 +100,4 @@ public class MySqlGameDAO implements GameDAO {
         }
     }
 
-
-//    private ChessGame readChessGame(ResultSet rs) throws SQLException {
-//        var chessBoard = rs.getArray("chessBoard");
-//        var json = rs.getString("json");
-//        var chessGame = new Gson().fromJson(json, ChessGame.class);
-//        return chessGame.setBoard(chessGame);
-//    }
 }
