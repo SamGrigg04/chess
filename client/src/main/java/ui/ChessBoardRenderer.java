@@ -11,11 +11,13 @@ public final class ChessBoardRenderer {
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 1;
     private static final String EMPTY = "   ";
 
+    // calls the thing that prints the board (passes in the config)
     public static void render(PlayerColor playerColor) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         render(out, playerColor.config());
     }
 
+    // prints the chess board to the terminal based on player color passed in
     private static void render(PrintStream out, ChessBoardConfig config) {
         // clears the screen
         out.print(ERASE_SCREEN);
@@ -30,7 +32,7 @@ public final class ChessBoardRenderer {
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
-
+    // prints a header for each element in the headers string
     private static void drawHeaders(PrintStream out, String[] headers) {
         setBlack(out);
 
@@ -41,15 +43,18 @@ public final class ChessBoardRenderer {
         out.println();
     }
 
+    // Draws the header
     private static void drawHeader(PrintStream out, String headerText) {
         int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
-        int suffixLength = 0;
+        int suffixLength = 0; // This will need to change if I want to use the special characters (see pet shop)
 
+        // Keeping the scaffolding for the special characters for now even though it doesn't do anything
         out.print(EMPTY.repeat(prefixLength));
         printHeaderText(out, headerText);
         out.print(EMPTY.repeat(suffixLength));
     }
 
+    // Finally actually prints the thing to the terminal. abstraction is weird
     private static void printHeaderText(PrintStream out, String player) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
@@ -59,14 +64,18 @@ public final class ChessBoardRenderer {
         setBlack(out);
     }
 
+    // draws the chess board row by row
     private static void drawChessBoard(PrintStream out, ChessBoardConfig config) {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
+            // gets the data for the row to be printed
             String[] rowContents = config.initialBoard()[boardRow];
+            // gets the data for the header (row number) to put on either side
             String rowHeader = config.rowHeaders()[boardRow];
             drawRowOfSquares(out, boardRow, rowContents, rowHeader, config.topPieceTextColor(), config.bottomPieceTextColor());
         }
     }
 
+    // draws each row
     private static void drawRowOfSquares(PrintStream out,
                                          int boardRow,
                                          String[] rowContents,
@@ -75,11 +84,13 @@ public final class ChessBoardRenderer {
                                          String bottomPieceTextColor) {
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
+            // puts the row number in first
             setLightGrey(out);
 
             drawHeader(out, rowHeader);
 
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
+                // fancy logic I'm very proud of to determine what color the square should be
                 boolean useWhiteSquare = (boardRow % 2 == 0) == (boardCol % 2 == 0);
 
                 if (useWhiteSquare) {
@@ -92,16 +103,19 @@ public final class ChessBoardRenderer {
                 int suffixLength = 0;
 
                 out.print(EMPTY.repeat(prefixLength));
+                // sets the colors depending on who is viewing the board
                 if (boardRow <= 1) {
                     out.print(topPieceTextColor);
                 }
                 if (boardRow >= 6) {
                     out.print(bottomPieceTextColor);
                 }
+                // prints the contents of the row
                 out.print(rowContents[boardCol]);
                 out.print(EMPTY.repeat(suffixLength));
             }
 
+            // prints the row number at the end
             drawHeader(out, rowHeader);
 
             out.println();
@@ -120,18 +134,22 @@ public final class ChessBoardRenderer {
 
     private static void setLightGrey(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
+        // this is only for the headers, so I always want the color to be black
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
+    // Today I learned you can put a little record in a class. Very nice for config stuff
     public record ChessBoardConfig(
-            String[] columnHeaders,
-            String[] rowHeaders,
-            String[][] initialBoard,
-            String topPieceTextColor,
-            String bottomPieceTextColor
+            String[] columnHeaders, // column letters
+            String[] rowHeaders, // row numbers
+            String[][] initialBoard, // initial setup
+            String topPieceTextColor, // opposing player color
+            String bottomPieceTextColor // your player color
     ) {
+        // and I need nothing in here because it is a record
     }
 
+    // This is where all the non-duplicate code goes
     public enum PlayerColor {
         BLACK(
                 new ChessBoardConfig(
@@ -147,8 +165,8 @@ public final class ChessBoardRenderer {
                                 {" P ", " P ", " P ", " P ", " P ", " P ", " P ", " P "},
                                 {" R ", " N ", " B ", " Q ", " K ", " B ", " N ", " R "}
                         },
-                        SET_TEXT_COLOR_RED,
-                        SET_TEXT_COLOR_BLUE
+                        SET_TEXT_COLOR_RED, // top color
+                        SET_TEXT_COLOR_BLUE // bottom color
                 )
         ),
         WHITE(
