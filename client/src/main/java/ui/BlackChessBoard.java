@@ -44,7 +44,7 @@ public class BlackChessBoard {
     private static void drawHeaders(PrintStream out) {
         setBlack(out);
 
-        String[] headers = {"   ", " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", "   "};
+        String[] headers = { EMPTY , " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EMPTY };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             drawHeader(out, headers[boardCol]);
         }
