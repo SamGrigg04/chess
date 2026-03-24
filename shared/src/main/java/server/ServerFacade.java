@@ -4,6 +4,9 @@ import com.google.gson.Gson;
 import exception.ResponseException;
 
 import model.*;
+import request.JoinRequest;
+import request.LoginRequest;
+import request.RegisterRequest;
 
 import java.net.*;
 import java.net.http.*;
@@ -28,26 +31,26 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public AuthData register(UserData user) throws ResponseException {
-        var request = buildRequest("POST", "/user", user); // user is the request body
+    public AuthData register(String username, String password, String email) throws ResponseException {
+        var request = buildRequest("POST", "/user", new RegisterRequest(username, password, email), null); // user is the request body
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
 
-    public AuthData login(UserData user) throws ResponseException { //LoginRequest instead of userData?
-        var request = buildRequest("POST", "/session", user);
+    public AuthData login(String username, String password) throws ResponseException { //LoginRequest instead of userData?
+        var request = buildRequest("POST", "/session", new LoginRequest(username, password), null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
 
     public void logout(String authToken) throws ResponseException {
-        var request = buildRequest("DELETE", "/session", authToken);
+        var request = buildRequest("DELETE", "/session", null, authToken);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
     public Collection<GameData> listGames(String authToken) throws ResponseException {
-        var request = buildRequest("GET", "/game", authToken);
+        var request = buildRequest("GET", "/game", null, authToken);
         var response = sendRequest(request);
 
         var gamesAsArray = handleResponse(response, GameData[].class);
@@ -58,30 +61,38 @@ public class ServerFacade {
         return Arrays.asList(gamesAsArray);
     }
 
-    public int createGame(String gameName) throws ResponseException {
-        var request = buildRequest("POST", "/game", gameName);
+    public int createGame(String gameName, String authToken) throws ResponseException {
+        var request = buildRequest("POST", "/game", gameName, authToken);
         var response = sendRequest(request);
-        return handleResponse(response, int.class);
+        var idAsArray = handleResponse(response, Integer[].class);
+
+        if (idAsArray == null) {
+            return 0;
+        }
+        return idAsArray[0];
     }
 
-    public void joinGame(String playerColor, int gameID) throws ResponseException {
-        var request = buildRequest("PUT", "/game", Map.of("playerColor", playerColor, "gameID", gameID));
+    public void joinGame(String playerColor, int gameID, String authToken) throws ResponseException {
+        var request = buildRequest("PUT", "/game", new JoinRequest(playerColor, gameID), authToken);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
     public void clear() throws ResponseException {
-        var request = buildRequest("DELETE", "/db", null);
+        var request = buildRequest("DELETE", "/db", null, null);
         var response = sendRequest(request);
         handleResponse(response, null);
     }
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
+    private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
         if (body != null) {
             request.setHeader("Content-Type", "application/json");
+        }
+        if (authToken != null) {
+            request.setHeader("Authorization", authToken);
         }
         return request.build();
     }
@@ -112,6 +123,7 @@ public class ServerFacade {
 
             throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
         }
+
 
         if (responseClass != null) {
             return new Gson().fromJson(response.body(), responseClass);
