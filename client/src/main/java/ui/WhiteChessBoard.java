@@ -11,20 +11,7 @@ public class WhiteChessBoard {
     private static final int BOARD_SIZE_IN_SQUARES = 10;
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 1;
 
-    // Padded characters.
     private static final String EMPTY = "   ";
-    private static final String K = " K ";
-    private static final String Q = " Q ";
-    private static final String B = " B ";
-    private static final String N = " N ";
-    private static final String R = " R ";
-    private static final String P = " P ";
-    private static final String k = " k ";
-    private static final String q = " q ";
-    private static final String b = " b ";
-    private static final String n = " n ";
-    private static final String r = " r ";
-    private static final String p = " p ";
 
     public static void main(String[] args) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
@@ -72,14 +59,14 @@ public class WhiteChessBoard {
 
     private static void drawChessBoard(PrintStream out) {
         String[][] initBoard = {
-                {R, N, B, Q, K, B, N, R},
-                {P, P, P, P, P, P, P, P},
+                {" R ", " N ", " B ", " Q ", " K ", " B ", " N ", " R "},
+                {" P ", " P ", " P ", " P ", " P ", " P ", " P ", " P "},
                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                {p, p, p, p, p, p, p, p},
-                {r, n, b, q, k, b, n, r}
+                {" p ", " p ", " p ", " p ", " p ", " p ", " p ", " p "},
+                {" r ", " n ", " b ", " q ", " k ", " b ", " n ", " r "}
         };
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
             String[] rowContents = initBoard[boardRow];
