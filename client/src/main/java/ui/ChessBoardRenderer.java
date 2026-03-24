@@ -19,7 +19,7 @@ public final class ChessBoardRenderer {
 
     // prints the chess board to the terminal based on player color passed in
     private static void render(PrintStream out, ChessBoardConfig config) {
-        // clears the screen
+        // clears the screen (supposedly)
         out.print(ERASE_SCREEN);
 
         // prints the headers at the top, then the board spaces (with the side headers), then the bottom headers
