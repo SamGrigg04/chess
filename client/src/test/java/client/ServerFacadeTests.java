@@ -15,6 +15,10 @@ public class ServerFacadeTests {
         System.out.println("Started test HTTP server on " + port);
     }
 
+    /*
+    @BeforeEach -- clear the database and initialize ServerFacade
+     */
+
     @AfterAll
     static void stopServer() {
         server.stop();

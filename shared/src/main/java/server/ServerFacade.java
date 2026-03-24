@@ -5,6 +5,12 @@ import model.GameData;
 
 import java.util.List;
 
+/*
+talks to endpoints (login, logout, register, list, etc.)
+translates json payloads to AuthData/GameData
+throws ResponseExceptions (nicely) for any errors
+ */
+
 public class ServerFacade {
     private final String serverUrl;
 
@@ -24,15 +30,19 @@ public class ServerFacade {
 
     }
 
-    public int createGame(String authToken, String gameName) {
-        return 0;
-    }
-
     public List<GameData> listGames(String authToken) {
         return null;
     }
 
+    public int createGame(String authToken, String gameName) {
+        return 0;
+    }
+
     public void joinGame(String authToken, int gameID, String playerColor) {
+
+    }
+
+    public void clear() {
 
     }
 }
