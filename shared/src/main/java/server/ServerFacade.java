@@ -11,7 +11,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 
-import java.util.List;
+import java.util.*;
 
 /*
 talks to endpoints (login, logout, register, list, etc.)
@@ -20,15 +20,16 @@ throws ResponseExceptions (nicely) for any errors
  */
 
 public class ServerFacade {
-    private final String serverUrl;
-    private final HttpClient client = HttpClient.newHttpClient();
+    private final HttpClient client = HttpClient.newHttpClient(); // creates requests and gets back responses
+    private final String serverUrl; // includes host name and port number
+
 
     public ServerFacade(String url) throws ResponseException {
         serverUrl = url;
     }
 
     public AuthData register(UserData user) throws ResponseException {
-        var request = buildRequest("POST", "/user", user);
+        var request = buildRequest("POST", "/user", user); // user is the request body
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
@@ -42,23 +43,37 @@ public class ServerFacade {
     public void logout(String authToken) throws ResponseException {
         var request = buildRequest("DELETE", "/session", authToken);
         var response = sendRequest(request);
-        handleResponse(response, AuthData.class);
+        handleResponse(response, null);
     }
 
-    public List<GameData> listGames(String authToken) throws ResponseException {
-        return null;
+    public Collection<GameData> listGames(String authToken) throws ResponseException {
+        var request = buildRequest("GET", "/game", authToken);
+        var response = sendRequest(request);
+
+        var gamesAsArray = handleResponse(response, GameData[].class);
+        // We can't immediately return it because deserializing doesn't return a collection of game data
+        if (gamesAsArray == null ) { // Thanks, compiler warning thingy
+            return Collections.emptyList();
+        }
+        return Arrays.asList(gamesAsArray);
     }
 
-    public int createGame(String authToken, String gameName) throws ResponseException {
-        return 0;
+    public int createGame(String gameName) throws ResponseException {
+        var request = buildRequest("POST", "/game", gameName);
+        var response = sendRequest(request);
+        return handleResponse(response, int.class);
     }
 
-    public void joinGame(String authToken, int gameID, String playerColor) throws ResponseException {
-
+    public void joinGame(String playerColor, int gameID) throws ResponseException {
+        var request = buildRequest("PUT", "/game", Map.of("playerColor", playerColor, "gameID", gameID));
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     public void clear() throws ResponseException {
-
+        var request = buildRequest("DELETE", "/db", null);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
     private HttpRequest buildRequest(String method, String path, Object body) {
