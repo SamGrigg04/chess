@@ -6,12 +6,11 @@ import java.util.Random;
 
 import static ui.EscapeSequences.*;
 
-public class ChessBoard {
+public class WhiteChessBoard {
 
     // Board dimensions.
-    private static final int BOARD_SIZE_IN_SQUARES = 8;
-    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 3;
-    private static final int LINE_WIDTH_IN_PADDED_CHARS = 1;
+    private static final int BOARD_SIZE_IN_SQUARES = 10;
+    private static final int SQUARE_SIZE_IN_PADDED_CHARS = 1;
 
     // Padded characters.
     private static final String EMPTY = "   ";
@@ -40,21 +39,18 @@ public class ChessBoard {
 
         drawChessBoard(out);
 
+        drawHeaders(out);
+
         out.print(SET_BG_COLOR_BLACK);
         out.print(SET_TEXT_COLOR_WHITE);
     }
 
     private static void drawHeaders(PrintStream out) {
-
         setBlack(out);
 
-        String[] headers = { "a", "b", "c", "d", "e", "f", "g", "h" };
+        String[] headers = { "   ", " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", "   " };
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
             drawHeader(out, headers[boardCol]);
-
-            if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-                out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
-            }
         }
 
         out.println();
@@ -62,7 +58,7 @@ public class ChessBoard {
 
     private static void drawHeader(PrintStream out, String headerText) {
         int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
-        int suffixLength = SQUARE_SIZE_IN_PADDED_CHARS - prefixLength - 1;
+        int suffixLength = 0;
 
         out.print(EMPTY.repeat(prefixLength));
         printHeaderText(out, headerText);
@@ -70,8 +66,8 @@ public class ChessBoard {
     }
 
     private static void printHeaderText(PrintStream out, String player) {
-        out.print(SET_BG_COLOR_BLACK);
-        out.print(SET_TEXT_COLOR_GREEN);
+        out.print(SET_BG_COLOR_LIGHT_GREY);
+        out.print(SET_TEXT_COLOR_BLACK);
 
         out.print(player);
 
@@ -81,15 +77,9 @@ public class ChessBoard {
     private static void drawChessBoard(PrintStream out) {
 
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
-
             drawRowOfSquares(out);
-
-            if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
-                // Draw horizontal row separator.
-                drawHorizontalLine(out);
-                setBlack(out);
-            }
         }
+
     }
 
     private static void drawRowOfSquares(PrintStream out) {
@@ -98,23 +88,12 @@ public class ChessBoard {
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
                 setWhite(out);
 
-                if (squareRow == SQUARE_SIZE_IN_PADDED_CHARS / 2) {
-                    int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
-                    int suffixLength = SQUARE_SIZE_IN_PADDED_CHARS - prefixLength - 1;
+                int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
+                int suffixLength = 0;
 
-                    out.print(EMPTY.repeat(prefixLength));
-                    printPlayer(out, rand.nextBoolean() ? K : Q);
-                    out.print(EMPTY.repeat(suffixLength));
-                }
-                else {
-                    out.print(EMPTY.repeat(SQUARE_SIZE_IN_PADDED_CHARS));
-                }
-
-                if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-                    // Draw vertical column separator.
-                    setBlack(out);
-                    out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
-                }
+                out.print(EMPTY.repeat(prefixLength));
+                printPlayer(out, rand.nextBoolean() ? K : Q);
+                out.print(EMPTY.repeat(suffixLength));
 
                 setBlack(out);
             }
@@ -123,19 +102,19 @@ public class ChessBoard {
         }
     }
 
-    private static void drawHorizontalLine(PrintStream out) {
-
-        int boardSizeInSpaces = BOARD_SIZE_IN_SQUARES * SQUARE_SIZE_IN_PADDED_CHARS +
-                (BOARD_SIZE_IN_SQUARES - 1) * LINE_WIDTH_IN_PADDED_CHARS;
-
-        for (int lineRow = 0; lineRow < LINE_WIDTH_IN_PADDED_CHARS; ++lineRow) {
-            setBlack(out);
-            out.print(EMPTY.repeat(boardSizeInSpaces));
-
-            setBlack(out);
-            out.println();
-        }
-    }
+//    private static void drawHorizontalLine(PrintStream out) {
+//
+//        int boardSizeInSpaces = BOARD_SIZE_IN_SQUARES * SQUARE_SIZE_IN_PADDED_CHARS +
+//                (BOARD_SIZE_IN_SQUARES - 1) * LINE_WIDTH_IN_PADDED_CHARS;
+//
+//        for (int lineRow = 0; lineRow < LINE_WIDTH_IN_PADDED_CHARS; ++lineRow) {
+//            setBlack(out);
+//            out.print(EMPTY.repeat(boardSizeInSpaces));
+//
+//            setBlack(out);
+//            out.println();
+//        }
+//    }
 
     private static void setWhite(PrintStream out) {
         out.print(SET_BG_COLOR_WHITE);
