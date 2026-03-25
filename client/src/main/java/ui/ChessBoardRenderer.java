@@ -179,6 +179,7 @@ public final class ChessBoardRenderer {
                                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
+                                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                                 {" P ", " P ", " P ", " P ", " P ", " P ", " P ", " P "},
                                 {" R ", " N ", " B ", " Q ", " K ", " B ", " N ", " R "}
                         },
