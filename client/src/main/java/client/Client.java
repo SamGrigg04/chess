@@ -66,12 +66,12 @@ public class Client {
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "signin" -> signIn(params);
-                case "rescue" -> rescuePet(params);
-                case "list" -> listPets();
-                case "signout" -> signOut();
-                case "adopt" -> adoptPet(params);
-                case "adoptall" -> adoptAllPets();
+                case "login" -> login(params);
+                case "register" -> register(params);
+                case "logout" -> logout();
+                case "create game" -> createGame(params);
+                case "list games" -> listGames();
+                case "play game", "observe game" -> joinGame(params);
                 case "quit" -> "quit";
                 default -> help();
             };
@@ -80,7 +80,7 @@ public class Client {
         }
     }
 
-    public String signIn(String... params) throws ResponseException {
+    public String login(String... params) throws ResponseException {
         if (params.length >= 1) {
             state = State.SIGNEDIN;
             visitorName = String.join("-", params);
@@ -90,86 +90,42 @@ public class Client {
         throw new ResponseException(ResponseException.Code.ClientError, "Expected: <yourname>");
     }
 
-    public String rescuePet(String... params) throws ResponseException {
-        assertSignedIn();
-        if (params.length >= 2) {
-            String name = params[0];
-            PetType type = PetType.valueOf(params[1].toUpperCase());
-            var pet = new Pet(0, name, type);
-            pet = server.addPet(pet);
-            return String.format("You rescued %s. Assigned ID: %d", pet.name(), pet.id());
-        }
-        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <name> <CAT|DOG|FROG>");
+    public String register(String... params) throws ResponseException {
+        return null;
     }
 
-    public String listPets() throws ResponseException {
-        assertSignedIn();
-        PetList pets = server.listPets();
-        var result = new StringBuilder();
-        var gson = new Gson();
-        for (Pet pet : pets) {
-            result.append(gson.toJson(pet)).append('\n');
-        }
-        return result.toString();
+    public String logout() throws ResponseException {
+        return null;
     }
 
-    public String adoptPet(String... params) throws ResponseException {
-        assertSignedIn();
-        if (params.length == 1) {
-            try {
-                int id = Integer.parseInt(params[0]);
-                Pet pet = getPet(id);
-                if (pet != null) {
-                    server.deletePet(id);
-                    return String.format("%s says %s", pet.name(), pet.sound());
-                }
-            } catch (NumberFormatException ignored) {
-            }
-        }
-        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <pet id>");
+    public String createGame(String... params) throws ResponseException {
+        return null;
     }
 
-    public String adoptAllPets() throws ResponseException {
-        assertSignedIn();
-        var buffer = new StringBuilder();
-        for (Pet pet : server.listPets()) {
-            buffer.append(String.format("%s says %s%n", pet.name(), pet.sound()));
-        }
-
-        server.deleteAllPets();
-        return buffer.toString();
+    public String listGames() throws ResponseException {
+        return null;
     }
 
-    public String signOut() throws ResponseException {
-        assertSignedIn();
-//        ws.leavePetShop(visitorName);
-        state = State.SIGNEDOUT;
-        return String.format("%s left the shop", visitorName);
-    }
-
-    private Pet getPet(int id) throws ResponseException {
-        for (Pet pet : server.listPets()) {
-            if (pet.id() == id) {
-                return pet;
-            }
-        }
+    public String joinGame(String... params) throws ResponseException {
         return null;
     }
 
     public String help() {
         if (state == State.SIGNEDOUT) {
             return """
-                    - signIn <yourname>
-                    - quit
+                    2 - login
+                    3 - register
+                    4 - quit
                     """;
         }
         return """
-                - list
-                - adopt <pet id>
-                - rescue <name> <CAT|DOG|FROG|FISH>
-                - adoptAll
-                - signOut
-                - quit
+                2 - logout
+                3 - create game
+                4 - list games
+                5 - play game
+                6 - join game
+                7 - observe game
+                8 - quit
                 """;
     }
 
