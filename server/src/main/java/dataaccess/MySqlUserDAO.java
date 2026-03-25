@@ -74,7 +74,7 @@ public class MySqlUserDAO implements UserDAO {
     }
 
     public void setupUserTable() throws DataAccessException {
-        configureDatabase();
+        DatabaseManager.configureDatabase(createUserTable);
     }
 
     private final String[] createUserTable = {
@@ -87,17 +87,4 @@ public class MySqlUserDAO implements UserDAO {
         )
         """
     };
-
-    private void configureDatabase() throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createUserTable) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
-        }
-    }
-
 }

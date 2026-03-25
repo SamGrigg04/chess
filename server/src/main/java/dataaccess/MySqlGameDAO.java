@@ -119,7 +119,7 @@ public class MySqlGameDAO implements GameDAO {
     }
 
     public void setupGameTable() throws DataAccessException {
-        configureDatabase();
+        DatabaseManager.configureDatabase(createGameTable);
     }
 
     private final String[] createGameTable = {
@@ -134,17 +134,4 @@ public class MySqlGameDAO implements GameDAO {
         )
         """
     };
-
-    private void configureDatabase() throws DataAccessException {
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createGameTable) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", e.getMessage()));
-        }
-    }
-
 }
