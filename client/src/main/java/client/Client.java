@@ -209,7 +209,7 @@ public class Client {
         }
         server.joinGame(color.name(), gameID, authToken);
 
-        ChessBoardRenderer.render(ChessBoardRenderer.PlayerColor.valueOf(playerColor));
+        ChessBoardRenderer.render(color);
 
         return String.format("Joined game with id %s ", params[0]);
     }
