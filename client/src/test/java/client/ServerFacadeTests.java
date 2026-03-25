@@ -6,6 +6,8 @@ import result.AuthResult;
 import server.Server;
 import server.ServerFacade;
 
+import java.util.Collection;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -84,5 +86,39 @@ public class ServerFacadeTests {
                 () -> facade.createGame("", maker.authToken()));
     }
 
+    @Test
+    void listGamesSuccess() throws ResponseException {
+        AuthResult maker = facade.register("listy", "losty", "lusty@t.com");
+        int id = facade.createGame("Test(2)(3).txt", maker.authToken());
+        Collection<?> games = facade.listGames(maker.authToken());
+        assertFalse(games.isEmpty());
+    }
+
+    @Test
+    void listGamesFail() {
+        assertThrows(ResponseException.class, () -> facade.listGames("wrong"));
+    }
+
+    @Test
+    void joinGameSuccess() throws ResponseException {
+        AuthResult host = facade.register("bigboi", "large", "incharge@mail.com");
+        int id = facade.createGame("BigGame", host.authToken());
+        AuthResult guest = facade.register("smallboi", "smol", "teeny@mail.com");
+        assertDoesNotThrow(() -> facade.joinGame("WHITE", id, guest.authToken()));
+    }
+
+    @Test
+    void joinGameFail() throws ResponseException {
+        AuthResult host = facade.register("largefry", "potato", "mc@d.com");
+        int id = facade.createGame("Game", host.authToken());
+        AuthResult guest = facade.register("smallcoke", "n03", "con@glomerate.coke");
+        assertThrows(ResponseException.class,
+                () -> facade.joinGame("PURPLE", id, guest.authToken()));
+    }
+
+    @Test
+    void clearTest() throws ResponseException {
+        // TODO: Do I need to implement clear?
+    }
 
 }
