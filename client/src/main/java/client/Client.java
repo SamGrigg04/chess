@@ -177,7 +177,12 @@ public class Client {
             throw new ResponseException(ResponseException.Code.ClientError, "Expected gameID");
         }
 
-        int gameID = server.createGame(params[0], authToken);
+        String gameName = params[0].trim();
+        if (gameName.isEmpty()) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Game name cannot be blank");
+        }
+
+        int gameID = server.createGame(gameName, authToken);
 
         return String.format("Created game with id %s", gameID);
     }
