@@ -58,6 +58,8 @@ public class Client {
                 }
             } catch (ResponseException ex) {
                 System.out.print(ex.getMessage() + "\n");
+            } catch (Exception ex) {
+                System.out.print("Something went wrong: " + ex.getMessage() + "\n");
             }
         }
         System.out.println();
