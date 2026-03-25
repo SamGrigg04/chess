@@ -1,11 +1,5 @@
 package client;
 
-/*
-handle commands like help, register, join game, quit, etc.
-call ServerFacade for backend work
-call the renderer when a player tries to play/observe
- */
-
 import java.util.Collection;
 import java.util.Scanner;
 
@@ -96,8 +90,8 @@ public class Client {
             case 5 -> logout();
             case 6 -> createGame(collectInputs(scanner, "Game name: "));
             case 7 -> listGames();
-            case 8 -> joinGame(collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
-            case 9 -> observeGame(collectInputs(scanner, "Game ID: "));
+            case 8 -> joinGame(scanner, collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
+            case 9 -> observeGame(scanner, collectInputs(scanner, "Game ID: "));
             default -> "Please select a valid option";
         };
     }
@@ -189,7 +183,7 @@ public class Client {
         return String.format("Created game with id %s", gameID);
     }
 
-    public String joinGame(String... params) throws ResponseException {
+    public String joinGame(Scanner scanner, String... params) throws ResponseException {
         assertSignedIn();
 
         if (params.length < 2) {
@@ -212,11 +206,12 @@ public class Client {
         server.joinGame(color.name(), gameID, authToken);
 
         ChessBoardRenderer.render(color);
+        waitForEnter(scanner);
 
         return String.format("Joined game with id %s ", params[0]);
     }
 
-    public String observeGame(String... params) throws ResponseException {
+    public String observeGame(Scanner scanner, String... params) throws ResponseException {
         assertSignedIn();
 
         if (params.length < 1) {
@@ -224,6 +219,7 @@ public class Client {
         }
 
         ChessBoardRenderer.render(ChessBoardRenderer.PlayerColor.WHITE);
+        waitForEnter(scanner);
 
         return String.format("Observing game with id %s ", params[0]);
     }
@@ -268,6 +264,11 @@ public class Client {
                 Input 8 to play an existing game
                 Input 9 to observe an existing game
                 """;
+    }
+
+    private void waitForEnter(Scanner scanner) {
+        System.out.print("\u001b[0m" + "Press Enter to proceed...");
+        scanner.nextLine();
     }
 
     private void assertSignedIn() throws ResponseException {
