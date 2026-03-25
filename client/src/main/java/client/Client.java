@@ -22,7 +22,7 @@ public class Client {
     private final ServerFacade server;
     private State state = State.SIGNEDOUT;
 
-    public Client(String serverURL) throws ResponseException {
+    public Client(String serverURL) {
         server = new ServerFacade(serverURL);
     }
 
