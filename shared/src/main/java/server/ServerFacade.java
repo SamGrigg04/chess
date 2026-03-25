@@ -3,11 +3,9 @@ package server;
 import com.google.gson.Gson;
 import exception.ResponseException;
 
-import model.*;
-import request.JoinRequest;
-import request.LoginRequest;
-import request.RegisterRequest;
-import result.ListResult;
+import model.GameData;
+import request.*;
+import result.*;
 
 import java.net.*;
 import java.net.http.*;
@@ -32,16 +30,16 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public AuthData register(String username, String password, String email) throws ResponseException {
+    public AuthResult register(String username, String password, String email) throws ResponseException {
         var request = buildRequest("POST", "/user", new RegisterRequest(username, password, email), null);
         var response = sendRequest(request);
-        return handleResponse(response, AuthData.class);
+        return handleResponse(response, AuthResult.class);
     }
 
-    public AuthData login(String username, String password) throws ResponseException { //LoginRequest instead of userData?
+    public AuthResult login(String username, String password) throws ResponseException { //LoginRequest instead of userData?
         var request = buildRequest("POST", "/session", new LoginRequest(username, password), null);
         var response = sendRequest(request);
-        return handleResponse(response, AuthData.class);
+        return handleResponse(response, AuthResult.class);
     }
 
     public void logout(String authToken) throws ResponseException {
@@ -62,14 +60,15 @@ public class ServerFacade {
     }
 
     public int createGame(String gameName, String authToken) throws ResponseException {
-        var request = buildRequest("POST", "/game", gameName, authToken);
+        var request = buildRequest("POST", "/game", new CreateRequest(gameName), authToken);
         var response = sendRequest(request);
-        var idAsArray = handleResponse(response, Integer[].class);
+        var createResult = handleResponse(response, CreateResult.class);
 
-        if (idAsArray == null) {
+        if (createResult == null) { // non-initialized int has a value of 0
             return 0;
         }
-        return idAsArray[0];
+
+        return createResult.gameID();
     }
 
     public void joinGame(String playerColor, int gameID, String authToken) throws ResponseException {
