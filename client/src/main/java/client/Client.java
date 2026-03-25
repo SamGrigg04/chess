@@ -1,17 +1,13 @@
 package client;
 
-
 /*
 handle commands like help, register, join game, quit, etc.
 call ServerFacade for backend work
 call the renderer when a player tries to play/observe
  */
 
-import java.util.Arrays;
 import java.util.Scanner;
 
-import com.google.gson.Gson;
-import model.*;
 import exception.ResponseException;
 //import client.websocket.NotificationHandler;
 import server.ServerFacade;
@@ -30,26 +26,37 @@ public class Client {
     }
 
     public void run() {
-        System.out.println("Welcome to chess I guess. Sign in to start.");
-        System.out.print(help());
+        System.out.println("Welcome to chess I guess. Sign in to start." + "\n");
 
         Scanner scanner = new Scanner(System.in);
-        var result = "";
-        while (!result.equals("quit")) {
+        boolean running = true;
+        while (running) {
+            // Thanks, CS 260. Neat syntax no?
+            String menu = (state == State.SIGNEDOUT) ? signedOutMenu() : signedInMenu();
+            System.out.print(menu);
             printPrompt();
             String line = scanner.nextLine();
+
+            int option = validateOption(line);
+            if (option == -1) {
+                System.out.print("\u001b[31m" + "Please select a valid option number." + "\u001b[0m" + "\n");
+                continue;
+            }
+
             try {
-
+                String actionResult;
                 if (state == State.SIGNEDOUT) {
-                    result = loggedInEval(line);
+                    actionResult = loggedOutEval(option, scanner);
                 } else {
-                    result = loggedOutEval(line);
+                    actionResult = loggedInEval(option, scanner);
                 }
-
-                System.out.print("\u001b[34m" + result);
-            } catch (Throwable e) {
-                var msg = e.toString();
-                System.out.print(msg);
+                if ("quit".equalsIgnoreCase(actionResult)) {
+                    running = false;
+                } else if (actionResult != null && !actionResult.isBlank()) {
+                    System.out.println("\u001b[0m" + actionResult);
+                }
+            } catch (ResponseException ex) {
+                System.out.print(ex.getMessage());
             }
         }
         System.out.println();
@@ -61,44 +68,47 @@ public class Client {
 //    }
 
     private void printPrompt() {
-        System.out.print("\n" + "\u001b[0m" + ">>> " + "\u001b[32m");
+        System.out.print("\n" + "\u001b[0m" + ">>> ");
     }
 
-
-    public String loggedInEval(String input) {
+    private int validateOption(String input) {
         try {
-            String[] tokens = input.toLowerCase().split(" ");
-            String cmd = (tokens.length > 0) ? tokens[0] : "help";
-            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (cmd) {
-                case "1" -> help();
-                case "2" -> login(params);
-                case "3" -> register(params);
-                case "4" -> "quit";
-                default -> "Please select a valid option";
-            };
-        } catch (ResponseException ex) {
-            return ex.getMessage();
+            return Integer.parseInt(input.trim());
+        } catch (NumberFormatException ex) {
+            return -1;
         }
     }
 
-    public String loggedOutEval(String input) {
-        try {
-            String[] tokens = input.toLowerCase().split(" ");
-            String cmd = (tokens.length > 0) ? tokens[0] : "help";
-            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
-            return switch (cmd) {
-                case "1" -> help();
-                case "4" -> "quit";
-                case "5" -> logout();
-                case "6" -> createGame(params);
-                case "7" -> listGames();
-                case "8", "9" -> joinGame(params);
-                default -> "Please select a valid option";
-            };
-        } catch (ResponseException ex) {
-            return ex.getMessage();
+    private String loggedOutEval(int option, Scanner scanner) throws ResponseException {
+        return switch (option) {
+            case 1 -> signedOutHelp();
+            case 2 -> login(collectInputs(scanner, "Username: ", "Password: "));
+            case 3 -> register(collectInputs(scanner, "Username: ", "Password: ", "Email: "));
+            case 4 -> "quit";
+            default -> "Please select a valid option";
+        };
+    }
+
+    private String loggedInEval(int option, Scanner scanner) throws ResponseException {
+        return switch (option) {
+            case 1 -> signedInHelp();
+            case 4 -> "quit";
+            case 5 -> logout();
+            case 6 -> createGame(collectInputs(scanner, "Game name: "));
+            case 7 -> listGames();
+            case 8 -> joinGame(collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
+            case 9 -> joinGame(collectInputs(scanner, "Game ID: "));
+            default -> "Please select a valid option";
+        };
+    }
+
+    private String[] collectInputs(Scanner scanner, String... prompts) {
+        String[] responses = new String[prompts.length];
+        for (int i = 0; i < prompts.length; i++) {
+            System.out.print(prompts[i]);
+            responses[i] = scanner.nextLine();
         }
+        return responses;
     }
 
     public String login(String... params) throws ResponseException {
@@ -131,15 +141,37 @@ public class Client {
         return null;
     }
 
-    public String help() {
-        if (state == State.SIGNEDOUT) {
-            return """
-                    Input 1 for help
-                    Input 2 to go to the login screen
-                    Input 3 to register a new account
-                    Input 4 to quit
-                    """;
-        }
+    private String signedOutMenu() {
+        return """
+                1 - help
+                2 - login
+                3 - register
+                4 - quit
+                """;
+    }
+
+    private String signedInMenu() {
+        return """
+                Input 1 - help
+                Input 4 - quit
+                Input 5 - logout
+                Input 6 - create game
+                Input 7 - list games
+                Input 8 - play game
+                Input 9 - observe game
+                """;
+    }
+
+    private String signedOutHelp() {
+        return """
+                Input 1 for help
+                Input 2 to go to the login screen
+                Input 3 to register a new account
+                Input 4 to quit
+                """;
+    }
+
+    private String signedInHelp() {
         return """
                 Input 1 for help
                 Input 4 to quit
