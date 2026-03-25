@@ -9,6 +9,8 @@ call the renderer when a player tries to play/observe
 import java.util.Scanner;
 
 import exception.ResponseException;
+import model.AuthData;
+import model.UserData;
 //import client.websocket.NotificationHandler;
 import server.ServerFacade;
 //import client.websocket.WebSocketFacade;
@@ -16,6 +18,7 @@ import server.ServerFacade;
 
 public class Client {
     private String visitorName = null;
+    private String authToken = null;
     private final ServerFacade server;
 //    private final WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
@@ -112,17 +115,29 @@ public class Client {
     }
 
     public String login(String... params) throws ResponseException {
-        if (params.length >= 1) {
-            state = State.SIGNEDIN;
-            visitorName = String.join("-", params);
-//            ws.enterPetShop(visitorName);
-            return String.format("You signed in as %s.", visitorName);
+        if (params.length < 2) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Expected username and password");
         }
-        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <yourname>");
+
+        AuthData authData = server.login(params[0], params[1]);
+        state = State.SIGNEDIN;
+        authToken = authData.authToken();
+        visitorName = authData.username();
+//        ws.enterPetShop(visitorName);
+        return String.format("You signed in as %s.", visitorName);
     }
 
     public String register(String... params) throws ResponseException {
-        return null;
+        if (params.length < 3) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Expected username, password, and email");
+        }
+
+        AuthData authData = server.register(params[0], params[1], params[2]);
+        state = State.SIGNEDIN;
+        authToken = authData.authToken();
+        visitorName = authData.username();
+
+        return String.format("You registered as %s", visitorName);
     }
 
     public String logout() throws ResponseException {
