@@ -141,24 +141,27 @@ public class Client {
     }
 
     public String logout() throws ResponseException {
-        if (state != State.SIGNEDIN) {
-            throw new ResponseException(ResponseException.Code
-                    .ClientError, "How did you do that? You're not signed in!");
-        }
+        assertSignedIn();
 
         state = State.SIGNEDOUT;
         return String.format("%s understandably got bored of chess and left", visitorName);
     }
 
     public String createGame(String... params) throws ResponseException {
+        assertSignedIn();
+
         return null;
     }
 
     public String listGames() throws ResponseException {
+        assertSignedIn();
+
         return null;
     }
 
     public String joinGame(String... params) throws ResponseException {
+        assertSignedIn();
+
         return null;
     }
 
