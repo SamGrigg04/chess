@@ -58,8 +58,10 @@ public class Client {
                 }
             } catch (ResponseException ex) {
                 System.out.print(ex.getMessage() + "\n");
-            } catch (Exception ex) {
-                System.out.print("Something went wrong: " + ex.getMessage() + "\n");
+            } catch (Exception ex) { // Catch any other random errors
+                // If there's a message, display it. If not, display the class of the error
+                var msg = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getSimpleName();
+                System.out.print("Something went wrong: " + msg + "\n");
             }
         }
         System.out.println();
