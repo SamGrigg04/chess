@@ -126,6 +126,42 @@ public class ServerFacade {
         return null;
     }
 
+    // Makes errors look nicer (parses from JSON)
+    // Takes in the raw response and the HTTP status
+    private ResponseException toResponseException(String body, int status) {
+        // Gets the status code from ResponseException
+        ResponseException.Code code = ResponseException.fromHttpStatusCode(status);
+        String message = "Server error: " + status;
+
+        // If there isn't a body, return a generic error
+        if (body != null && !body.isBlank()) {
+            // Deserializes the body (body should have a status and a message)
+            // Originally was var map = new Gson().fromJson(body, HashMap.class); but that had a compiler error
+            // The internet says this is how to get rid of that error
+            Type mapType = new TypeToken<Map<String, Object>>() {}.getType();
+            Map<String, Object> map = new Gson().fromJson(body, mapType);
+
+            if (map != null) {
+                // Get the error message
+                var messageValue = map.get("message");
+                if (messageValue != null) {
+                    message = messageValue.toString();
+                }
+                // Get the HTTP status and match it to its code
+                var statusValue = map.get("status");
+                if (statusValue != null) {
+                    try {
+                        code = ResponseException.Code.valueOf(statusValue.toString());
+                    } catch (IllegalArgumentException ignored) {
+                        // ResponseException handles the default code
+                    }
+                }
+            }
+        }
+
+        return new ResponseException(code, message);
+    }
+
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
     }
