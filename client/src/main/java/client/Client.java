@@ -38,9 +38,14 @@ public class Client {
         while (!result.equals("quit")) {
             printPrompt();
             String line = scanner.nextLine();
-
             try {
-                result = eval(line);
+
+                if (state == State.SIGNEDOUT) {
+                    result = loggedInEval(line);
+                } else {
+                    result = loggedOutEval(line);
+                }
+
                 System.out.print("\u001b[34m" + result);
             } catch (Throwable e) {
                 var msg = e.toString();
@@ -60,20 +65,36 @@ public class Client {
     }
 
 
-    public String eval(String input) {
+    public String loggedInEval(String input) {
         try {
             String[] tokens = input.toLowerCase().split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "login" -> login(params);
-                case "register" -> register(params);
-                case "logout" -> logout();
-                case "create game" -> createGame(params);
-                case "list games" -> listGames();
-                case "play game", "observe game" -> joinGame(params);
-                case "quit" -> "quit";
-                default -> help();
+                case "1" -> help();
+                case "2" -> login(params);
+                case "3" -> register(params);
+                case "4" -> "quit";
+                default -> "Please select a valid option";
+            };
+        } catch (ResponseException ex) {
+            return ex.getMessage();
+        }
+    }
+
+    public String loggedOutEval(String input) {
+        try {
+            String[] tokens = input.toLowerCase().split(" ");
+            String cmd = (tokens.length > 0) ? tokens[0] : "help";
+            String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "1" -> help();
+                case "4" -> "quit";
+                case "5" -> logout();
+                case "6" -> createGame(params);
+                case "7" -> listGames();
+                case "8", "9" -> joinGame(params);
+                default -> "Please select a valid option";
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -113,19 +134,20 @@ public class Client {
     public String help() {
         if (state == State.SIGNEDOUT) {
             return """
-                    2 - login
-                    3 - register
-                    4 - quit
+                    Input 1 for help
+                    Input 2 to go to the login screen
+                    Input 3 to register a new account
+                    Input 4 to quit
                     """;
         }
         return """
-                2 - logout
-                3 - create game
-                4 - list games
-                5 - play game
-                6 - join game
-                7 - observe game
-                8 - quit
+                Input 1 for help
+                Input 4 to quit
+                Input 5 to logout
+                Input 6 to create a new game
+                Input 7 to list all games that currently exist
+                Input 8 to play an existing game
+                Input 9 to observe an existing game
                 """;
     }
 
