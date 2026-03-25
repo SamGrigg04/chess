@@ -6,7 +6,7 @@ import java.util.Scanner;
 import exception.ResponseException;
 import model.GameData;
 import result.AuthResult;
-import server.ServerFacade; // TODO: code quality doesn't like this, but I need it right?
+import server.ServerFacade;
 import ui.ChessBoardRenderer;
 
 

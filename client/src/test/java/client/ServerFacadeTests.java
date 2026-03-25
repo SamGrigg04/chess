@@ -118,7 +118,7 @@ public class ServerFacadeTests {
 
     @Test
     void clearTest() throws ResponseException {
-        // TODO: Do I need to implement clear?
+
     }
 
 }
