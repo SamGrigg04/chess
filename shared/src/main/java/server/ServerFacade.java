@@ -1,32 +1,27 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import exception.ResponseException;
 
 import model.GameData;
 import request.*;
 import result.*;
 
+import java.lang.reflect.Type;
 import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
-import java.net.http.HttpResponse.BodyHandlers;
 
 import java.util.*;
-
-/*
-talks to endpoints (login, logout, register, list, etc.)
-translates json payloads to AuthData/GameData
-throws ResponseExceptions (nicely) for any errors
- */
 
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient(); // creates requests and gets back responses
     private final String serverUrl; // includes host name and port number
 
 
-    public ServerFacade(String url) throws ResponseException {
+    public ServerFacade(String url) {
         serverUrl = url;
     }
 
