@@ -7,6 +7,7 @@ import model.*;
 import request.JoinRequest;
 import request.LoginRequest;
 import request.RegisterRequest;
+import result.ListResult;
 
 import java.net.*;
 import java.net.http.*;
@@ -32,7 +33,7 @@ public class ServerFacade {
     }
 
     public AuthData register(String username, String password, String email) throws ResponseException {
-        var request = buildRequest("POST", "/user", new RegisterRequest(username, password, email), null); // user is the request body
+        var request = buildRequest("POST", "/user", new RegisterRequest(username, password, email), null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
@@ -53,12 +54,11 @@ public class ServerFacade {
         var request = buildRequest("GET", "/game", null, authToken);
         var response = sendRequest(request);
 
-        var gamesAsArray = handleResponse(response, GameData[].class);
-        // We can't immediately return it because deserializing doesn't return a collection of game data
-        if (gamesAsArray == null ) { // Thanks, compiler warning thingy
+        var listResult = handleResponse(response, ListResult.class);
+        if (listResult == null || listResult.games() == null) {
             return Collections.emptyList();
         }
-        return Arrays.asList(gamesAsArray);
+        return new ArrayList<>(listResult.games());
     }
 
     public int createGame(String gameName, String authToken) throws ResponseException {
