@@ -10,8 +10,8 @@ import java.util.Collection;
 import java.util.Scanner;
 
 import exception.ResponseException;
-import model.AuthData;
 import model.GameData;
+import result.AuthResult;
 import server.ServerFacade; // TODO: code quality doesn't like this, but I need it right?
 
 
@@ -111,10 +111,10 @@ public class Client {
             throw new ResponseException(ResponseException.Code.ClientError, "Expected username and password");
         }
 
-        AuthData authData = server.login(params[0], params[1]);
+        AuthResult authResult = server.login(params[0], params[1]);
         state = State.SIGNEDIN;
-        authToken = authData.authToken();
-        visitorName = authData.username();
+        authToken = authResult.authToken();
+        visitorName = authResult.username();
         return String.format("You signed in as %s.", visitorName);
     }
 
@@ -123,10 +123,10 @@ public class Client {
             throw new ResponseException(ResponseException.Code.ClientError, "Expected username, password, and email");
         }
 
-        AuthData authData = server.register(params[0], params[1], params[2]);
+        AuthResult authResult = server.register(params[0], params[1], params[2]);
         state = State.SIGNEDIN;
-        authToken = authData.authToken();
-        visitorName = authData.username();
+        authToken = authResult.authToken();
+        visitorName = authResult.username();
 
         return String.format("You registered as %s", visitorName);
     }
@@ -151,9 +151,9 @@ public class Client {
         for (GameData game : gameList) {
             outString.append(game.gameName())
                     .append(" | white: ")
-                    .append(game.whiteUsername().isEmpty() ? "empty" : game.whiteUsername())
+                    .append(game.whiteUsername() == null ? "empty" : game.whiteUsername())
                     .append(" | black: ")
-                    .append(game.blackUsername().isEmpty() ? "empty" : game.blackUsername())
+                    .append(game.blackUsername() == null ? "empty" : game.blackUsername())
                     .append(" | id: ")
                     .append(game.gameID())
                     .append("\n");
@@ -173,7 +173,9 @@ public class Client {
     public String joinGame(String... params) throws ResponseException {
         assertSignedIn();
 
-        server.joinGame(params[0], Integer.parseInt(params[1]), authToken);
+        int gameID = Integer.parseInt(params[1]);
+        String playerColor = params[0].toUpperCase();
+        server.joinGame(playerColor, gameID, authToken);
 
         return String.format("Joined game with id %s ", params[1]);
     }
