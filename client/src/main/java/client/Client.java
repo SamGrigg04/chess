@@ -6,7 +6,7 @@ import java.util.Scanner;
 import exception.ResponseException;
 import model.GameData;
 import result.AuthResult;
-import server.ServerFacade;
+import serverFacade.ServerFacade;
 import ui.ChessBoardRenderer;
 
 
@@ -217,11 +217,13 @@ public class Client {
         if (params.length < 1) {
             throw new ResponseException("Expected gameID");
         }
-
-        ChessBoardRenderer.render(ChessBoardRenderer.PlayerColor.WHITE);
-        waitForEnter(scanner);
+        String[] newParams = new String[2];
+        newParams[0] = params[0];
+        newParams[1] = "WHITE";
+        joinGame(scanner, newParams);
 
         return String.format("Observing game with id %s ", params[0]);
+
     }
 
     private String signedOutMenu() {

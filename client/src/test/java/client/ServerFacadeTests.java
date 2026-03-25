@@ -4,7 +4,7 @@ import exception.ResponseException;
 import org.junit.jupiter.api.*;
 import result.AuthResult;
 import server.Server;
-import server.ServerFacade;
+import serverFacade.ServerFacade;
 
 import java.util.Collection;
 

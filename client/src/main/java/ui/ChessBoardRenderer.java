@@ -156,14 +156,14 @@ public final class ChessBoardRenderer {
                         new String[]{EMPTY, " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EMPTY},
                         new String[]{" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "},
                         new String[][]{
-                                {" R ", " N ", " B ", " Q ", " K ", " B ", " N ", " R "},
+                                {" R ", " N ", " B ", " K ", " Q ", " B ", " N ", " R "},
                                 {" P ", " P ", " P ", " P ", " P ", " P ", " P ", " P "},
                                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                                 {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
                                 {" p ", " p ", " p ", " p ", " p ", " p ", " p ", " p "},
-                                {" r ", " n ", " b ", " q ", " k ", " b ", " n ", " r "}
+                                {" r ", " n ", " b ", " k ", " q ", " b ", " n ", " r "}
                         },
                         SET_TEXT_COLOR_RED, // top color
                         SET_TEXT_COLOR_BLUE // bottom color
