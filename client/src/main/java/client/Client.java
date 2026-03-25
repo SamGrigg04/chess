@@ -194,9 +194,20 @@ public class Client {
             throw new ResponseException(ResponseException.Code.ClientError, "Expected gameID and player color");
         }
 
-        int gameID = Integer.parseInt(params[0]);
-        var playerColor = params[1].toUpperCase();
-        server.joinGame(playerColor, gameID, authToken);
+        int gameID;
+        try {
+            gameID = Integer.parseInt(params[0]);
+        } catch (NumberFormatException ex) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Game ID must be a number");
+        }
+        var playerColorInput = params[1].trim();
+        ChessBoardRenderer.PlayerColor color;
+        try {
+            color = ChessBoardRenderer.PlayerColor.valueOf(playerColorInput.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Player color must be white or black");
+        }
+        server.joinGame(color.name(), gameID, authToken);
 
         ChessBoardRenderer.render(ChessBoardRenderer.PlayerColor.valueOf(playerColor));
 
