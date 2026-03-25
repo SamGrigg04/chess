@@ -6,26 +6,23 @@ call ServerFacade for backend work
 call the renderer when a player tries to play/observe
  */
 
+import java.util.Collection;
 import java.util.Scanner;
 
 import exception.ResponseException;
 import model.AuthData;
-import model.UserData;
-//import client.websocket.NotificationHandler;
-import server.ServerFacade;
-//import client.websocket.WebSocketFacade;
-//import webSocketMessages.Notification;
+import model.GameData;
+import server.ServerFacade; // TODO: code quality doesn't like this, but I need it right?
+
 
 public class Client {
     private String visitorName = null;
     private String authToken = null;
     private final ServerFacade server;
-//    private final WebSocketFacade ws;
     private State state = State.SIGNEDOUT;
 
     public Client(String serverURL) throws ResponseException {
         server = new ServerFacade(serverURL);
-//        ws = new WebSocketFacade(serverUrl, this);
     }
 
     public void run() {
@@ -59,16 +56,11 @@ public class Client {
                     System.out.println("\u001b[0m" + actionResult);
                 }
             } catch (ResponseException ex) {
-                System.out.print(ex.getMessage());
+                System.out.print(ex.getMessage() + "\n");
             }
         }
         System.out.println();
     }
-
-//    public void notify(Notification notification) {
-//        System.out.println("\u001b[31m" + notification.message());
-//        printPrompt();
-//    }
 
     private void printPrompt() {
         System.out.print("\n" + "\u001b[0m" + ">>> ");
@@ -123,7 +115,6 @@ public class Client {
         state = State.SIGNEDIN;
         authToken = authData.authToken();
         visitorName = authData.username();
-//        ws.enterPetShop(visitorName);
         return String.format("You signed in as %s.", visitorName);
     }
 
@@ -143,18 +134,38 @@ public class Client {
     public String logout() throws ResponseException {
         assertSignedIn();
 
+        server.logout(authToken);
         state = State.SIGNEDOUT;
+
         return String.format("%s understandably got bored of chess and left", visitorName);
+    }
+
+    public String listGames() throws ResponseException {
+        assertSignedIn();
+
+        Collection<GameData> gameList = server.listGames(authToken);
+        if (gameList.isEmpty()) {
+            return "You are alone in this universe. \n";
+        }
+        StringBuilder outString = new StringBuilder();
+        for (GameData game : gameList) {
+            outString.append(game.gameName())
+                    .append(" | white: ")
+                    .append(game.whiteUsername().isEmpty() ? "empty" : game.whiteUsername())
+                    .append(" | black: ")
+                    .append(game.blackUsername().isEmpty() ? "empty" : game.blackUsername())
+                    .append(" | id: ")
+                    .append(game.gameID())
+                    .append("\n");
+        }
+
+        return outString.toString();
     }
 
     public String createGame(String... params) throws ResponseException {
         assertSignedIn();
 
-        return null;
-    }
 
-    public String listGames() throws ResponseException {
-        assertSignedIn();
 
         return null;
     }
@@ -176,13 +187,13 @@ public class Client {
 
     private String signedInMenu() {
         return """
-                Input 1 - help
-                Input 4 - quit
-                Input 5 - logout
-                Input 6 - create game
-                Input 7 - list games
-                Input 8 - play game
-                Input 9 - observe game
+                1 - help
+                4 - quit
+                5 - logout
+                6 - create game
+                7 - list games
+                8 - play game
+                9 - observe game
                 """;
     }
 
