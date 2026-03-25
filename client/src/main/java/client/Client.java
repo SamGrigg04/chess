@@ -13,6 +13,7 @@ import exception.ResponseException;
 import model.GameData;
 import result.AuthResult;
 import server.ServerFacade; // TODO: code quality doesn't like this, but I need it right?
+import ui.ChessBoardRenderer;
 
 
 public class Client {
@@ -92,7 +93,7 @@ public class Client {
             case 6 -> createGame(collectInputs(scanner, "Game name: "));
             case 7 -> listGames();
             case 8 -> joinGame(collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
-            case 9 -> joinGame(collectInputs(scanner, "Game ID: "));
+            case 9 -> observeGame(collectInputs(scanner, "Game ID: "));
             default -> "Please select a valid option";
         };
     }
@@ -148,8 +149,13 @@ public class Client {
             return "You are alone in this universe. \n";
         }
         StringBuilder outString = new StringBuilder();
+
+        int gameNumber = 1;
         for (GameData game : gameList) {
-            outString.append(game.gameName())
+            outString
+                    .append(gameNumber++)
+                    .append(". ")
+                    .append(game.gameName())
                     .append(" | white: ")
                     .append(game.whiteUsername() == null ? "empty" : game.whiteUsername())
                     .append(" | black: ")
@@ -165,6 +171,10 @@ public class Client {
     public String createGame(String... params) throws ResponseException {
         assertSignedIn();
 
+        if (params.length < 1) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Expected gameID");
+        }
+
         int gameID = server.createGame(params[0], authToken);
 
         return String.format("Created game with id %s", gameID);
@@ -173,11 +183,29 @@ public class Client {
     public String joinGame(String... params) throws ResponseException {
         assertSignedIn();
 
+        if (params.length < 2) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Expected gameID and player color");
+        }
+
         int gameID = Integer.parseInt(params[0]);
-        String playerColor = params[1].toUpperCase();
+        var playerColor = params[1].toUpperCase();
         server.joinGame(playerColor, gameID, authToken);
 
-        return String.format("Joined game with id %s ", params[1]);
+        ChessBoardRenderer.render(ChessBoardRenderer.PlayerColor.valueOf(playerColor));
+
+        return String.format("Joined game with id %s ", params[0]);
+    }
+
+    public String observeGame(String... params) throws ResponseException {
+        assertSignedIn();
+
+        if (params.length < 1) {
+            throw new ResponseException(ResponseException.Code.ClientError, "Expected gameID");
+        }
+
+        ChessBoardRenderer.render(ChessBoardRenderer.PlayerColor.WHITE);
+
+        return String.format("Observing game with id %s ", params[0]);
     }
 
     private String signedOutMenu() {
