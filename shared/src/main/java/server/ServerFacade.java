@@ -103,7 +103,7 @@ public class ServerFacade {
         try {
             return client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception ex) {
-            throw new ResponseException(ResponseException.Code.ServerError, ex.getMessage());
+            throw new ResponseException(ex.getMessage());
         }
     }
 
@@ -125,7 +125,7 @@ public class ServerFacade {
     // Takes in the raw response and the HTTP status
     private ResponseException toResponseException(String body, int status) {
         // Gets the status code from ResponseException
-        ResponseException.Code code = ResponseException.fromHttpStatusCode(status);
+        ResponseException.fromHttpStatusCode();
         String message = "Server error: " + status;
 
         // If there isn't a body, return a generic error
@@ -146,7 +146,7 @@ public class ServerFacade {
                 var statusValue = map.get("status");
                 if (statusValue != null) {
                     try {
-                        code = ResponseException.Code.valueOf(statusValue.toString());
+                        ResponseException.Code.valueOf(statusValue.toString());
                     } catch (IllegalArgumentException ignored) {
                         // ResponseException handles the default code
                     }
@@ -154,7 +154,7 @@ public class ServerFacade {
             }
         }
 
-        return new ResponseException(code, message);
+        return new ResponseException(message);
     }
 
     private boolean isSuccessful(int status) {

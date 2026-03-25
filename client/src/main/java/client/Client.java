@@ -107,7 +107,7 @@ public class Client {
 
     public String login(String... params) throws ResponseException {
         if (params.length < 2) {
-            throw new ResponseException(ResponseException.Code.ClientError, "Expected username and password");
+            throw new ResponseException("Expected username and password");
         }
 
         AuthResult authResult = server.login(params[0], params[1]);
@@ -119,7 +119,7 @@ public class Client {
 
     public String register(String... params) throws ResponseException {
         if (params.length < 3) {
-            throw new ResponseException(ResponseException.Code.ClientError, "Expected username, password, and email");
+            throw new ResponseException("Expected username, password, and email");
         }
 
         AuthResult authResult = server.register(params[0], params[1], params[2]);
@@ -170,12 +170,12 @@ public class Client {
         assertSignedIn();
 
         if (params.length < 1) {
-            throw new ResponseException(ResponseException.Code.ClientError, "Expected gameID");
+            throw new ResponseException("Expected gameID");
         }
 
         String gameName = params[0].trim();
         if (gameName.isEmpty()) {
-            throw new ResponseException(ResponseException.Code.ClientError, "Game name cannot be blank");
+            throw new ResponseException("Game name cannot be blank");
         }
 
         int gameID = server.createGame(gameName, authToken);
@@ -187,21 +187,21 @@ public class Client {
         assertSignedIn();
 
         if (params.length < 2) {
-            throw new ResponseException(ResponseException.Code.ClientError, "Expected gameID and player color");
+            throw new ResponseException("Expected gameID and player color");
         }
 
         int gameID;
         try {
             gameID = Integer.parseInt(params[0]);
         } catch (NumberFormatException ex) {
-            throw new ResponseException(ResponseException.Code.ClientError, "Game ID must be a number");
+            throw new ResponseException("Game ID must be a number");
         }
         var playerColorInput = params[1].trim();
         ChessBoardRenderer.PlayerColor color;
         try {
             color = ChessBoardRenderer.PlayerColor.valueOf(playerColorInput.toUpperCase());
         } catch (IllegalArgumentException ex) {
-            throw new ResponseException(ResponseException.Code.ClientError, "Player color must be white or black");
+            throw new ResponseException("Player color must be white or black");
         }
         server.joinGame(color.name(), gameID, authToken);
 
@@ -215,7 +215,7 @@ public class Client {
         assertSignedIn();
 
         if (params.length < 1) {
-            throw new ResponseException(ResponseException.Code.ClientError, "Expected gameID");
+            throw new ResponseException("Expected gameID");
         }
 
         ChessBoardRenderer.render(ChessBoardRenderer.PlayerColor.WHITE);
@@ -273,7 +273,7 @@ public class Client {
 
     private void assertSignedIn() throws ResponseException {
         if (state == State.SIGNEDOUT) {
-            throw new ResponseException(ResponseException.Code.ClientError, "You must sign in");
+            throw new ResponseException("You must sign in");
         }
     }
 }
