@@ -173,8 +173,8 @@ public class Client {
     public String joinGame(String... params) throws ResponseException {
         assertSignedIn();
 
-        int gameID = Integer.parseInt(params[1]);
-        String playerColor = params[0].toUpperCase();
+        int gameID = Integer.parseInt(params[0]);
+        String playerColor = params[1].toUpperCase();
         server.joinGame(playerColor, gameID, authToken);
 
         return String.format("Joined game with id %s ", params[1]);
