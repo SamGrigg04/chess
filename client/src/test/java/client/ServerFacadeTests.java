@@ -47,5 +47,42 @@ public class ServerFacadeTests {
                 () -> facade.register("twin", "a", "f@email.com"));
     }
 
+    @Test
+    void loginSuccess() throws ResponseException {
+        facade.register("k", "d", "wheeeeee");
+        AuthResult auth = facade.login("k", "d");
+        assertNotNull(auth.authToken());
+    }
+
+    @Test
+    void loginFail() {
+        assertThrows(ResponseException.class, () -> facade.login("nope", "wrong"));
+    }
+
+    @Test
+    void logoutSuccess() throws ResponseException {
+        AuthResult auth = facade.register("m", "n", "02@email.org");
+        assertDoesNotThrow(() -> facade.logout(auth.authToken()));
+    }
+
+    @Test
+    void logoutFail() {
+        assertThrows(ResponseException.class, () -> facade.logout("bogus"));
+    }
+
+    @Test
+    void createGameSuccess() throws ResponseException {
+        AuthResult maker = facade.register("nerd", "supernerd", "bah@k.co");
+        int gameId = facade.createGame("help i need a life outside of chess", maker.authToken());
+        assertTrue(gameId > 0);
+    }
+
+    @Test
+    void createGameFail() throws ResponseException {
+        AuthResult maker = facade.register("whats", "in", "a@name.com");
+        assertThrows(ResponseException.class,
+                () -> facade.createGame("", maker.authToken()));
+    }
+
 
 }
