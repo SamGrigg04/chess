@@ -165,15 +165,17 @@ public class Client {
     public String createGame(String... params) throws ResponseException {
         assertSignedIn();
 
+        int gameID = server.createGame(params[0], authToken);
 
-
-        return null;
+        return String.format("Created game with id %s", gameID);
     }
 
     public String joinGame(String... params) throws ResponseException {
         assertSignedIn();
 
-        return null;
+        server.joinGame(params[0], Integer.parseInt(params[1]), authToken);
+
+        return String.format("Joined game with id %s ", params[1]);
     }
 
     private String signedOutMenu() {
