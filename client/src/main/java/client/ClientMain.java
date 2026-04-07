@@ -11,7 +11,7 @@ public class ClientMain {
         // Starts the client (command line thingy)
         try {
             new Client(serverUrl).run();
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             System.out.printf("Unable to start server: %s%n", ex.getMessage());
         }
     }
