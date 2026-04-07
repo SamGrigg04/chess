@@ -13,7 +13,7 @@ public final class ChessBoardRenderer {
     Collection<ChessMove> possibleMoves;
 
     public ChessBoardRenderer(ChessBoard board, Collection<ChessMove> possibleMoves) {
-        this.board = board;
+        ChessBoardRenderer.board = board;
         this.possibleMoves = possibleMoves;
     }
 
