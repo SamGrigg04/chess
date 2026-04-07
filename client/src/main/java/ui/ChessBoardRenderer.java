@@ -10,7 +10,7 @@ import java.util.Collection;
 import static ui.EscapeSequences.*;
 
 public final class ChessBoardRenderer {
-    ChessBoard board;
+    static ChessBoard board;
     Collection<ChessMove> possibleMoves;
 
     public ChessBoardRenderer(ChessBoard board, Collection<ChessMove> possibleMoves) {
