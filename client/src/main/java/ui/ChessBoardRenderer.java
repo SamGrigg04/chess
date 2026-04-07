@@ -95,7 +95,7 @@ public final class ChessBoardRenderer {
     // draws each row
     private static void drawRowOfSquares(PrintStream out,
                                          int boardRow,
-                                         String[] rowContents,
+                                         ChessPiece[] rowContents,
                                          String rowHeader,
                                          String topPieceTextColor,
                                          String bottomPieceTextColor) {
