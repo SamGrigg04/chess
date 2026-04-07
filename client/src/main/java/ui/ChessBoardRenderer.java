@@ -10,11 +10,20 @@ import static ui.EscapeSequences.*;
 
 public final class ChessBoardRenderer {
     static ChessBoard board;
+    static ChessBoard reverseBoard;
     Collection<ChessMove> possibleMoves;
 
     public ChessBoardRenderer(ChessBoard board, Collection<ChessMove> possibleMoves) {
         ChessBoardRenderer.board = board;
         this.possibleMoves = possibleMoves;
+
+        ChessBoardRenderer.reverseBoard = board;
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                reverseBoard.addPiece(new ChessPosition(8 - i, 8 - j), board.getPiece(new ChessPosition(i, j)));
+            }
+        }
+
     }
 
     // TODO: draw board using this.board
@@ -191,7 +200,7 @@ public final class ChessBoardRenderer {
                 new ChessBoardConfig(
                         new String[]{EMPTY, " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EMPTY},
                         new String[]{" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "},
-                        board,
+                        reverseBoard,
                         SET_TEXT_COLOR_RED, // top color
                         SET_TEXT_COLOR_BLUE // bottom color
                 )
