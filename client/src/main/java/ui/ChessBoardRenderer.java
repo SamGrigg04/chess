@@ -81,8 +81,11 @@ public final class ChessBoardRenderer {
     // TODO: modify obviously.
     private static void drawChessBoard(PrintStream out, ChessBoardConfig config, Boolean highlightMoves) {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
-            // gets the data for the row to be printed
-            String[] rowContents = config.initialBoard()[boardRow];
+            ChessPiece[] rowContents = new ChessPiece[BOARD_SIZE_IN_SQUARES - 2];
+            for (int boardColumn = 0; boardColumn < BOARD_SIZE_IN_SQUARES - 2; ++boardColumn) {
+                // gets the data for the row to be printed
+                rowContents[boardColumn] = (config.initialBoard().getPiece(new ChessPosition(boardRow, boardColumn)));
+            }
             // gets the data for the header (row number) to put on either side
             String rowHeader = config.rowHeaders()[boardRow];
             drawRowOfSquares(out, boardRow, rowContents, rowHeader, config.topPieceTextColor(), config.bottomPieceTextColor());
