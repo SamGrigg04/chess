@@ -78,8 +78,8 @@ public final class ChessBoardRenderer {
     }
 
     // draws the chess board row by row
-    // TODO: Go square by square through the passed in ChessBoard, draw accordingly, check for highlight moves flag
-    private static void drawChessBoard(PrintStream out, ChessBoardConfig config) {
+    // TODO: modify obviously.
+    private static void drawChessBoard(PrintStream out, ChessBoardConfig config, Boolean highlightMoves) {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
             // gets the data for the row to be printed
             String[] rowContents = config.initialBoard()[boardRow];
