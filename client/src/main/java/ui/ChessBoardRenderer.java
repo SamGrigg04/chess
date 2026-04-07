@@ -189,16 +189,7 @@ public final class ChessBoardRenderer {
                 new ChessBoardConfig(
                         new String[]{EMPTY, " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", EMPTY},
                         new String[]{" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "},
-                        new String[][]{
-                                {" r ", " n ", " b ", " q ", " k ", " b ", " n ", " r "},
-                                {" p ", " p ", " p ", " p ", " p ", " p ", " p ", " p "},
-                                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                                {EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY, EMPTY},
-                                {" P ", " P ", " P ", " P ", " P ", " P ", " P ", " P "},
-                                {" R ", " N ", " B ", " Q ", " K ", " B ", " N ", " R "}
-                        },
+                        board,
                         SET_TEXT_COLOR_BLUE,
                         SET_TEXT_COLOR_RED
                 )
