@@ -153,6 +153,16 @@ public final class ChessBoardRenderer {
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
+    private static void setHighlightWhite(PrintStream out) {
+        out.print(SET_BG_COLOR_GREEN);
+        out.print(SET_TEXT_COLOR_BLACK);
+    }
+
+    private static void setHighlightBlack(PrintStream out) {
+        out.print(SET_BG_COLOR_DARK_GREEN);
+        out.print(SET_TEXT_COLOR_BLACK);
+    }
+
     // Today I learned you can put a little record in a class. Very nice for config stuff
     public record ChessBoardConfig(
             String[] columnHeaders, // column letters
