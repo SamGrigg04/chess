@@ -86,12 +86,25 @@ public class Client {
     private String loggedInEval(int option, Scanner scanner) throws ResponseException {
         return switch (option) {
             case 1 -> signedInHelp();
-            case 4 -> "quit";
-            case 5 -> logout();
-            case 6 -> createGame(collectInputs(scanner, "Game name: "));
-            case 7 -> listGames();
-            case 8 -> joinGame(scanner, collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
-            case 9 -> observeGame(scanner, collectInputs(scanner, "Game ID: "));
+            case 2 -> "quit";
+            case 3 -> logout();
+            case 4 -> createGame(collectInputs(scanner, "Game name: "));
+            case 5 -> listGames();
+            case 6 -> joinGame(scanner, collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
+            case 7 -> observeGame(scanner, collectInputs(scanner, "Game ID: "));
+            default -> "Please select a valid option";
+        };
+    }
+
+    // TODO: implement functions
+    private String playingEval(int option, Scanner scanner) throws ResponseException {
+        return switch (option) {
+            case 1 -> playHelp();
+            case 2 -> redrawBoard();
+            case 3 -> leaveGame();
+            case 4 -> makeMove();
+            case 5 -> resign();
+            case 6 -> highlightMoves();
             default -> "Please select a valid option";
         };
     }
@@ -183,6 +196,7 @@ public class Client {
         return String.format("Created game with id %s", gameID);
     }
 
+    // TODO: call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
     public String joinGame(Scanner scanner, String... params) throws ResponseException {
         assertSignedIn();
 
@@ -211,6 +225,7 @@ public class Client {
         return String.format("Joined game with id %s ", params[0]);
     }
 
+    // TODO: do not call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
     public String observeGame(Scanner scanner, String... params) throws ResponseException {
         assertSignedIn();
 
@@ -226,6 +241,26 @@ public class Client {
 
     }
 
+    private String highlightMoves() {
+        return "";
+    }
+
+    private String resign() {
+        return "";
+    }
+
+    private String makeMove() {
+        return "";
+    }
+
+    private String leaveGame() {
+        return "";
+    }
+
+    private String redrawBoard() {
+        return "";
+    }
+
     private String signedOutMenu() {
         return """
                 1 - help
@@ -238,13 +273,25 @@ public class Client {
     private String signedInMenu() {
         return """
                 1 - help
-                4 - quit
-                5 - logout
-                6 - create game
-                7 - list games
-                8 - play game
-                9 - observe game
+                2 - quit
+                3 - logout
+                4 - create game
+                5 - list games
+                6 - play game
+                7 - observe game
                 """;
+    }
+
+    //TODO: refactor so same numbers can do different things??
+    private String playMenu() {
+        return """
+                1 - help
+                2 - redraw board
+                3 - leave
+                4 - make move
+                5 - resign
+                6 - highlight legal moves
+        """;
     }
 
     private String signedOutHelp() {
@@ -265,6 +312,17 @@ public class Client {
                 Input 7 to list all games that currently exist
                 Input 8 to play an existing game
                 Input 9 to observe an existing game
+                """;
+    }
+
+    private String playHelp() {
+        return """
+                Input 1 for help
+                Input 2 to redraw the chess board
+                Input 3 to leave the game (without losing)
+                Input 4 to make a move
+                Input 5 to resign (automatic loss)
+                Input 6 to highlight legal moves for any given piece
                 """;
     }
 
