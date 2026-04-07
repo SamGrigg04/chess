@@ -167,7 +167,7 @@ public final class ChessBoardRenderer {
     public record ChessBoardConfig(
             String[] columnHeaders, // column letters
             String[] rowHeaders, // row numbers
-            String[][] initialBoard, // initial setup
+            ChessBoard initialBoard, // initial setup
             String topPieceTextColor, // opposing player color
             String bottomPieceTextColor // your player color
     ) {
