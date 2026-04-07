@@ -78,6 +78,26 @@ public class ServerFacade {
         handleResponse(response, null);
     }
 
+    /*
+    If a command is invalid, send an error message
+
+    Get a CONNECT UserGameCommand:
+        send a LoadGameMessage to the root client
+        send a NotificationMessage to all other clients in the game (with join specifics)
+    Get a MAKE_MOVE UserNameCommand:
+        verify the move
+        update the game in the database to represent the move
+        send a LoadGameMessage to *all* clients with an updated game
+        send a NotificationMessage to all other clients in the game (with move specifics)
+        if move is in check, checkmate, or stalemate, send a NotificationMessage to *all* clients
+    Get a LEAVE UserNameCommand:
+        update the game in the database to remove the root client
+        send a NotificationMessage to all other clients
+    Get a RESIGN UserNameCommand:
+        mark the game as over (no more moves can be made) and update it in the database
+        send a NotificationMessage to *all* clients that the root client resigned
+     */
+
     private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
         var request = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
