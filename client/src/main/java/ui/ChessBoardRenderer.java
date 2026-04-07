@@ -25,19 +25,19 @@ public final class ChessBoardRenderer {
     private static final String EMPTY = "   ";
 
     // calls the thing that prints the board (passes in the config)
-    public static void render(PlayerColor playerColor) {
+    public static void render(PlayerColor playerColor, Boolean highlightMoves) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        render(out, playerColor.config());
+        render(out, playerColor.config(), highlightMoves);
     }
 
     // prints the chess board to the terminal based on player color passed in
-    private static void render(PrintStream out, ChessBoardConfig config) {
+    private static void render(PrintStream out, ChessBoardConfig config, Boolean highlightMoves) {
         // clears the screen (supposedly)
         out.print(ERASE_SCREEN);
 
         // prints the headers at the top, then the board spaces (with the side headers), then the bottom headers
         drawHeaders(out, config.columnHeaders());
-        drawChessBoard(out, config);
+        drawChessBoard(out, config, highlightMoves);
         drawHeaders(out, config.columnHeaders());
 
         // Sets colors generally for the whole UI
@@ -88,17 +88,18 @@ public final class ChessBoardRenderer {
             }
             // gets the data for the header (row number) to put on either side
             String rowHeader = config.rowHeaders()[boardRow];
-            drawRowOfSquares(out, boardRow, rowContents, rowHeader, config.topPieceTextColor(), config.bottomPieceTextColor());
+            drawRowOfSquares(out, boardRow, rowContents, rowHeader, config.topPieceTextColor(), config.bottomPieceTextColor(), highlightMoves);
         }
     }
 
-    // draws each row
+    // TODO: Go square by square through the passed in ChessBoard, draw accordingly, check for highlight moves flag
     private static void drawRowOfSquares(PrintStream out,
                                          int boardRow,
                                          ChessPiece[] rowContents,
                                          String rowHeader,
                                          String topPieceTextColor,
-                                         String bottomPieceTextColor) {
+                                         String bottomPieceTextColor,
+                                         Boolean highlightMoves) {
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
             // puts the row number in first
@@ -107,13 +108,21 @@ public final class ChessBoardRenderer {
             drawHeader(out, rowHeader);
 
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
-                // fancy logic I'm very proud of to determine what color the square should be
-                boolean useWhiteSquare = (boardRow % 2 == 0) == (boardCol % 2 == 0);
 
-                if (useWhiteSquare) {
-                    setWhite(out);
+                if (rowContents[boardCol].getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
+                    if (highlightMoves) {
+                        setHighlightWhite(out);
+                    } else {
+                        setWhite(out);
+                    }
+                } else if (rowContents[boardCol].getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
+                    if (highlightMoves) {
+                        setHighlightBlack(out);
+                    } else {
+                        setBlack(out);
+                    }
                 } else {
-                    setBlack(out);
+                    System.out.println("Something is rotten in the state of Denmark");
                 }
 
                 int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
