@@ -1,11 +1,22 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessMove;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
 public final class ChessBoardRenderer {
+    ChessBoard board;
+    Collection<ChessMove> moves;
+
+    public ChessBoardRenderer(ChessBoard board, Collection<ChessMove> moves) {
+        this.board = board;
+        this.moves = moves;
+    }
 
     private static final int BOARD_SIZE_IN_SQUARES = 10;
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 1;
