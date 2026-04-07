@@ -11,12 +11,15 @@ import static ui.EscapeSequences.*;
 
 public final class ChessBoardRenderer {
     ChessBoard board;
-    Collection<ChessMove> moves;
+    Collection<ChessMove> possibleMoves;
 
-    public ChessBoardRenderer(ChessBoard board, Collection<ChessMove> moves) {
+    public ChessBoardRenderer(ChessBoard board, Collection<ChessMove> possibleMoves) {
         this.board = board;
-        this.moves = moves;
+        this.possibleMoves = possibleMoves;
     }
+
+    // TODO: draw board using this.board
+    // TODO: highlight moves based on moves
 
     private static final int BOARD_SIZE_IN_SQUARES = 10;
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 1;
@@ -76,6 +79,7 @@ public final class ChessBoardRenderer {
     }
 
     // draws the chess board row by row
+    // TODO: Go square by square through the passed in ChessBoard, draw accordingly, check for highlight moves flag
     private static void drawChessBoard(PrintStream out, ChessBoardConfig config) {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
             // gets the data for the row to be printed
