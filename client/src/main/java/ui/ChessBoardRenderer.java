@@ -4,15 +4,12 @@ import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import static ui.EscapeSequences.*;
 
 public final class ChessBoardRenderer {
-    Collection<ChessMove> possibleMoves;
-
-    // TODO: draw board using this.board
-    // TODO: highlight moves based on moves
 
     private static final int BOARD_SIZE_IN_SQUARES = 10;
     private static final int SQUARE_SIZE_IN_PADDED_CHARS = 1;
@@ -77,11 +74,11 @@ public final class ChessBoardRenderer {
             ChessPiece[] rowContents = new ChessPiece[BOARD_SIZE_IN_SQUARES - 2];
             for (int boardColumn = 1; boardColumn <= BOARD_SIZE_IN_SQUARES - 2; ++boardColumn) {
                 // gets the data for the row to be printed
-                rowContents[boardColumn - 1] = config.initialBoard().getPiece(new ChessPosition(boardRow, boardColumn));
+                rowContents[boardColumn - 1] = config.board().getPiece(new ChessPosition(boardRow, boardColumn));
             }
             // gets the data for the header (row number) to put on either side
             String rowHeader = config.rowHeaders()[boardRow - 1];
-            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, config.yourPieceTextColor(), config.opposingPieceTextColor(), highlightMoves);
+            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, config, highlightMoves);
         }
     }
 
@@ -90,9 +87,8 @@ public final class ChessBoardRenderer {
                                          int boardRow,
                                          ChessPiece[] rowContents,
                                          String rowHeader,
-                                         String yourPieceTextColor,
-                                         String opposingPieceTextColor,
-                                         Boolean highlightMoves) {
+                                         ChessBoardConfig config,
+                                         Boolean doHighlightMoves) {
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
             // puts the row number in first
@@ -103,12 +99,9 @@ public final class ChessBoardRenderer {
                 ChessPiece piece = rowContents[boardCol];
 
                 boolean isLightSquare = (boardRow + boardCol) % 2 == 0;
-                if (highlightMoves) {
-                    if (isLightSquare) {
-                        setHighlightWhite(out);
-                    } else {
-                        setHighlightBlack(out);
-                    }
+
+                if (doHighlightMoves) {
+                    highlightMoves(out, isLightSquare, piece, new ChessPosition(boardRow, boardCol), config);
                 } else {
                     if (isLightSquare) {
                         setWhite(out);
@@ -119,6 +112,9 @@ public final class ChessBoardRenderer {
 
                 int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
                 int suffixLength = 0;
+
+                String yourPieceTextColor = config.yourPieceTextColor();
+                String opposingPieceTextColor = config.opposingPieceTextColor();
 
                 out.print(EMPTY.repeat(prefixLength));
                 if (piece != null && piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
@@ -136,6 +132,32 @@ public final class ChessBoardRenderer {
             // prints the row number at the end
             drawHeader(out, rowHeader);
             out.println();
+        }
+    }
+
+    private static void highlightMoves(PrintStream out,
+                                       boolean isLightSquare,
+                                       ChessPiece piece,
+                                       ChessPosition position,
+                                       ChessBoardConfig config) {
+
+        Collection<ChessMove> possibleMoves = piece.pieceMoves(config.board, position);
+        Collection<ChessPosition> startPositions = new ArrayList<>();
+        Collection<ChessPosition> endPositions = new ArrayList<>();
+
+        for (ChessMove possibleMove : possibleMoves) {
+            endPositions.add(possibleMove.getEndPosition());
+            startPositions.add(possibleMove.getStartPosition());
+        }
+
+        if (isLightSquare && endPositions.contains(position)) {
+            setHighlightWhite(out);
+        } else if (endPositions.contains(position)) {
+            setHighlightBlack(out);
+        }
+
+        if (startPositions.contains(position)) {
+            setHighlightYellow(out);
         }
     }
 
@@ -165,11 +187,16 @@ public final class ChessBoardRenderer {
         out.print(SET_TEXT_COLOR_BLACK);
     }
 
+    private static void setHighlightYellow(PrintStream out) {
+        out.print(SET_BG_COLOR_YELLOW);
+        out.print(SET_TEXT_COLOR_BLACK);
+    }
+
     // Today I learned you can put a little record in a class. Very nice for config stuff
     public record ChessBoardConfig(
             String[] columnHeaders, // column letters
             String[] rowHeaders, // row numbers
-            ChessBoard initialBoard, // initial setup
+            ChessBoard board, // board
             String yourPieceTextColor, // opposing player color
             String opposingPieceTextColor // your player color
     ) { /* and I need nothing in here because it is a record */ }
@@ -181,7 +208,7 @@ public final class ChessBoardRenderer {
                         new String[]{" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "},
                         null,
                         SET_TEXT_COLOR_BLUE, // your color
-                        SET_TEXT_COLOR_YELLOW // opposing color
+                        SET_TEXT_COLOR_RED // opposing color
                 )
         ),
         WHITE(
@@ -190,7 +217,7 @@ public final class ChessBoardRenderer {
                         new String[]{" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "},
                         null,
                         SET_TEXT_COLOR_BLUE,
-                        SET_TEXT_COLOR_YELLOW
+                        SET_TEXT_COLOR_RED
                 )
         );
 
