@@ -217,8 +217,24 @@ public final class ChessBoardRenderer {
             this.config = config;
         }
 
-        ChessBoardConfig config() {
-            return config;
+        ChessBoardConfig config(ChessBoard board) {
+            ChessBoard displayBoard = this == BLACK ? reverseBoard(board) : board;
+            return new ChessBoardConfig(
+                    config.columnHeaders(),
+                    config.rowHeaders(),
+                    displayBoard,
+                    config.topPieceTextColor(),
+                    config.bottomPieceTextColor()
+            );
+        }
+    }
+
+    private static ChessBoard reverseBoard(ChessBoard board) {
+        ChessBoard reversedBoard = new ChessBoard();
+        for (int row = 1; row <= 8; row++) {
+            for (int col = 1; col <= 8; col++) {
+                reversedBoard.addPiece(new ChessPosition(9 - row, 9 - col), board.getPiece(new ChessPosition(row, col)));
+            }
         }
     }
 
