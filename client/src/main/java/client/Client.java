@@ -90,7 +90,7 @@ public class Client {
             case 3 -> logout();
             case 4 -> createGame(collectInputs(scanner, "Game name: "));
             case 5 -> listGames();
-            case 6 -> joinGame(scanner, collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
+            case 6 -> joinGame(false, scanner, collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
             case 7 -> observeGame(scanner, collectInputs(scanner, "Game ID: "));
             default -> "Please select a valid option";
         };
@@ -197,7 +197,7 @@ public class Client {
     }
 
     // TODO: call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
-    public String joinGame(Scanner scanner, String... params) throws ResponseException {
+    public String joinGame(boolean isObserver, Scanner scanner, String... params) throws ResponseException {
         assertSignedIn();
 
         if (params.length < 2) {
@@ -217,9 +217,12 @@ public class Client {
         } catch (IllegalArgumentException ex) {
             throw new ResponseException("Player color must be white or black");
         }
-        server.joinGame(color.name(), gameID, authToken);
 
-        ChessBoardRenderer.render(color);
+        if (!isObserver) {
+            server.joinGame(color.name(), gameID, authToken);
+        }
+
+        ChessBoardRenderer.render(color, false);
         waitForEnter(scanner);
 
         return String.format("Joined game with id %s ", params[0]);
@@ -232,10 +235,11 @@ public class Client {
         if (params.length < 1) {
             throw new ResponseException("Expected gameID");
         }
+
         String[] newParams = new String[2];
         newParams[0] = params[0];
         newParams[1] = "WHITE";
-        joinGame(scanner, newParams);
+        joinGame(true, scanner, newParams);
 
         return String.format("Observing game with id %s ", params[0]);
 
