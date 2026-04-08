@@ -236,6 +236,26 @@ public final class ChessBoardRenderer {
                 reversedBoard.addPiece(new ChessPosition(9 - row, 9 - col), board.getPiece(new ChessPosition(row, col)));
             }
         }
+        return reversedBoard;
+    }
+
+    private static String pieceSymbol(ChessPiece piece) {
+        return switch (piece.getPieceType()) {
+            case KING -> KING;
+            case QUEEN -> QUEEN;
+            case ROOK -> ROOK;
+            case BISHOP -> BISHOP;
+            case PAWN -> PAWN;
+            case KNIGHT -> KNIGHT;
+
+//            If I want to use fancy characters
+//            case KING -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_KING : BLACK_KING;
+//            case QUEEN -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_QUEEN : BLACK_QUEEN;
+//            case BISHOP -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_BISHOP : BLACK_BISHOP;
+//            case KNIGHT -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_KNIGHT : BLACK_KNIGHT;
+//            case ROOK -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_ROOK : BLACK_ROOK;
+//            case PAWN -> piece.getTeamColor() == ChessGame.TeamColor.WHITE ? WHITE_PAWN : BLACK_PAWN;
+        };
     }
 
 }
