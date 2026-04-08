@@ -33,7 +33,7 @@ public final class ChessBoardRenderer {
     private static final String EMPTY = "   ";
 
     // calls the thing that prints the board (passes in the config)
-    public static void render(PlayerColor playerColor, Boolean highlightMoves) {
+    public static void render(ChessBoard board, PlayerColor playerColor, Boolean highlightMoves) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         render(out, playerColor.config(), highlightMoves);
     }
