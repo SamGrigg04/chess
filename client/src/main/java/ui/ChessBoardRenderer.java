@@ -23,7 +23,6 @@ public final class ChessBoardRenderer {
                 reverseBoard.addPiece(new ChessPosition(8 - i, 8 - j), board.getPiece(new ChessPosition(i, j)));
             }
         }
-
     }
 
     // TODO: draw board using this.board
@@ -77,17 +76,16 @@ public final class ChessBoardRenderer {
     }
 
     // Finally actually prints the thing to the terminal. abstraction is weird
-    private static void printHeaderText(PrintStream out, String player) {
+    private static void printHeaderText(PrintStream out, String text) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
         out.print(SET_TEXT_COLOR_BLACK);
 
-        out.print(player);
+        out.print(text);
 
         setBlack(out);
     }
 
     // draws the chess board row by row
-    // TODO: modify obviously.
     private static void drawChessBoard(PrintStream out, ChessBoardConfig config, Boolean highlightMoves) {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
             ChessPiece[] rowContents = new ChessPiece[BOARD_SIZE_IN_SQUARES - 2];
@@ -113,7 +111,6 @@ public final class ChessBoardRenderer {
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
             // puts the row number in first
             setLightGrey(out);
-
             drawHeader(out, rowHeader);
 
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
@@ -146,13 +143,12 @@ public final class ChessBoardRenderer {
                     out.print(bottomPieceTextColor);
                 }
                 // prints the contents of the row
-                out.print(rowContents[boardCol]);
+                out.print(rowContents[boardCol].getPieceType());
                 out.print(EMPTY.repeat(suffixLength));
             }
 
             // prints the row number at the end
             drawHeader(out, rowHeader);
-
             out.println();
         }
     }
@@ -190,11 +186,8 @@ public final class ChessBoardRenderer {
             ChessBoard initialBoard, // initial setup
             String topPieceTextColor, // opposing player color
             String bottomPieceTextColor // your player color
-    ) {
-        // and I need nothing in here because it is a record
-    }
+    ) { /* and I need nothing in here because it is a record */ }
 
-    // This is where all the non-duplicate code goes
     public enum PlayerColor {
         BLACK(
                 new ChessBoardConfig(
