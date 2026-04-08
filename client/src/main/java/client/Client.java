@@ -28,7 +28,7 @@ public class Client {
         boolean running = true;
         while (running) {
             // Thanks, CS 260. Neat syntax no?
-            String menu = (state == State.SIGNEDOUT) ? signedOutMenu() : signedInMenu();
+            String menu = (state == State.SIGNEDOUT) ? signedOutMenu() : (state == State.PLAYING) ? playMenu() : signedInMenu();
             System.out.print(menu);
             printPrompt();
             String line = scanner.nextLine();
@@ -84,7 +84,7 @@ public class Client {
         };
     }
 
-    private String loggedInEval(int option, Scanner scanner) throws ResponseException {
+    private String loggedInEval(int option, Scanner scanner) throws ResponseException, InterruptedException {
         return switch (option) {
             case 1 -> signedInHelp();
             case 2 -> "quit";
@@ -198,8 +198,9 @@ public class Client {
     }
 
     // TODO: call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
-    public String joinGame(boolean isObserver, Scanner scanner, String... params) throws ResponseException {
+    public String joinGame(boolean isObserver, Scanner scanner, String... params) throws ResponseException, InterruptedException {
         assertSignedIn();
+        state = State.PLAYING;
 
         if (params.length < 2) {
             throw new ResponseException("Expected gameID and player color");
@@ -225,13 +226,13 @@ public class Client {
 
         ChessBoard board = findGame(gameID).game().getBoard();
         ChessBoardRenderer.render(board, color, false);
-        waitForEnter(scanner);
+        Thread.sleep(500);
 
         return String.format("Joined game with id %s ", params[0]);
     }
 
     // TODO: do not call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
-    public String observeGame(Scanner scanner, String... params) throws ResponseException {
+    public String observeGame(Scanner scanner, String... params) throws ResponseException, InterruptedException {
         assertSignedIn();
 
         if (params.length < 1) {
@@ -247,24 +248,53 @@ public class Client {
 
     }
 
-    private String highlightMoves() {
+    private String highlightMoves() throws ResponseException {
+        assertPlaying();
+
+
+
         return "";
     }
 
+    // TODO: Does not cause the player to leave the game
+    // TODO: If an observer, send back an error
     private String resign() {
         return "";
     }
 
+    // TODO: If an observer, send back an error
     private String makeMove() {
         return "";
     }
 
     private String leaveGame() {
+        state = State.SIGNEDIN;
         return "";
     }
 
     private String redrawBoard() {
         return "";
+    }
+
+    private GameData findGame(int gameID) throws ResponseException {
+        for (GameData game : server.listGames(authToken)) {
+            if (game.gameID() == gameID) {
+                return game;
+            }
+        }
+        throw new ResponseException("Game not found");
+    }
+
+    private void assertSignedIn() throws ResponseException {
+        if (state == State.SIGNEDOUT) {
+            throw new ResponseException("You must sign in");
+        }
+    }
+
+    private void assertPlaying() throws ResponseException {
+        if (state != State.PLAYING) {
+            throw new ResponseException("You are not currently in a game");
+        }
     }
 
     private String signedOutMenu() {
@@ -296,7 +326,7 @@ public class Client {
                 4 - make move
                 5 - resign
                 6 - highlight legal moves
-        """;
+                """;
     }
 
     private String signedOutHelp() {
@@ -333,25 +363,5 @@ public class Client {
                 Input 6 to highlight legal moves for any given piece. Location is specified \n
                 by <row number><column number> (e.g. 1a).
                 """;
-    }
-
-    private void waitForEnter(Scanner scanner) {
-        System.out.print("\u001b[0m" + "Press Enter to proceed...");
-        scanner.nextLine();
-    }
-
-    private void assertSignedIn() throws ResponseException {
-        if (state == State.SIGNEDOUT) {
-            throw new ResponseException("You must sign in");
-        }
-    }
-
-    private GameData findGame(int gameID) throws ResponseException {
-        for (GameData game : server.listGames(authToken)) {
-            if (game.gameID() == gameID) {
-                return game;
-            }
-        }
-        throw new ResponseException("Game not found");
     }
 }
