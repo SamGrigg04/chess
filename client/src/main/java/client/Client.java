@@ -91,8 +91,8 @@ public class Client {
             case 3 -> logout();
             case 4 -> createGame(collectInputs(scanner, "Game name: "));
             case 5 -> listGames();
-            case 6 -> joinGame(false, scanner, collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
-            case 7 -> observeGame(scanner, collectInputs(scanner, "Game ID: "));
+            case 6 -> joinGame(false, collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
+            case 7 -> observeGame(collectInputs(scanner, "Game ID: "));
             default -> "Please select a valid option";
         };
     }
@@ -198,7 +198,7 @@ public class Client {
     }
 
     // TODO: call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
-    public String joinGame(boolean isObserver, Scanner scanner, String... params) throws ResponseException, InterruptedException {
+    public String joinGame(boolean isObserver, String... params) throws ResponseException, InterruptedException {
         assertSignedIn();
         state = State.PLAYING;
 
@@ -232,7 +232,7 @@ public class Client {
     }
 
     // TODO: do not call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
-    public String observeGame(Scanner scanner, String... params) throws ResponseException, InterruptedException {
+    public String observeGame(String... params) throws ResponseException, InterruptedException {
         assertSignedIn();
 
         if (params.length < 1) {
@@ -242,7 +242,7 @@ public class Client {
         String[] newParams = new String[2];
         newParams[0] = params[0];
         newParams[1] = "WHITE";
-        joinGame(true, scanner, newParams);
+        joinGame(true, newParams);
 
         return String.format("Observing game with id %s ", params[0]);
 
