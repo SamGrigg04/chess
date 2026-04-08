@@ -23,7 +23,6 @@ public final class ChessBoardRenderer {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         render(out,
                 playerColor.config(board),
-                true,
                 playerColor.displayPosition(startPosition),
                 playerColor.displayPositions(endPositions));
     }
@@ -31,7 +30,6 @@ public final class ChessBoardRenderer {
     // prints the chess board to the terminal based on player color passed in
     private static void render(PrintStream out,
                                ChessBoardConfig config,
-                               Boolean highlightMoves,
                                ChessPosition startPosition,
                                Collection<ChessPosition> endPositions) {
         // clears the screen (supposedly)
@@ -39,7 +37,7 @@ public final class ChessBoardRenderer {
 
         // prints the headers at the top, then the board spaces (with the side headers), then the bottom headers
         drawHeaders(out, config.columnHeaders());
-        drawChessBoard(out, config, highlightMoves, startPosition, endPositions);
+        drawChessBoard(out, config, startPosition, endPositions);
         drawHeaders(out, config.columnHeaders());
 
         // Sets colors generally for the whole UI
@@ -82,7 +80,6 @@ public final class ChessBoardRenderer {
     // draws the chess board row by row
     private static void drawChessBoard(PrintStream out,
                                        ChessBoardConfig config,
-                                       Boolean highlightMoves,
                                        ChessPosition startPosition,
                                        Collection<ChessPosition> endPositions) {
         for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
@@ -93,7 +90,7 @@ public final class ChessBoardRenderer {
             }
             // gets the data for the header (row number) to put on either side
             String rowHeader = config.rowHeaders()[boardRow - 1];
-            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, config, highlightMoves, startPosition, endPositions);
+            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, config, startPosition, endPositions);
         }
     }
 
@@ -102,7 +99,6 @@ public final class ChessBoardRenderer {
                                          ChessPiece[] rowContents,
                                          String rowHeader,
                                          ChessBoardConfig config,
-                                         Boolean doHighlightMoves,
                                          ChessPosition startPosition,
                                          Collection<ChessPosition> endPositions) {
 
@@ -123,7 +119,7 @@ public final class ChessBoardRenderer {
                     setBlack(out);
                 }
 
-                if (doHighlightMoves) {
+                if (startPosition != null && endPositions != null) {
                     highlightMoves(out, isLightSquare, currentPosition, startPosition, endPositions);
                 }
 
