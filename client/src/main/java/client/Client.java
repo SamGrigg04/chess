@@ -1,9 +1,12 @@
 package client;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
 import chess.ChessBoard;
+import chess.ChessMove;
+import chess.ChessPosition;
 import exception.ResponseException;
 import model.GameData;
 import result.AuthResult;
@@ -16,6 +19,8 @@ public class Client {
     private String authToken = null;
     private final ServerFacade server;
     private State state = State.SIGNEDOUT;
+    private Integer activeGameID = null;
+    private ChessBoardRenderer.PlayerColor activeColor = null;
 
     public Client(String serverURL) {
         server = new ServerFacade(serverURL);
@@ -41,10 +46,12 @@ public class Client {
 
             try {
                 String actionResult;
-                if (state == State.SIGNEDOUT) {
-                    actionResult = loggedOutEval(option, scanner);
-                } else {
+                if (state == State.SIGNEDIN) {
                     actionResult = loggedInEval(option, scanner);
+                } else if (state == State.PLAYING) {
+                    actionResult = playingEval(option, scanner);
+                } else {
+                    actionResult = loggedOutEval(option, scanner);
                 }
                 if ("quit".equalsIgnoreCase(actionResult)) {
                     running = false;
@@ -98,14 +105,14 @@ public class Client {
     }
 
     // TODO: implement functions
-    private String playingEval(int option, Scanner scanner) throws ResponseException {
+    private String playingEval(int option, Scanner scanner) throws ResponseException, InterruptedException {
         return switch (option) {
             case 1 -> playHelp();
             case 2 -> redrawBoard();
             case 3 -> leaveGame();
             case 4 -> makeMove();
             case 5 -> resign();
-            case 6 -> highlightMoves();
+            case 6 -> highlightMoves(collectInputs(scanner, "For piece in position: "));
             default -> "Please select a valid option";
         };
     }
@@ -200,7 +207,6 @@ public class Client {
     // TODO: call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
     public String joinGame(boolean isObserver, String... params) throws ResponseException, InterruptedException {
         assertSignedIn();
-        state = State.PLAYING;
 
         if (params.length < 2) {
             throw new ResponseException("Expected gameID and player color");
@@ -224,8 +230,12 @@ public class Client {
             server.joinGame(color.name(), gameID, authToken);
         }
 
+        activeGameID = gameID;
+        activeColor = color;
+        state = State.PLAYING;
+
         ChessBoard board = findGame(gameID).game().getBoard();
-        ChessBoardRenderer.render(board, color, false);
+        ChessBoardRenderer.render(board, color, null, null);
         Thread.sleep(500);
 
         return String.format("Joined game with id %s ", params[0]);
@@ -248,12 +258,50 @@ public class Client {
 
     }
 
-    private String highlightMoves() throws ResponseException {
+    private String highlightMoves(String... params) throws ResponseException, InterruptedException {
         assertPlaying();
 
+        if (params.length < 1) {
+            throw new ResponseException("Expected a position");
+        }
 
+        String position = params[0].trim();
 
-        return "";
+        if (position.length() != 2) {
+            throw new ResponseException("Invalid position");
+        }
+
+        char row = Character.toLowerCase(position.charAt(0));
+        char column = Character.toLowerCase(position.charAt(1));
+
+        if (row < 'a' || row > 'h' || column < '1' || column > '8') {
+            throw new ResponseException("Invalid position");
+        }
+
+        ChessPosition startPosition = new ChessPosition(column - '0', row - 'a' + 1); // character arithmetic
+
+        GameData game = findGame(activeGameID);
+        ChessBoard board = game.game().getBoard();
+        if (board.getPiece(startPosition) == null) {
+            throw new ResponseException("No piece at that position");
+        }
+
+        Collection<ChessPosition> endPositions = new ArrayList<>();
+        Collection<ChessMove> validMoves = game.game().validMoves(startPosition);
+        if (validMoves != null) {
+            if (validMoves.isEmpty()) {
+                throw new ResponseException("No valid moves found");
+            }
+            for (ChessMove move : validMoves) {
+                endPositions.add(move.getEndPosition());
+            }
+        }
+
+        ChessBoardRenderer.render(board, activeColor, startPosition, endPositions);
+        Thread.sleep(500);
+
+        return String.format("Highlighted possible moves for position %s", params[0]);
+
     }
 
     // TODO: Does not cause the player to leave the game
@@ -269,6 +317,8 @@ public class Client {
 
     private String leaveGame() {
         state = State.SIGNEDIN;
+        activeGameID = null;
+        activeColor = null;
         return "";
     }
 

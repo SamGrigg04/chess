@@ -16,19 +16,30 @@ public final class ChessBoardRenderer {
     private static final String EMPTY = "   ";
 
     // calls the thing that prints the board (passes in the config)
-    public static void render(ChessBoard board, PlayerColor playerColor, Boolean highlightMoves) {
+    public static void render(ChessBoard board,
+                              PlayerColor playerColor,
+                              ChessPosition startPosition,
+                              Collection<ChessPosition> endPositions) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        render(out, playerColor.config(board), highlightMoves);
+        render(out,
+                playerColor.config(board),
+                true,
+                playerColor.displayPosition(startPosition),
+                playerColor.displayPositions(endPositions));
     }
 
     // prints the chess board to the terminal based on player color passed in
-    private static void render(PrintStream out, ChessBoardConfig config, Boolean highlightMoves) {
+    private static void render(PrintStream out,
+                               ChessBoardConfig config,
+                               Boolean highlightMoves,
+                               ChessPosition startPosition,
+                               Collection<ChessPosition> endPositions) {
         // clears the screen (supposedly)
         out.print(ERASE_SCREEN);
 
         // prints the headers at the top, then the board spaces (with the side headers), then the bottom headers
         drawHeaders(out, config.columnHeaders());
-        drawChessBoard(out, config, highlightMoves);
+        drawChessBoard(out, config, highlightMoves, startPosition, endPositions);
         drawHeaders(out, config.columnHeaders());
 
         // Sets colors generally for the whole UI
@@ -69,7 +80,11 @@ public final class ChessBoardRenderer {
     }
 
     // draws the chess board row by row
-    private static void drawChessBoard(PrintStream out, ChessBoardConfig config, Boolean highlightMoves) {
+    private static void drawChessBoard(PrintStream out,
+                                       ChessBoardConfig config,
+                                       Boolean highlightMoves,
+                                       ChessPosition startPosition,
+                                       Collection<ChessPosition> endPositions) {
         for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
             ChessPiece[] rowContents = new ChessPiece[BOARD_SIZE_IN_SQUARES - 2];
             for (int boardColumn = 1; boardColumn <= BOARD_SIZE_IN_SQUARES - 2; ++boardColumn) {
@@ -78,7 +93,7 @@ public final class ChessBoardRenderer {
             }
             // gets the data for the header (row number) to put on either side
             String rowHeader = config.rowHeaders()[boardRow - 1];
-            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, config, highlightMoves);
+            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, config, highlightMoves, startPosition, endPositions);
         }
     }
 
@@ -87,7 +102,9 @@ public final class ChessBoardRenderer {
                                          ChessPiece[] rowContents,
                                          String rowHeader,
                                          ChessBoardConfig config,
-                                         Boolean doHighlightMoves) {
+                                         Boolean doHighlightMoves,
+                                         ChessPosition startPosition,
+                                         Collection<ChessPosition> endPositions) {
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
             // puts the row number in first
@@ -96,17 +113,18 @@ public final class ChessBoardRenderer {
 
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
                 ChessPiece piece = rowContents[boardCol];
+                ChessPosition currentPosition = new ChessPosition(boardRow + 1, boardCol + 1);
 
                 boolean isLightSquare = (boardRow + boardCol) % 2 == 0;
 
-                if (doHighlightMoves) {
-                    highlightMoves(out, isLightSquare, piece, new ChessPosition(boardRow, boardCol), config);
+                if (isLightSquare) {
+                    setWhite(out);
                 } else {
-                    if (isLightSquare) {
-                        setWhite(out);
-                    } else {
-                        setBlack(out);
-                    }
+                    setBlack(out);
+                }
+
+                if (doHighlightMoves) {
+                    highlightMoves(out, isLightSquare, currentPosition, startPosition, endPositions);
                 }
 
                 int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
@@ -136,27 +154,16 @@ public final class ChessBoardRenderer {
 
     private static void highlightMoves(PrintStream out,
                                        boolean isLightSquare,
-                                       ChessPiece piece,
-                                       ChessPosition position,
-                                       ChessBoardConfig config) {
+                                       ChessPosition currentPosition,
+                                       ChessPosition startPosition,
+                                       Collection<ChessPosition> endPositions) {
 
-        Collection<ChessMove> possibleMoves = piece.pieceMoves(config.board, position);
-        Collection<ChessPosition> startPositions = new ArrayList<>();
-        Collection<ChessPosition> endPositions = new ArrayList<>();
-
-        for (ChessMove possibleMove : possibleMoves) {
-            endPositions.add(possibleMove.getEndPosition());
-            startPositions.add(possibleMove.getStartPosition());
-        }
-
-        if (isLightSquare && endPositions.contains(position)) {
-            setHighlightWhite(out);
-        } else if (endPositions.contains(position)) {
-            setHighlightBlack(out);
-        }
-
-        if (startPositions.contains(position)) {
+        if (currentPosition.equals(startPosition)) {
             setHighlightYellow(out);
+        } else if (endPositions != null && isLightSquare && endPositions.contains(currentPosition)) {
+            setHighlightWhite(out);
+        } else if (endPositions != null && endPositions.contains(currentPosition)) {
+            setHighlightBlack(out);
         }
     }
 
@@ -235,6 +242,26 @@ public final class ChessBoardRenderer {
                     SET_TEXT_COLOR_BLUE,
                     SET_TEXT_COLOR_RED
             );
+        }
+
+        ChessPosition displayPosition(ChessPosition position) {
+            if (position == null) {
+                return null;
+            }
+            return this == BLACK
+                    ? new ChessPosition(position.getRow(), 9 - position.getColumn())
+                    : new ChessPosition(9 - position.getRow(), position.getColumn());
+        }
+
+        Collection<ChessPosition> displayPositions(Collection<ChessPosition> positions) {
+            Collection<ChessPosition> displayPositions = new ArrayList<>();
+            if (positions == null) {
+                return displayPositions;
+            }
+            for (ChessPosition position : positions) {
+                displayPositions.add(displayPosition(position));
+            }
+            return displayPositions;
         }
     }
 
