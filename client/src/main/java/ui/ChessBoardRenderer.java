@@ -81,7 +81,7 @@ public final class ChessBoardRenderer {
             }
             // gets the data for the header (row number) to put on either side
             String rowHeader = config.rowHeaders()[boardRow - 1];
-            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, config.topPieceTextColor(), config.bottomPieceTextColor(), highlightMoves);
+            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, config.yourPieceTextColor(), config.opposingPieceTextColor(), highlightMoves);
         }
     }
 
@@ -90,8 +90,8 @@ public final class ChessBoardRenderer {
                                          int boardRow,
                                          ChessPiece[] rowContents,
                                          String rowHeader,
-                                         String topPieceTextColor,
-                                         String bottomPieceTextColor,
+                                         String yourPieceTextColor,
+                                         String opposingPieceTextColor,
                                          Boolean highlightMoves) {
 
         for (int squareRow = 0; squareRow < SQUARE_SIZE_IN_PADDED_CHARS; ++squareRow) {
@@ -122,10 +122,10 @@ public final class ChessBoardRenderer {
 
                 out.print(EMPTY.repeat(prefixLength));
                 if (piece != null && piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
-                    out.print(topPieceTextColor);
+                    out.print(yourPieceTextColor);
                     out.print(pieceSymbol(piece));
                 } else if (piece != null) {
-                    out.print(bottomPieceTextColor);
+                    out.print(opposingPieceTextColor);
                     out.print(pieceSymbol(piece));
                 } else {
                     out.print(EMPTY);
@@ -170,8 +170,8 @@ public final class ChessBoardRenderer {
             String[] columnHeaders, // column letters
             String[] rowHeaders, // row numbers
             ChessBoard initialBoard, // initial setup
-            String topPieceTextColor, // opposing player color
-            String bottomPieceTextColor // your player color
+            String yourPieceTextColor, // opposing player color
+            String opposingPieceTextColor // your player color
     ) { /* and I need nothing in here because it is a record */ }
 
     public enum PlayerColor {
@@ -180,8 +180,8 @@ public final class ChessBoardRenderer {
                         new String[]{EMPTY, " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EMPTY},
                         new String[]{" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "},
                         null,
-                        SET_TEXT_COLOR_RED, // top color
-                        SET_TEXT_COLOR_BLUE // bottom color
+                        SET_TEXT_COLOR_BLUE, // your color
+                        SET_TEXT_COLOR_YELLOW // opposing color
                 )
         ),
         WHITE(
@@ -190,7 +190,7 @@ public final class ChessBoardRenderer {
                         new String[]{" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "},
                         null,
                         SET_TEXT_COLOR_BLUE,
-                        SET_TEXT_COLOR_RED
+                        SET_TEXT_COLOR_YELLOW
                 )
         );
 
@@ -206,13 +206,12 @@ public final class ChessBoardRenderer {
                     config.columnHeaders(),
                     config.rowHeaders(),
                     displayBoard,
-                    config.topPieceTextColor(),
-                    config.bottomPieceTextColor()
+                    config.yourPieceTextColor(),
+                    config.opposingPieceTextColor()
             );
         }
     }
 
-    // TODO: Bro do you even reverse? Is it a problem here or with choosing what to display or with the top/bottom colors?
     private static ChessBoard reverseBoard(ChessBoard board) {
         ChessBoard reversedBoard = new ChessBoard();
         for (int row = 1; row <= 8; row++) {
