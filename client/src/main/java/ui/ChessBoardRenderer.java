@@ -207,8 +207,8 @@ public final class ChessBoardRenderer {
                         new String[]{EMPTY, " h ", " g ", " f ", " e ", " d ", " c ", " b ", " a ", EMPTY},
                         new String[]{" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 "},
                         null,
-                        SET_TEXT_COLOR_BLUE, // your color
-                        SET_TEXT_COLOR_RED // opposing color
+                        null,
+                        null
                 )
         ),
         WHITE(
@@ -216,8 +216,8 @@ public final class ChessBoardRenderer {
                         new String[]{EMPTY, " a ", " b ", " c ", " d ", " e ", " f ", " g ", " h ", EMPTY},
                         new String[]{" 8 ", " 7 ", " 6 ", " 5 ", " 4 ", " 3 ", " 2 ", " 1 "},
                         null,
-                        SET_TEXT_COLOR_BLUE,
-                        SET_TEXT_COLOR_RED
+                        null,
+                        null
                 )
         );
 
@@ -233,8 +233,8 @@ public final class ChessBoardRenderer {
                     config.columnHeaders(),
                     config.rowHeaders(),
                     displayBoard,
-                    config.yourPieceTextColor(),
-                    config.opposingPieceTextColor()
+                    SET_TEXT_COLOR_BLUE,
+                    SET_TEXT_COLOR_RED
             );
         }
     }
