@@ -115,8 +115,9 @@ public final class ChessBoardRenderer {
 
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
 
-                if (rowContents[boardCol].getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
-                    if (highlightMoves) {
+                boolean isLightSquare = (boardRow + boardCol) % 2 == 0;
+                if (highlightMoves) {
+                    if (isLightSquare) {
                         setHighlightWhite(out);
                     } else {
                         setWhite(out);
