@@ -61,5 +61,12 @@ public class EscapeSequences {
     public static final String BLACK_PAWN = " ♟ ";
     public static final String EMPTY = " \u2003 ";
 
+    public static final String KING = " K ";
+    public static final String QUEEN = " Q ";
+    public static final String ROOK = " R ";
+    public static final String PAWN = " P ";
+    public static final String KNIGHT = " N ";
+    public static final String BISHOP = " B ";
+
     public static String moveCursorToLocation(int x, int y) { return UNICODE_ESCAPE + "[" + y + ";" + x + "H"; }
 }
