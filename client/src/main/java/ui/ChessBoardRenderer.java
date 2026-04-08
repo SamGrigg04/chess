@@ -35,7 +35,7 @@ public final class ChessBoardRenderer {
     // calls the thing that prints the board (passes in the config)
     public static void render(ChessBoard board, PlayerColor playerColor, Boolean highlightMoves) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-        render(out, playerColor.config(), highlightMoves);
+        render(out, playerColor.config(board), highlightMoves);
     }
 
     // prints the chess board to the terminal based on player color passed in
