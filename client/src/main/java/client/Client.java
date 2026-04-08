@@ -3,6 +3,7 @@ package client;
 import java.util.Collection;
 import java.util.Scanner;
 
+import chess.ChessBoard;
 import exception.ResponseException;
 import model.GameData;
 import result.AuthResult;
@@ -287,7 +288,6 @@ public class Client {
                 """;
     }
 
-    //TODO: refactor so same numbers can do different things??
     private String playMenu() {
         return """
                 1 - help

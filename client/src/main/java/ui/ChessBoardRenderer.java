@@ -128,7 +128,7 @@ public final class ChessBoardRenderer {
                     out.print(bottomPieceTextColor);
                     out.print(pieceSymbol(piece));
                 } else {
-                    out.print(EscapeSequences.EMPTY);
+                    out.print(EMPTY);
                 }
                 out.print(EMPTY.repeat(suffixLength));
             }
@@ -212,6 +212,7 @@ public final class ChessBoardRenderer {
         }
     }
 
+    // TODO: Bro do you even reverse? Is it a problem here or with choosing what to display or with the top/bottom colors?
     private static ChessBoard reverseBoard(ChessBoard board) {
         ChessBoard reversedBoard = new ChessBoard();
         for (int row = 1; row <= 8; row++) {
