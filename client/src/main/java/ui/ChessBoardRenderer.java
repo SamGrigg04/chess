@@ -9,21 +9,7 @@ import java.util.Collection;
 import static ui.EscapeSequences.*;
 
 public final class ChessBoardRenderer {
-    static ChessBoard board;
-    static ChessBoard reverseBoard;
     Collection<ChessMove> possibleMoves;
-
-    public ChessBoardRenderer(ChessBoard board, Collection<ChessMove> possibleMoves) {
-        ChessBoardRenderer.board = board;
-        this.possibleMoves = possibleMoves;
-
-        ChessBoardRenderer.reverseBoard = board;
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                reverseBoard.addPiece(new ChessPosition(8 - i, 8 - j), board.getPiece(new ChessPosition(i, j)));
-            }
-        }
-    }
 
     // TODO: draw board using this.board
     // TODO: highlight moves based on moves
@@ -87,15 +73,15 @@ public final class ChessBoardRenderer {
 
     // draws the chess board row by row
     private static void drawChessBoard(PrintStream out, ChessBoardConfig config, Boolean highlightMoves) {
-        for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
+        for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
             ChessPiece[] rowContents = new ChessPiece[BOARD_SIZE_IN_SQUARES - 2];
-            for (int boardColumn = 0; boardColumn < BOARD_SIZE_IN_SQUARES - 2; ++boardColumn) {
+            for (int boardColumn = 1; boardColumn <= BOARD_SIZE_IN_SQUARES - 2; ++boardColumn) {
                 // gets the data for the row to be printed
-                rowContents[boardColumn] = (config.initialBoard().getPiece(new ChessPosition(boardRow, boardColumn)));
+                rowContents[boardColumn - 1] = config.initialBoard().getPiece(new ChessPosition(boardRow, boardColumn));
             }
             // gets the data for the header (row number) to put on either side
-            String rowHeader = config.rowHeaders()[boardRow];
-            drawRowOfSquares(out, boardRow, rowContents, rowHeader, config.topPieceTextColor(), config.bottomPieceTextColor(), highlightMoves);
+            String rowHeader = config.rowHeaders()[boardRow - 1];
+            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, config.topPieceTextColor(), config.bottomPieceTextColor(), highlightMoves);
         }
     }
 
@@ -114,16 +100,13 @@ public final class ChessBoardRenderer {
             drawHeader(out, rowHeader);
 
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
+                ChessPiece piece = rowContents[boardCol];
 
                 boolean isLightSquare = (boardRow + boardCol) % 2 == 0;
                 if (highlightMoves) {
                     if (isLightSquare) {
                         setHighlightWhite(out);
                     } else {
-                        setWhite(out);
-                    }
-                } else if (rowContents[boardCol].getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
-                    if (highlightMoves) {
                         setHighlightBlack(out);
                     }
                 } else {
@@ -138,15 +121,15 @@ public final class ChessBoardRenderer {
                 int suffixLength = 0;
 
                 out.print(EMPTY.repeat(prefixLength));
-                // sets the colors depending on who is viewing the board
-                if (boardRow <= 1) {
+                if (piece != null && piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)) {
                     out.print(topPieceTextColor);
-                }
-                if (boardRow >= 6) {
+                    out.print(pieceSymbol(piece));
+                } else if (piece != null) {
                     out.print(bottomPieceTextColor);
+                    out.print(pieceSymbol(piece));
+                } else {
+                    out.print(EscapeSequences.EMPTY);
                 }
-                // prints the contents of the row
-                out.print(rowContents[boardCol].getPieceType());
                 out.print(EMPTY.repeat(suffixLength));
             }
 
