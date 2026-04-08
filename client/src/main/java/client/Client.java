@@ -222,7 +222,8 @@ public class Client {
             server.joinGame(color.name(), gameID, authToken);
         }
 
-        ChessBoardRenderer.render(color, false);
+        ChessBoard board = findGame(gameID).game().getBoard();
+        ChessBoardRenderer.render(board, color, false);
         waitForEnter(scanner);
 
         return String.format("Joined game with id %s ", params[0]);
