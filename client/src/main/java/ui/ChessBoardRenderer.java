@@ -125,11 +125,13 @@ public final class ChessBoardRenderer {
                 } else if (rowContents[boardCol].getTeamColor().equals(ChessGame.TeamColor.BLACK)) {
                     if (highlightMoves) {
                         setHighlightBlack(out);
+                    }
+                } else {
+                    if (isLightSquare) {
+                        setWhite(out);
                     } else {
                         setBlack(out);
                     }
-                } else {
-                    System.out.println("Something is rotten in the state of Denmark");
                 }
 
                 int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
