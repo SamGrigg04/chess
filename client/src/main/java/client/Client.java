@@ -15,15 +15,13 @@ import ui.ChessBoardRenderer;
 
 
 public class Client {
-    private String visitorName = null;
-    private String authToken = null;
     private final ServerFacade server;
-    private State state = State.SIGNEDOUT;
-    private Integer activeGameID = null;
-    private ChessBoardRenderer.PlayerColor activeColor = null;
+    private final ClientSession session = new ClientSession();
+    private final GameplayClient gameplayClient;
 
     public Client(String serverURL) {
         server = new ServerFacade(serverURL);
+        gameplayClient = new GameplayClient(/* serverURL, */server, session);
     }
 
     public void run() {
@@ -98,21 +96,20 @@ public class Client {
             case 3 -> logout();
             case 4 -> createGame(collectInputs(scanner, "Game name: "));
             case 5 -> listGames();
-            case 6 -> joinGame(false, collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
-            case 7 -> observeGame(collectInputs(scanner, "Game ID: "));
+            case 6 -> gameplayClient.joinGame(collectInputs(scanner, "Game ID: ", "Player color (white/black): "));
+            case 7 -> gameplayClient.observeGame(collectInputs(scanner, "Game ID: "));
             default -> "Please select a valid option";
         };
     }
 
-    // TODO: implement functions
     private String playingEval(int option, Scanner scanner) throws ResponseException, InterruptedException {
         return switch (option) {
             case 1 -> playHelp();
-            case 2 -> redrawBoard();
-            case 3 -> leaveGame();
-            case 4 -> makeMove();
-            case 5 -> resign();
-            case 6 -> highlightMoves(collectInputs(scanner, "For piece in position: "));
+            case 2 -> gameplayClient.redrawBoard();
+            case 3 -> gameplayClient.leaveGame();
+            case 4 -> gameplayClient.makeMove();
+            case 5 -> gameplayClient.resign();
+            case 6 -> gameplayClient.highlightMoves(collectInputs(scanner, "For piece in position: "));
             default -> "Please select a valid option";
         };
     }
@@ -132,10 +129,8 @@ public class Client {
         }
 
         AuthResult authResult = server.login(params[0], params[1]);
-        state = State.SIGNEDIN;
-        authToken = authResult.authToken();
-        visitorName = authResult.username();
-        return String.format("You signed in as %s.", visitorName);
+        session.signIn(authResult.username(), authResult.authToken());
+        return String.format("You signed in as %s.", session.getVisitorName());
     }
 
     public String register(String... params) throws ResponseException {
@@ -144,26 +139,21 @@ public class Client {
         }
 
         AuthResult authResult = server.register(params[0], params[1], params[2]);
-        state = State.SIGNEDIN;
-        authToken = authResult.authToken();
-        visitorName = authResult.username();
-
-        return String.format("You registered as %s", visitorName);
+        session.signIn(authResult.username(), authResult.authToken());
+        return String.format("You registered as %s", session.getVisitorName());
     }
 
     public String logout() throws ResponseException {
-        assertSignedIn();
-
-        server.logout(authToken);
-        state = State.SIGNEDOUT;
-
-        return String.format("%s understandably got bored of chess and left", visitorName);
+        session.assertSignedIn();
+        server.logout(session.getAuthToken());
+        session.signOut();
+        return String.format("%s understandably got bored of chess and left", session.getVisitorName());
     }
 
     public String listGames() throws ResponseException {
-        assertSignedIn();
+        session.assertSignedIn();
 
-        Collection<GameData> gameList = server.listGames(authToken);
+        Collection<GameData> gameList = server.listGames(session.getAuthToken());
         if (gameList.isEmpty()) {
             return "You are alone in this universe. \n";
         }
@@ -188,7 +178,7 @@ public class Client {
     }
 
     public String createGame(String... params) throws ResponseException {
-        assertSignedIn();
+        session.assertSignedIn();
 
         if (params.length < 1) {
             throw new ResponseException("Expected gameID");
@@ -199,7 +189,7 @@ public class Client {
             throw new ResponseException("Game name cannot be blank");
         }
 
-        int gameID = server.createGame(gameName, authToken);
+        int gameID = server.createGame(gameName, session.getAuthToken());
 
         return String.format("Created game with id %s", gameID);
     }
