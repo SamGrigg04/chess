@@ -1,9 +1,14 @@
 package client;
 
+import chess.ChessGame;
+
 public class GameplayWebsocketFacade {
+    private final String serverUrl;
+    private final ServerMessageObserver observer;
 
-    public GameplayWebsocketFacade() {
-
+    public GameplayWebsocketFacade(String serverUrl, ServerMessageObserver observer) {
+        this.serverUrl = serverUrl;
+        this.observer = observer;
     }
 
     public void connect() {
@@ -26,7 +31,9 @@ public class GameplayWebsocketFacade {
 
     }
 
-
+    public String websocketUrl() {
+        return serverUrl;
+    }
 
     public interface ServerMessageObserver {
         void onLoadGame(ChessGame game);
