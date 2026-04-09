@@ -97,7 +97,10 @@ public class WebSocketService {
 
         String username = authDAO.getAuth(command.getAuthToken()).username();
 
-        gameDAO.updateGame(command.getGameID(), null, username);
+        if (playerColor != null) {
+            gameDAO.updateGame(command.getGameID(), playerColor.toString(), null);
+        }
+        gameDAO.saveGame(command.getGameID(), gameData.game());
 
         String notificationText = String.format("%s left the game", username);
         return new LeaveResult(notificationText);
