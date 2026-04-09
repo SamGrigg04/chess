@@ -29,7 +29,7 @@ public class GameplayClient implements ServerMessageObserver{
 
         // TODO: call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
         return String.format("Joined game with id %s", gameID);
-    };
+    }
 
     public String observeGame(String... params) throws ResponseException {
         session.assertSignedIn();
