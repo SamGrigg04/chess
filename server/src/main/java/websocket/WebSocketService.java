@@ -122,6 +122,7 @@ public class WebSocketService {
         }
 
         gameData.game().setIsGameOver(true);
+        gameDAO.saveGame(command.getGameID(), game);
 
         String notificationText = String.format("%s resigned", username);
         return new ResignResult(notificationText);
