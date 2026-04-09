@@ -64,6 +64,12 @@ public class GameplayClient implements ServerMessageObserver{
         throw new ResponseException("Game not found");
     }
 
-    
+    private int parseGameID(String input) throws ResponseException {
+        try {
+            return Integer.parseInt(input.trim());
+        } catch (NumberFormatException ex) {
+            throw new ResponseException("Game ID must be a number");
+        }
+    }
 
 }
