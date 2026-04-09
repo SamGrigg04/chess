@@ -82,8 +82,10 @@ public class GameplayClient implements ServerMessageObserver{
         return String.format("Highlighted possible moves for position %s", params[0]);
     }
 
-    public String redrawBoard() {
-        return null;
+    public String redrawBoard() throws ResponseException {
+        session.assertPlaying();
+        renderCurrentBoard(null, null);
+        return "Board redrawn";
     }
 
     public String leaveGame() {
