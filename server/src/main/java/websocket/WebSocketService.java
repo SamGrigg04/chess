@@ -54,7 +54,7 @@ public class WebSocketService {
         if (playerColor == null) {
             throw new ResponseException("Error: unauthorized");
         }
-        if (game.getTeamTurn() != playerColor || game.isGameOver) {
+        if (game.getTeamTurn() != playerColor || game.isGameOver()) {
             throw new ResponseException("Error: bad request");
         }
 
