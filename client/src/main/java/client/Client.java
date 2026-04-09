@@ -194,43 +194,6 @@ public class Client {
         return String.format("Created game with id %s", gameID);
     }
 
-    // TODO: call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
-    public String joinGame(boolean isObserver, String... params) throws ResponseException, InterruptedException {
-        assertSignedIn();
-
-        if (params.length < 2) {
-            throw new ResponseException("Expected gameID and player color");
-        }
-
-        int gameID;
-        try {
-            gameID = Integer.parseInt(params[0]);
-        } catch (NumberFormatException ex) {
-            throw new ResponseException("Game ID must be a number");
-        }
-        var playerColorInput = params[1].trim();
-        ChessBoardRenderer.PlayerColor color;
-        try {
-            color = ChessBoardRenderer.PlayerColor.valueOf(playerColorInput.toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            throw new ResponseException("Player color must be white or black");
-        }
-
-        if (!isObserver) {
-            server.joinGame(color.name(), gameID, authToken);
-        }
-
-        activeGameID = gameID;
-        activeColor = color;
-        state = State.PLAYING;
-
-        ChessBoard board = findGame(gameID).game().getBoard();
-        ChessBoardRenderer.render(board, color, null, null);
-        Thread.sleep(500);
-
-        return String.format("Joined game with id %s ", params[0]);
-    }
-
     // TODO: do not call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
     public String observeGame(String... params) throws ResponseException, InterruptedException {
         assertSignedIn();
