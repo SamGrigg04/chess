@@ -208,7 +208,8 @@ public class GameplayClient implements ServerMessageObserver{
             case "ROOK" -> ChessPiece.PieceType.ROOK;
             case "BISHOP" -> ChessPiece.PieceType.BISHOP;
             case "KNIGHT" -> ChessPiece.PieceType.KNIGHT;
-            default -> throw new ResponseException("Promotion piece must be queen, rook, bishop, or knight");
+            default -> throw new ResponseException("Promotion piece must be queen, rook, bishop, or knight." +
+                    " Leave blank if you don't want to promote.");
         };
     }
 
