@@ -381,12 +381,12 @@ public class Client {
     private String signedInHelp() {
         return """
                 Input 1 for help
-                Input 4 to quit
-                Input 5 to logout
-                Input 6 to create a new game
-                Input 7 to list all games that currently exist
-                Input 8 to play an existing game
-                Input 9 to observe an existing game
+                Input 2 to quit
+                Input 3 to logout
+                Input 4 to create a new game
+                Input 5 to list all games that currently exist
+                Input 6 to play an existing game
+                Input 7 to observe an existing game
                 """;
     }
 
