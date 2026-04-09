@@ -1,11 +1,13 @@
 package websocket;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import exception.ResponseException;
 import io.javalin.websocket.*;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.*;
 import websocket.commands.*;
+import websocket.result.ConnectResult;
 
 import java.io.IOException;
 
@@ -13,6 +15,11 @@ import java.io.IOException;
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
+    private final WebSocketService websocketService;
+
+    public WebSocketHandler(WebSocketService websocketService) {
+        this.websocketService = websocketService;
+    }
 
     @Override
     public void handleConnect(WsConnectContext ctx) {
@@ -24,14 +31,23 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     public void handleMessage(WsMessageContext ctx) {
         try {
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
-            switch (UserGameCommand.getCommandType()) {
-                case CONNECT -> connect(command.getAuthToken(), command.getGameID(), ctx.session);
-                case MAKE_MOVE -> makeMove(command.getAuthToken(), command.getGameID(), ctx.session);
-                case LEAVE -> leave(command.getAuthToken(), command.getGameID(), ctx.session);
-                case RESIGN -> resign(command.getAuthToken(), command.getGameID(), ctx.session);
+            switch (command.getCommandType()) {
+                case CONNECT -> {
+                    ConnectResult result = websocketService.connect(command);
+                    connections.add(command.getGameID(), ctx.session);
+                    connections.sendToOne(ctx.session,
+                            new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, result.game()));
+                    connections.sendToOthers(command.getGameID(), ctx.session,
+                            new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, result.notificationText()));
+                } //TODO: make the rest similar
+                case MAKE_MOVE -> makeMove(command, ctx.session);
+                case LEAVE -> leave(command, ctx.session);
+                case RESIGN -> resign(command, ctx.session);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
+        } catch (ResponseException | DataAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -40,25 +56,4 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
         System.out.println("Websocket closed");
     }
 
-    public void connect(String authToken, Integer gameID, Session session) throws IOException {
-        connections.add(gameID, session);
-        var message = String.format("%s joined the game", gameID); //TODO: get username? right message?
-        var notification = new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-        connections.broadcast(session, notification);
-    }
-
-    public void makeMove(String authToken, Integer gameID, Session session) throws IOException {
-
-    }
-
-    public void leave(String authToken, Integer gameID, Session session) throws IOException {
-        var message = String.format("%s left the game", gameID); //TODO: get username? right message?
-        var notification = new LoadGameMessage(ServerMessage.ServerMessageType.NOTIFICATION);
-        connections.broadcast(session, notification);
-        connections.remove(gameID, session);
-    }
-
-    public void resign(String authToken, Integer gameID, Session session) throws IOException {
-
-    }
 }
