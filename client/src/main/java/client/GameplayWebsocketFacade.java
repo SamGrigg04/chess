@@ -25,4 +25,14 @@ public class GameplayWebsocketFacade {
     public void disconnect() {
 
     }
+
+
+
+    public interface ServerMessageObserver {
+        void onLoadGame(ChessGame game);
+
+        void onNotification(String message);
+
+        void onError(String errorMessage);
+    }
 }
