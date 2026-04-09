@@ -37,7 +37,7 @@ public class Server {
             userHandler = new UserHandler(new UserService(memoryAuthDAO, memoryUserDAO));
             gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO));
             clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
-            webSocketHandler = new WebSocketHandler(); //TODO: might change
+            webSocketHandler = new WebSocketHandler(new WebSocketService(memoryGameDAO)); //TODO: might change
         } else {
             MySqlAuthDAO mySqlAuthDAO = new MySqlAuthDAO();
             MySqlGameDAO mySqlGameDAO = new MySqlGameDAO();
@@ -55,7 +55,7 @@ public class Server {
             userHandler = new UserHandler(new UserService(mySqlAuthDAO, mySqlUserDAO));
             gameHandler = new GameHandler(new GameService(mySqlAuthDAO, mySqlGameDAO));
             clearHandler = new ClearHandler(new ClearService(mySqlAuthDAO, mySqlGameDAO, mySqlUserDAO));
-            webSocketHandler = new WebSocketHandler(); //TODO: might change
+            webSocketHandler = new WebSocketHandler(new WebSocketService(mySqlGameDAO)); //TODO: might change
         }
 
 
