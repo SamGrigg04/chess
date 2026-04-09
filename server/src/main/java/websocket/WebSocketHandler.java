@@ -37,43 +37,68 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     try {
                         result = websocketService.connect(command);
                     } catch (ResponseException e) {
-                        connections.sendToOne(ctx.session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()));
+                        connections.sendToOne(ctx.session,
+                                new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
+                                        e.getMessage()));
                         return;
                     }
                     connections.add(command.getGameID(), ctx.session);
                     connections.sendToOne(ctx.session,
                             new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, result.game()));
                     connections.sendToOthers(command.getGameID(), ctx.session,
-                            new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, result.notificationText()));
+                            new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                    result.notificationText()));
                 }
                 case MAKE_MOVE -> {
                     MoveResult result;
                     try {
                         result = websocketService.makeMove(command, ctx.session);
                     } catch (ResponseException e) {
-                        connections.sendToOne(ctx.session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()));
+                        connections.sendToOne(ctx.session,
+                                new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
+                                        e.getMessage()));
                         return;
                     }
                     connections.sendToGame(command.getGameID(),
                             new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, result.game()));
                     connections.sendToOthers(command.getGameID(), ctx.session,
-                            new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, result.moveNotification()));
+                            new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                    result.moveNotification()));
                     // if check, checkmate, or stalemate
                     if (result.statusNotification() != null && !result.statusNotification().isEmpty()) {
                         connections.sendToGame(command.getGameID(),
-                                new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, result.statusNotification()));
+                                new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                        result.statusNotification()));
                     }
                 }
                 case LEAVE -> {
-                    LeaveResult result = websocketService.leave(command, ctx.session);
+                    LeaveResult result;
+                    try {
+                        result = websocketService.leave(command, ctx.session);
+                    } catch (ResponseException e) {
+                        connections.sendToOne(ctx.session,
+                                new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()));
+                        return;
+                    }
+                    connections.sendToOthers(command.getGameID(), ctx.session,
+                            new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                    result.notificationText()));
                 }
                 case RESIGN -> {
-                    ResignResult result = websocketService.resign(command, ctx.session);
+                    ResignResult result;
+                    try {
+                        result = websocketService.resign(command, ctx.session);
+                    } catch (ResponseException e) {
+                        connections.sendToOne(ctx.session,
+                                new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()));
+                        return;
+                    }
+                    connections.sendToOthers(command.getGameID(), ctx.session,
+                            new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
+                                    result.notificationText()));
                 }
             }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | IOException e) {
             throw new RuntimeException(e);
         }
     }
