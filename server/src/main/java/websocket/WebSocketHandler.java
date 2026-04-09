@@ -12,7 +12,6 @@ import websocket.result.*;
 
 import java.io.IOException;
 
-
 public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsCloseHandler {
 
     private final ConnectionManager connections = new ConnectionManager();
@@ -46,9 +45,24 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                             new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, result.game()));
                     connections.sendToOthers(command.getGameID(), ctx.session,
                             new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, result.notificationText()));
-                } //TODO: make the rest similar
+                }
                 case MAKE_MOVE -> {
-                    MoveResult result = websocketService.makeMove(command, ctx.session);
+                    MoveResult result;
+                    try {
+                        result = websocketService.makeMove(command, ctx.session);
+                    } catch (ResponseException e) {
+                        connections.sendToOne(ctx.session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()));
+                        return;
+                    }
+                    connections.sendToGame(command.getGameID(),
+                            new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, result.game()));
+                    connections.sendToOthers(command.getGameID(), ctx.session,
+                            new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, result.moveNotification()));
+                    // if check, checkmate, or stalemate
+                    if (result.statusNotification() != null && !result.statusNotification().isEmpty()) {
+                        connections.sendToGame(command.getGameID(),
+                                new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, result.statusNotification()));
+                    }
                 }
                 case LEAVE -> {
                     LeaveResult result = websocketService.leave(command, ctx.session);
@@ -59,7 +73,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             }
         } catch (IOException ex) {
             ex.printStackTrace();
-        } catch (ResponseException | DataAccessException e) {
+        } catch (DataAccessException e) {
             throw new RuntimeException(e);
         }
     }
