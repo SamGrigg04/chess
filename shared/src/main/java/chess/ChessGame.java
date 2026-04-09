@@ -15,6 +15,7 @@ public class ChessGame {
 
     TeamColor team = TeamColor.WHITE;
     ChessBoard board = new ChessBoard();
+    public Boolean isGameOver = false;
 
     public ChessGame() {
         this.board.resetBoard();
@@ -35,6 +36,8 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         this.team = team;
     }
+
+    public void setIsGameOver(Boolean isGameOver) {this.isGameOver = isGameOver;}
 
     /**
      * Enum identifying the 2 possible teams in a chess game
@@ -225,12 +228,6 @@ public class ChessGame {
         return true;
     }
 
-    public boolean isGameOver() {
-        return isInCheckmate(TeamColor.WHITE)
-                || isInCheckmate(TeamColor.BLACK)
-                || isInStalemate(TeamColor.WHITE)
-                || isInStalemate(TeamColor.BLACK);
-    }
 
     private Collection<ChessMove> checkAllTeamMoves(ChessBoard board, TeamColor teamColor) {
         Collection<ChessMove> allValidMoves = new ArrayList<>();
