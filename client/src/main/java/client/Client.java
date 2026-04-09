@@ -36,7 +36,8 @@ public class Client {
                 case SIGNEDOUT -> signedOutMenu();
                 case PLAYING -> playMenu();
                 case SIGNEDIN -> signedInMenu();
-            };            System.out.print(menu);
+            };
+            System.out.print(menu);
             printPrompt();
             String line = scanner.nextLine();
 
