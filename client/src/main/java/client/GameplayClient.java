@@ -1,4 +1,57 @@
 package client;
 
-public class GameplayClient {
+import chess.ChessGame;
+import serverFacade.ServerFacade;
+
+public class GameplayClient implements ServerMessageObserver{
+    private final ServerFacade server;
+    private final ClientSession session;
+
+    public GameplayClient(/*String serverURL,*/ ServerFacade server, ClientSession session) {
+        this.server = server;
+        this.session = session;
+    }
+
+    public String joinGame() {
+        return null;
+    };
+
+    public String observeGame() {
+        return null;
+    }
+
+    public String highlightMoves() {
+        return null;
+    }
+
+    public String redrawBoard() {
+        return null;
+    }
+
+    public String leaveGame() {
+        return null;
+    }
+
+    public String makeMove() {
+        return null;
+    }
+
+    public String resign() {
+        return null;
+    }
+
+    @Override
+    public void onLoadGame(ChessGame game) {
+
+    }
+
+    @Override
+    public void onNotification(String message) {
+
+    }
+
+    @Override
+    public void onError(String errorMessage) {
+
+    }
 }
