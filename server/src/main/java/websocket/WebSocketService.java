@@ -56,9 +56,6 @@ public class WebSocketService {
         if (!validateGame(command.getGameID())) {
             throw new ResponseException("Error: bad request");
         }
-        if (!validateMove()) {
-            throw new ResponseException("Error: invalid move");
-        }
 
         String username = authDAO.getAuth(command.getAuthToken()).username();
         GameData gameData = gameDAO.getGame(command.getGameID());
@@ -92,7 +89,7 @@ public class WebSocketService {
             game.setIsGameOver(true);
         }
 
-        // TODO: update game in database
+        gameDAO.updateGame(command.getGameID(), String.valueOf(playerColor), username);
 
         String moveNotificationText = String.format("%s moved from %s to %s",
                 username,
@@ -104,10 +101,6 @@ public class WebSocketService {
 
     private String positionToString(ChessPosition pos) {
         return (char)('a' + (pos.getColumn() - 1)) + String.valueOf(pos.getRow());
-    }
-
-    public boolean validateMove() {
-        return false;
     }
 
     public LeaveResult leave(UserGameCommand command, Session session) {
