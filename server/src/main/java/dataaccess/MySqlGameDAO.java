@@ -84,6 +84,14 @@ public class MySqlGameDAO implements GameDAO {
     }
 
     @Override
+    public void saveGame(Integer gameID, ChessGame game) throws DataAccessException {
+        var statement = "UPDATE game SET game_state=? WHERE game_id=?";
+        String json = new Gson().toJson(game);
+
+        putGameInDB(gameID, statement, json);
+    }
+
+    @Override
     public void updateGame(Integer gameID, String playerColor, String username) throws DataAccessException {
         String statement;
 
@@ -94,10 +102,14 @@ public class MySqlGameDAO implements GameDAO {
         } else {
             throw new DataAccessException("Invalid player color");
         }
-        
+
+        putGameInDB(gameID, statement, username);
+    }
+
+    private void putGameInDB(Integer gameID, String statement, String json) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var preparedStatement = conn.prepareStatement(statement)) {
-                preparedStatement.setString(1, username);
+                preparedStatement.setString(1, json);
                 preparedStatement.setInt(2, gameID);
                 preparedStatement.executeUpdate();
             }
