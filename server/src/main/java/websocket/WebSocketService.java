@@ -44,7 +44,7 @@ public class WebSocketService {
         return new ConnectResult(game, notificationText);
     }
 
-    public MoveResult makeMove(UserGameCommand command, Session session) throws ResponseException, DataAccessException {
+    public MoveResult makeMove(UserGameCommand command) throws ResponseException, DataAccessException {
         validate(command);
 
         String username = authDAO.getAuth(command.getAuthToken()).username();
@@ -93,7 +93,18 @@ public class WebSocketService {
         return (char)('a' + (pos.getColumn() - 1)) + String.valueOf(pos.getRow());
     }
 
-    public LeaveResult leave(UserGameCommand command, Session session) throws DataAccessException, ResponseException {
+    public LeaveResult leave(UserGameCommand command) throws DataAccessException, ResponseException {
+        validate(command);
+
+        String username = authDAO.getAuth(command.getAuthToken()).username();
+
+        gameDAO.updateGame(command.getGameID(), null, username);
+
+        String notificationText = String.format("%s left the game", username);
+        return new LeaveResult(notificationText);
+    }
+
+    public ResignResult resign(UserGameCommand command) throws ResponseException, DataAccessException {
         validate(command);
 
         String username = authDAO.getAuth(command.getAuthToken()).username();
@@ -101,15 +112,17 @@ public class WebSocketService {
         ChessGame game = gameData.game();
         ChessGame.TeamColor playerColor = getPlayerColor(gameData, username);
 
-        String notificationText = "<PLAYERNAME> left the game";
-        return null;
-    }
+        if (game.isGameOver) {
+            throw new ResponseException("Error: game is over");
+        }
+        if (playerColor == null) {
+            throw new ResponseException("Error: unauthorized");
+        }
 
-    public ResignResult resign(UserGameCommand command, Session session) throws ResponseException, DataAccessException {
-        validate(command);
+        gameData.game().setIsGameOver(true);
 
-        String notificationText = "<PLAYERNAME> resigned";
-        return null;
+        String notificationText = String.format("%s resigned", username);
+        return new ResignResult(notificationText);
     }
 
     private void validate(UserGameCommand command) throws ResponseException, DataAccessException {

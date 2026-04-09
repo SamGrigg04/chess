@@ -52,7 +52,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case MAKE_MOVE -> {
                     MoveResult result;
                     try {
-                        result = websocketService.makeMove(command, ctx.session);
+                        result = websocketService.makeMove(command);
                     } catch (ResponseException e) {
                         connections.sendToOne(ctx.session,
                                 new ErrorMessage(ServerMessage.ServerMessageType.ERROR,
@@ -74,7 +74,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case LEAVE -> {
                     LeaveResult result;
                     try {
-                        result = websocketService.leave(command, ctx.session);
+                        result = websocketService.leave(command);
                     } catch (ResponseException e) {
                         connections.sendToOne(ctx.session,
                                 new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()));
@@ -87,7 +87,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                 case RESIGN -> {
                     ResignResult result;
                     try {
-                        result = websocketService.resign(command, ctx.session);
+                        result = websocketService.resign(command);
                     } catch (ResponseException e) {
                         connections.sendToOne(ctx.session,
                                 new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()));
