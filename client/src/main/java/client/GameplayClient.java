@@ -72,4 +72,12 @@ public class GameplayClient implements ServerMessageObserver{
         }
     }
 
+    private BoardPerspective parsePerspective(String input) throws ResponseException {
+        try {
+            return BoardPerspective.valueOf(input.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseException("Player color must be white or black");
+        }
+    }
+
 }
