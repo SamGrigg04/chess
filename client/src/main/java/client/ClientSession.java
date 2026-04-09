@@ -1,5 +1,6 @@
 package client;
 
+import exception.ResponseException;
 import model.GameData;
 import ui.BoardPerspective;
 
@@ -24,7 +25,14 @@ public class ClientSession {
         state = State.SIGNEDOUT;
         leaveGame();
     }
-    public void startGame() {}
+
+    public void startGame(Integer gameID, BoardPerspective perspective, boolean isObserver, GameData game) {
+        activeGameID = gameID;
+        activePerspective = perspective;
+        observer = isObserver;
+        currentGame = game;
+        state = State.PLAYING;
+    }
 
     public void leaveGame() {
         activeGameID = null;
@@ -35,11 +43,21 @@ public class ClientSession {
             state = State.SIGNEDIN;
         }
     }
-    public void updateGame() {}
+    public void updateGame(GameData game) {
+        currentGame = game;
+    }
 
-    public void assertSignedIn() {}
+    public void assertSignedIn() throws ResponseException {
+        if (state == State.SIGNEDOUT) {
+            throw new ResponseException("You must sign in");
+        }
+    }
 
-    public void assertPlaying() {}
+    public void assertPlaying() throws ResponseException {
+        if (state != State.PLAYING) {
+            throw new ResponseException("You are not currently in a game");
+        }
+    }
 
     public String getVisitorName() {
         return visitorName;
