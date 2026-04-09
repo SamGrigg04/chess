@@ -102,8 +102,10 @@ public class Client {
             case 1 -> playHelp();
             case 2 -> gameplayClient.redrawBoard();
             case 3 -> gameplayClient.leaveGame();
-            case 4 -> gameplayClient.makeMove();
-            case 5 -> gameplayClient.resign();
+            case 4 -> gameplayClient.makeMove(collectInputs(scanner, "Move from (e.g. e2): ",
+                    "Move to (e.g. e4): ",
+                    "Promotion piece if applicable (queen/rook/bishop/knight or leave blank: "));
+            case 5 -> gameplayClient.resign(collectInputs(scanner, "Type 'YES' to confirm resignation: "));
             case 6 -> gameplayClient.highlightMoves(collectInputs(scanner, "For piece in position: "));
             default -> "Please select a valid option";
         };
