@@ -83,6 +83,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     connections.sendToOthers(command.getGameID(), ctx.session,
                             new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                                     result.notificationText()));
+                    connections.remove(command.getGameID(), ctx.session);
                 }
                 case RESIGN -> {
                     ResignResult result;
