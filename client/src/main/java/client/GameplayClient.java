@@ -111,9 +111,17 @@ public class GameplayClient implements ServerMessageObserver{
     }
 
     // TODO: Does not cause the player to leave the game
-    // TODO: If an observer, send back an error
-    public String resign() {
-        return null;
+    public String resign(String... params) throws ResponseException {
+        session.assertPlaying();
+        if (session.isObserver()) {
+            throw new ResponseException("Observers cannot resign");
+        }
+        if (params.length < 1 || !"YES".equalsIgnoreCase(params[0].trim())) {
+            return "Resignation cancelled";
+        }
+
+        // TODO: end the game for all participands
+        return "Resignation request sent";
     }
 
     @Override
