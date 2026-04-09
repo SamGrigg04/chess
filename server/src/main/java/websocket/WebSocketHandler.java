@@ -34,7 +34,13 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
             UserGameCommand command = new Gson().fromJson(ctx.message(), UserGameCommand.class);
             switch (command.getCommandType()) {
                 case CONNECT -> {
-                    ConnectResult result = websocketService.connect(command);
+                    ConnectResult result;
+                    try {
+                        result = websocketService.connect(command);
+                    } catch (ResponseException e) {
+                        connections.sendToOne(ctx.session, new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()));
+                        return;
+                    }
                     connections.add(command.getGameID(), ctx.session);
                     connections.sendToOne(ctx.session,
                             new LoadGameMessage(ServerMessage.ServerMessageType.LOAD_GAME, result.game()));
