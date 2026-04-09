@@ -12,8 +12,23 @@ public class GameplayClient implements ServerMessageObserver{
         this.session = session;
     }
 
-    public String joinGame() {
-        return null;
+    public String joinGame(String... params) throws ResponseException {
+        session.assertSignedIn();
+        if (params.length < 2) {
+            throw new ResponseException("Expected gameID and player color");
+        }
+
+        int gameID = parseGameID(params[0]);
+        BoardPerspective perspective = parsePerspective(params[1]);
+
+        server.joinGame(perspective.name(), gameID, session.getAuthToken());
+
+        GameData game = findGame(gameID);
+        session.startGame(gameID, perspective, false, game);
+        renderCurrentBoard(null, null);
+
+        // Phase 6: after the server websocket endpoint exists, this should establish /ws and send CONNECT.
+        return String.format("Joined game with id %s", gameID);
     };
 
     public String observeGame() {
