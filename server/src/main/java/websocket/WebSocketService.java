@@ -67,18 +67,22 @@ public class WebSocketService {
             throw new ResponseException("Error: invalid move");
         }
 
+        ChessGame.TeamColor opponent = playerColor == ChessGame.TeamColor.WHITE
+                ? ChessGame.TeamColor.BLACK
+                : ChessGame.TeamColor.WHITE;
+
         String statusNotificationText = "";
-        if (game.isInCheck(playerColor)) {
-            statusNotificationText = playerColor + " is in check";
-        } else if (game.isInCheckmate(playerColor)) {
-            statusNotificationText = playerColor + " is in checkmate";
+        if (game.isInCheck(opponent)) {
+            statusNotificationText = opponent + " is in check";
+        } else if (game.isInCheckmate(opponent)) {
+            statusNotificationText = opponent + " is in checkmate";
             game.setIsGameOver(true);
-        } else if (game.isInStalemate(playerColor)) {
-            statusNotificationText = playerColor + " is in stalemate";
+        } else if (game.isInStalemate(opponent)) {
+            statusNotificationText = opponent + " is in stalemate";
             game.setIsGameOver(true);
         }
 
-        gameDAO.updateGame(command.getGameID(), String.valueOf(playerColor), username);
+        gameDAO.saveGame(command.getGameID(), game);
 
         String moveNotificationText = String.format("%s moved from %s to %s",
                 username,
@@ -96,6 +100,8 @@ public class WebSocketService {
         validate(command);
 
         String username = authDAO.getAuth(command.getAuthToken()).username();
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        ChessGame.TeamColor playerColor = getPlayerColor(gameData, username);
 
         if (playerColor != null) {
             gameDAO.updateGame(command.getGameID(), playerColor.toString(), null);
