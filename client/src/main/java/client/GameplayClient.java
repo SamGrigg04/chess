@@ -27,7 +27,7 @@ public class GameplayClient implements ServerMessageObserver{
         session.startGame(gameID, perspective, false, game);
         renderCurrentBoard(null, null);
 
-        // Phase 6: after the server websocket endpoint exists, this should establish /ws and send CONNECT.
+        // TODO: call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
         return String.format("Joined game with id %s", gameID);
     };
 
