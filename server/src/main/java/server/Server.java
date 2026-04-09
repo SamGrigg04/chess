@@ -36,7 +36,7 @@ public class Server {
             userHandler = new UserHandler(new UserService(memoryAuthDAO, memoryUserDAO));
             gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO));
             clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
-            webSocketHandler = new WebSocketHandler(new WebSocketService(memoryAuthDAO, memoryGameDAO)); //TODO: might change
+            webSocketHandler = new WebSocketHandler(new WebSocketService(memoryAuthDAO, memoryGameDAO));
         } else {
             MySqlAuthDAO mySqlAuthDAO = new MySqlAuthDAO();
             MySqlGameDAO mySqlGameDAO = new MySqlGameDAO();
@@ -54,9 +54,8 @@ public class Server {
             userHandler = new UserHandler(new UserService(mySqlAuthDAO, mySqlUserDAO));
             gameHandler = new GameHandler(new GameService(mySqlAuthDAO, mySqlGameDAO));
             clearHandler = new ClearHandler(new ClearService(mySqlAuthDAO, mySqlGameDAO, mySqlUserDAO));
-            webSocketHandler = new WebSocketHandler(new WebSocketService(mySqlAuthDAO, mySqlGameDAO)); //TODO: might change
+            webSocketHandler = new WebSocketHandler(new WebSocketService(mySqlAuthDAO, mySqlGameDAO));
         }
-
 
         javalin.post("/user", userHandler::register);
         javalin.post("/session", userHandler::login);
@@ -72,7 +71,7 @@ public class Server {
             ws.onConnect(webSocketHandler);
             ws.onMessage(webSocketHandler);
             ws.onClose(webSocketHandler);
-        }); //TODO
+        });
 
         javalin.exception(Exception.class, (e, ctx) ->
                 ctx.status(500).result(serializer.toJson(Map.of("message", "Error: " + e.getMessage()))));
