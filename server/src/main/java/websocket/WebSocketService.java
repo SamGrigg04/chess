@@ -10,7 +10,6 @@ import dataaccess.GameDAO;
 import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
-import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.result.ConnectResult;
