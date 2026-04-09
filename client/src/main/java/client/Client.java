@@ -255,7 +255,7 @@ public class Client {
                 Input 5 to resign. Resigning results in an automatic forfeit. Observers cannot resign. Resigning
                 does not cause you to leave the game.
                 Input 6 to highlight legal moves for any given piece. Location is specified
-                by <row number><column number> (e.g. 1a).
+                by <row number><column number> (e.g. a1).
                 """;
     }
 }
