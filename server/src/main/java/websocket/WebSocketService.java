@@ -30,12 +30,7 @@ public class WebSocketService {
     }
 
     public ConnectResult connect(UserGameCommand command) throws ResponseException, DataAccessException {
-        if (!validateAuth(command.getAuthToken())) {
-            throw new ResponseException("Error: unauthorized");
-        }
-        if (!validateGame(command.getGameID())) {
-            throw new ResponseException("Error: bad request");
-        }
+        validate(command);
 
         String username = authDAO.getAuth(command.getAuthToken()).username();
         GameData gameData = gameDAO.getGame(command.getGameID());
@@ -50,12 +45,7 @@ public class WebSocketService {
     }
 
     public MoveResult makeMove(UserGameCommand command, Session session) throws ResponseException, DataAccessException {
-        if (!validateAuth(command.getAuthToken())) {
-            throw new ResponseException("Error: unauthorized");
-        }
-        if (!validateGame(command.getGameID())) {
-            throw new ResponseException("Error: bad request");
-        }
+        validate(command);
 
         String username = authDAO.getAuth(command.getAuthToken()).username();
         GameData gameData = gameDAO.getGame(command.getGameID());
@@ -103,24 +93,40 @@ public class WebSocketService {
         return (char)('a' + (pos.getColumn() - 1)) + String.valueOf(pos.getRow());
     }
 
-    public LeaveResult leave(UserGameCommand command, Session session) {
+    public LeaveResult leave(UserGameCommand command, Session session) throws DataAccessException, ResponseException {
+        validate(command);
+
+        String username = authDAO.getAuth(command.getAuthToken()).username();
+        GameData gameData = gameDAO.getGame(command.getGameID());
+        ChessGame game = gameData.game();
+        ChessGame.TeamColor playerColor = getPlayerColor(gameData, username);
 
         String notificationText = "<PLAYERNAME> left the game";
         return null;
     }
 
-    public ResignResult resign(UserGameCommand command, Session session) {
+    public ResignResult resign(UserGameCommand command, Session session) throws ResponseException, DataAccessException {
+        validate(command);
 
         String notificationText = "<PLAYERNAME> resigned";
         return null;
     }
 
-    public boolean validateAuth(String AuthToken) throws DataAccessException {
+    private void validate(UserGameCommand command) throws ResponseException, DataAccessException {
+        if (!validateAuth(command.getAuthToken())) {
+            throw new ResponseException("Error: unauthorized");
+        }
+        if (!validateGame(command.getGameID())) {
+            throw new ResponseException("Error: bad request");
+        }
+    }
+
+    private boolean validateAuth(String AuthToken) throws DataAccessException {
         AuthData authData = authDAO.getAuth(AuthToken);
         return authData != null;
     }
 
-    public boolean validateGame(Integer gameID) throws DataAccessException {
+    private boolean validateGame(Integer gameID) throws DataAccessException {
         GameData gameData = gameDAO.getGame(gameID);
         return gameData != null;
     }
