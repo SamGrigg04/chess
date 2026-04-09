@@ -15,7 +15,7 @@ public class ChessGame {
 
     TeamColor team = TeamColor.WHITE;
     ChessBoard board = new ChessBoard();
-    public Boolean isGameOver = false;
+    private Boolean isGameOver = false;
 
     public ChessGame() {
         this.board.resetBoard();
@@ -36,6 +36,8 @@ public class ChessGame {
     public void setTeamTurn(TeamColor team) {
         this.team = team;
     }
+
+    public boolean isGameOver() {return isGameOver;}
 
     public void setIsGameOver(Boolean isGameOver) {this.isGameOver = isGameOver;}
 
