@@ -1,6 +1,9 @@
 package websocket;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import chess.InvalidMoveException;
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
@@ -8,6 +11,7 @@ import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
 import websocket.result.ConnectResult;
 import websocket.result.LeaveResult;
@@ -64,16 +68,42 @@ public class WebSocketService {
         if (playerColor == null) {
             throw new ResponseException("Error: unauthorized");
         }
-        if (game.getTeamTurn() != playerColor) {
-            throw new ResponseException("Error: not your turn");
+        if (game.getTeamTurn() != playerColor || game.isGameOver) {
+            throw new ResponseException("Error: bad request");
+        }
+
+        MakeMoveCommand moveCommand = (MakeMoveCommand) command;
+        ChessMove move = moveCommand.getMove();
+
+        try {
+            game.makeMove(move);
+        } catch (InvalidMoveException e) {
+            throw new ResponseException("Error: invalid move");
         }
 
         String statusNotificationText = "";
+        if (game.isInCheck(playerColor)) {
+            statusNotificationText = playerColor + " is in check";
+        } else if (game.isInCheckmate(playerColor)) {
+            statusNotificationText = playerColor + " is in checkmate";
+            game.setIsGameOver(true);
+        } else if (game.isInStalemate(playerColor)) {
+            statusNotificationText = playerColor + " is in stalemate";
+            game.setIsGameOver(true);
+        }
 
-        String moveNotificationText = String.format("%s moved from <STARTPOSITION> to <ENDPOSITION>",
-                username);
+        // TODO: update game in database
+
+        String moveNotificationText = String.format("%s moved from %s to %s",
+                username,
+                positionToString(move.getStartPosition()),
+                positionToString(move.getEndPosition()));
 
         return new MoveResult(game, moveNotificationText, statusNotificationText);
+    }
+
+    private String positionToString(ChessPosition pos) {
+        return (char)('a' + (pos.getColumn() - 1)) + String.valueOf(pos.getRow());
     }
 
     public boolean validateMove() {
