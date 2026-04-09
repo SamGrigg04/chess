@@ -88,8 +88,12 @@ public class GameplayClient implements ServerMessageObserver{
         return "Board redrawn";
     }
 
-    public String leaveGame() {
-        return null;
+    public String leaveGame() throws ResponseException {
+        session.assertPlaying();
+
+        // TODO: Disconnect websocket connection
+        session.leaveGame();
+        return "Left game";
     }
 
     // TODO: If an observer, send back an error
