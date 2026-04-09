@@ -114,7 +114,7 @@ public class WebSocketService {
         ChessGame game = gameData.game();
         ChessGame.TeamColor playerColor = getPlayerColor(gameData, username);
 
-        if (game.isGameOver) {
+        if (game.isGameOver()) {
             throw new ResponseException("Error: game is over");
         }
         if (playerColor == null) {
