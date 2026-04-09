@@ -55,6 +55,19 @@ public class GameplayClient implements ServerMessageObserver{
 
     }
 
+    private void renderCurrentBoard(ChessPosition startPosition, Collection<ChessPosition> endPositions) throws ResponseException {
+        GameData game = requireCurrentGame();
+        ChessBoardRenderer.render(game.game().getBoard(), session.getActivePerspective(), startPosition, endPositions);
+    }
+
+    private GameData requireCurrentGame() throws ResponseException {
+        GameData currentGame = session.getCurrentGame();
+        if (currentGame == null) {
+            throw new ResponseException("No game loaded");
+        }
+        return currentGame;
+    }
+
     private GameData findGame(int gameID) throws ResponseException {
         for (GameData game : server.listGames(session.getAuthToken())) {
             if (game.gameID() == gameID) {
