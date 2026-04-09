@@ -54,4 +54,16 @@ public class GameplayClient implements ServerMessageObserver{
     public void onError(String errorMessage) {
 
     }
+
+    private GameData findGame(int gameID) throws ResponseException {
+        for (GameData game : server.listGames(session.getAuthToken())) {
+            if (game.gameID() == gameID) {
+                return game;
+            }
+        }
+        throw new ResponseException("Game not found");
+    }
+
+    
+
 }
