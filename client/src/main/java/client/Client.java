@@ -48,14 +48,11 @@ public class Client {
             }
 
             try {
-                String actionResult;
-                if (state == State.SIGNEDIN) {
-                    actionResult = loggedInEval(option, scanner);
-                } else if (state == State.PLAYING) {
-                    actionResult = playingEval(option, scanner);
-                } else {
-                    actionResult = loggedOutEval(option, scanner);
-                }
+                String actionResult = switch (session.getState()) {
+                    case SIGNEDOUT -> loggedOutEval(option, scanner);
+                    case SIGNEDIN -> loggedInEval(option, scanner);
+                    case PLAYING -> playingEval(option, scanner);
+                };
                 if ("quit".equalsIgnoreCase(actionResult)) {
                     running = false;
                 } else if (actionResult != null && !actionResult.isBlank()) {
