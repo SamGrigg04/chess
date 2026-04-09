@@ -1,17 +1,12 @@
 package client;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Scanner;
 
-import chess.ChessBoard;
-import chess.ChessMove;
-import chess.ChessPosition;
 import exception.ResponseException;
 import model.GameData;
 import result.AuthResult;
 import serverFacade.ServerFacade;
-import ui.ChessBoardRenderer;
 
 
 public class Client {
