@@ -76,11 +76,11 @@ public class Server {
 
         javalin.exception(Exception.class, (e, ctx) ->
                 ctx.status(500).result(serializer.toJson(Map.of("message", "Error: " + e.getMessage()))));
-        javalin.exception(AlreadyTakenException.class, (e, ctx) ->
+        javalin.exception(AlreadyTakenException.class, (_, ctx) ->
                 ctx.status(403).result(serializer.toJson(Map.of("message", "Error: already taken"))));
-        javalin.exception(UnauthorizedException.class, (e, ctx) ->
+        javalin.exception(UnauthorizedException.class, (_, ctx) ->
                 ctx.status(401).result(serializer.toJson(Map.of("message", "Error: unauthorized"))));
-        javalin.exception(NoGameException.class, (e, ctx) ->
+        javalin.exception(NoGameException.class, (_, ctx) ->
                 ctx.status(400).result(serializer.toJson(Map.of("message", "Error: bad request"))));
 
     }
