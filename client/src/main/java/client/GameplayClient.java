@@ -96,9 +96,18 @@ public class GameplayClient implements ServerMessageObserver{
         return "Left game";
     }
 
-    // TODO: If an observer, send back an error
-    public String makeMove() {
-        return null;
+    public String makeMove(String... params) throws ResponseException {
+        session.assertPlaying();
+        if (session.isObserver()) {
+            throw new ResponseException("Observers cannot make moves");
+        }
+        if (params.length < 2) {
+            throw new ResponseException("Expected start and end positions");
+        }
+
+        ChessMove move = parseMove(params);
+        // TODO: Send over websocket
+        return String.format("Sent move request %s to %s", params[0], params[1]);
     }
 
     // TODO: Does not cause the player to leave the game
