@@ -141,4 +141,18 @@ public class GameplayClient implements ServerMessageObserver{
         }
     }
 
+    private ChessPosition parsePosition(String input) throws ResponseException {
+        String position = input.trim().toLowerCase();
+        if (position.length() != 2) {
+            throw new ResponseException("Invalid position");
+        }
+
+        char file = position.charAt(0);
+        char rank = position.charAt(1);
+        if (file < 'a' || file > 'h' || rank < '1' || rank > '8') {
+            throw new ResponseException("Invalid position");
+        }
+        return new ChessPosition(rank - '0', file - 'a' + 1);
+    }
+
 }
