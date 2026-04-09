@@ -31,8 +31,19 @@ public class GameplayClient implements ServerMessageObserver{
         return String.format("Joined game with id %s", gameID);
     };
 
-    public String observeGame() {
-        return null;
+    public String observeGame(String... params) throws ResponseException {
+        session.assertSignedIn();
+        if (params.length < 1) {
+            throw new ResponseException("Expected gameID");
+        }
+
+        int gameID = parseGameID(params[0]);
+        GameData game = findGame(gameID);
+        session.startGame(gameID, BoardPerspective.WHITE, true, game);
+        renderCurrentBoard(null, null);
+
+        // TODO: do not call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
+        return String.format("Observing game with id %s", gameID);
     }
 
     public String highlightMoves() {
