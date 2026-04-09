@@ -16,7 +16,7 @@ public class Client {
 
     public Client(String serverURL) {
         server = new ServerFacade(serverURL);
-        gameplayClient = new GameplayClient(/* serverURL, */server, session);
+        gameplayClient = new GameplayClient(serverURL, server, session);
     }
 
     public void run() {
@@ -142,9 +142,10 @@ public class Client {
 
     public String logout() throws ResponseException {
         session.assertSignedIn();
+        String username = session.getVisitorName(); // it gets cleared before we return
         server.logout(session.getAuthToken());
         session.signOut();
-        return String.format("%s understandably got bored of chess and left", session.getVisitorName());
+        return String.format("%s understandably got bored of chess and left", username);
     }
 
     public String listGames() throws ResponseException {

@@ -1,25 +1,25 @@
 package client;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import exception.ResponseException;
 import model.GameData;
 import serverFacade.ServerFacade;
 import ui.BoardPerspective;
 import ui.ChessBoardRenderer;
+import websocket.commands.MakeMoveCommand;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class GameplayClient implements ServerMessageObserver{
+public class GameplayClient implements GameplayWebsocketFacade.ServerMessageObserver{
     private final ServerFacade server;
     private final ClientSession session;
+    private final GameplayWebsocketFacade socketFacade;
 
-    public GameplayClient(/*String serverURL,*/ ServerFacade server, ClientSession session) {
+    public GameplayClient(String serverURL, ServerFacade server, ClientSession session) {
         this.server = server;
         this.session = session;
+        this.socketFacade = new GameplayWebsocketFacade(serverURL, this);
     }
 
     public String joinGame(String... params) throws ResponseException {
@@ -35,9 +35,7 @@ public class GameplayClient implements ServerMessageObserver{
 
         GameData game = findGame(gameID);
         session.startGame(gameID, perspective, false, game);
-        renderCurrentBoard(null, null);
-
-        // TODO: call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
+        socketFacade.connect(session.getAuthToken(), gameID);
         return String.format("Joined game with id %s", gameID);
     }
 
@@ -50,9 +48,7 @@ public class GameplayClient implements ServerMessageObserver{
         int gameID = parseGameID(params[0]);
         GameData game = findGame(gameID);
         session.startGame(gameID, BoardPerspective.WHITE, true, game);
-        renderCurrentBoard(null, null);
-
-        // TODO: do not call the join endpoint, open a websocket connection, send a CONNECT message, transition to gameplay UI
+        socketFacade.connect(session.getAuthToken(), gameID);
         return String.format("Observing game with id %s", gameID);
     }
 
@@ -90,8 +86,9 @@ public class GameplayClient implements ServerMessageObserver{
 
     public String leaveGame() throws ResponseException {
         session.assertPlaying();
-
-        // TODO: Disconnect websocket connection
+        Integer gameID = session.getActiveGameID();
+        socketFacade.leaveGame(session.getAuthToken(), gameID);
+        socketFacade.disconnect();
         session.leaveGame();
         return "Left game";
     }
@@ -106,7 +103,7 @@ public class GameplayClient implements ServerMessageObserver{
         }
 
         ChessMove move = parseMove(params);
-        // TODO: Send over websocket
+        socketFacade.sendMove(new MakeMoveCommand(session.getAuthToken(), session.getActiveGameID(), move));
         return String.format("Sent move request %s to %s", params[0], params[1]);
     }
 
@@ -120,23 +117,36 @@ public class GameplayClient implements ServerMessageObserver{
             return "Resignation cancelled";
         }
 
-        // TODO: end the game for all participands
+        socketFacade.resign(session.getAuthToken(), session.getActiveGameID());
         return "Resignation request sent";
     }
 
     @Override
     public void onLoadGame(ChessGame game) {
-
+        GameData current = session.getCurrentGame();
+        if (current != null) {
+            session.updateGame(new GameData(
+                    current.gameID(),
+                    current.whiteUsername(),
+                    current.blackUsername(),
+                    current.gameName(),
+                    game
+            ));
+            try {
+                renderCurrentBoard(null, null);
+            } catch (ResponseException ignored) {
+            }
+        }
     }
 
     @Override
     public void onNotification(String message) {
-
+        System.out.println("\n" + message);
     }
 
     @Override
     public void onError(String errorMessage) {
-
+        System.out.println("\n" + errorMessage);
     }
 
     private void renderCurrentBoard(ChessPosition startPosition, Collection<ChessPosition> endPositions) throws ResponseException {
