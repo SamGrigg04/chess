@@ -67,7 +67,7 @@ public class GameplayClient implements GameplayWebsocketFacade.ServerMessageObse
 
         Collection<ChessPosition> endPositions = new ArrayList<>();
         Collection<ChessMove> validMoves = game.game().validMoves(startPosition);
-        if (validMoves == null || validMoves.isEmpty()) {
+        if (validMoves == null) {
             throw new ResponseException("No valid moves found");
         }
         for (ChessMove move : validMoves) {
