@@ -32,9 +32,11 @@ public class Client {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
         while (running) {
-            // Thanks, CS 260. Neat syntax no?
-            String menu = (state == State.SIGNEDOUT) ? signedOutMenu() : (state == State.PLAYING) ? playMenu() : signedInMenu();
-            System.out.print(menu);
+            String menu = switch (session.getState()) {
+                case SIGNEDOUT -> signedOutMenu();
+                case PLAYING -> playMenu();
+                case SIGNEDIN -> signedInMenu();
+            };            System.out.print(menu);
             printPrompt();
             String line = scanner.nextLine();
 
