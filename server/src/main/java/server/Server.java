@@ -8,7 +8,6 @@ import service.*;
 import websocket.WebSocketHandler;
 import websocket.WebSocketService;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class Server {
