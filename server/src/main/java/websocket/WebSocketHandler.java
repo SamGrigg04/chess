@@ -4,10 +4,11 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import exception.ResponseException;
 import io.javalin.websocket.*;
-import org.eclipse.jetty.websocket.api.Session;
+import org.jetbrains.annotations.NotNull;
 import websocket.messages.*;
 import websocket.commands.*;
 import websocket.result.ConnectResult;
+import websocket.result.*;
 
 import java.io.IOException;
 
@@ -40,9 +41,15 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                     connections.sendToOthers(command.getGameID(), ctx.session,
                             new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION, result.notificationText()));
                 } //TODO: make the rest similar
-                case MAKE_MOVE -> makeMove(command, ctx.session);
-                case LEAVE -> leave(command, ctx.session);
-                case RESIGN -> resign(command, ctx.session);
+                case MAKE_MOVE -> {
+                    MoveResult result = websocketService.makeMove(command, ctx.session);
+                }
+                case LEAVE -> {
+                    LeaveResult result = websocketService.leave(command, ctx.session);
+                }
+                case RESIGN -> {
+                    ResignResult result = websocketService.resign(command, ctx.session);
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -52,7 +59,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
     }
 
     @Override
-    public void handleClose(WsCloseContext ctx) {
+    public void handleClose(@NotNull WsCloseContext ctx) {
         System.out.println("Websocket closed");
     }
 

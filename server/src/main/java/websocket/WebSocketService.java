@@ -7,6 +7,9 @@ import exception.ResponseException;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.UserGameCommand;
 import websocket.result.ConnectResult;
+import websocket.result.LeaveResult;
+import websocket.result.MoveResult;
+import websocket.result.ResignResult;
 
 public class WebSocketService {
     private final GameDAO gameDAO;
@@ -36,5 +39,17 @@ public class WebSocketService {
 
     public boolean validateGame(Integer gameID) {
         return false;
+    }
+
+    public MoveResult makeMove(UserGameCommand command, Session session) {
+        return null;
+    }
+
+    public LeaveResult leave(UserGameCommand command, Session session) {
+        return null;
+    }
+
+    public ResignResult resign(UserGameCommand command, Session session) {
+        return null;
     }
 }
