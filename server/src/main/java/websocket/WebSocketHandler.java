@@ -94,7 +94,7 @@ public class WebSocketHandler implements WsConnectHandler, WsMessageHandler, WsC
                                 new ErrorMessage(ServerMessage.ServerMessageType.ERROR, e.getMessage()));
                         return;
                     }
-                    connections.sendToOthers(command.getGameID(), ctx.session,
+                    connections.sendToGame(command.getGameID(),
                             new NotificationMessage(ServerMessage.ServerMessageType.NOTIFICATION,
                                     result.notificationText()));
                 }
