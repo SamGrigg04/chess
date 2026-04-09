@@ -46,8 +46,30 @@ public class GameplayClient implements ServerMessageObserver{
         return String.format("Observing game with id %s", gameID);
     }
 
-    public String highlightMoves() {
-        return null;
+    public String highlightMoves(String... params) throws ResponseException {
+        session.assertPlaying();
+        if (params.length < 1) {
+            throw new ResponseException("Expected a position");
+        }
+
+        ChessPosition startPosition = parsePosition(params[0]);
+        GameData game = requireCurrentGame();
+        ChessBoard board = game.game().getBoard();
+        if (board.getPiece(startPosition) == null) {
+            throw new ResponseException("No piece at that position");
+        }
+
+        Collection<ChessPosition> endPositions = new ArrayList<>();
+        Collection<ChessMove> validMoves = game.game().validMoves(startPosition);
+        if (validMoves == null || validMoves.isEmpty()) {
+            throw new ResponseException("No valid moves found");
+        }
+        for (ChessMove move : validMoves) {
+            endPositions.add(move.getEndPosition());
+        }
+
+        renderCurrentBoard(startPosition, endPositions);
+        return String.format("Highlighted possible moves for position %s", params[0]);
     }
 
     public String redrawBoard() {
