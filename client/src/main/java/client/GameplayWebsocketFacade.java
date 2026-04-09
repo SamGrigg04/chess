@@ -9,7 +9,9 @@ import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 
-public class GameplayWebsocketFacade {
+import jakarta.websocket.*;
+
+public class GameplayWebsocketFacade extends Endpoint {
     private final String serverUrl;
     private final ServerMessageObserver observer;
     private final Gson gson = new Gson();
@@ -65,6 +67,11 @@ public class GameplayWebsocketFacade {
                 observer.onNotification(message.getMessage());
             }
         }
+    }
+
+    @Override
+    public void onOpen(Session session, EndpointConfig config) {
+
     }
 
     public interface ServerMessageObserver {
