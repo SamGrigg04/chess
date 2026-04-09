@@ -84,7 +84,7 @@ public class Client {
         };
     }
 
-    private String loggedInEval(int option, Scanner scanner) throws ResponseException, InterruptedException {
+    private String loggedInEval(int option, Scanner scanner) throws ResponseException{
         return switch (option) {
             case 1 -> signedInHelp();
             case 2 -> "quit";
@@ -97,7 +97,7 @@ public class Client {
         };
     }
 
-    private String playingEval(int option, Scanner scanner) throws ResponseException, InterruptedException {
+    private String playingEval(int option, Scanner scanner) throws ResponseException {
         return switch (option) {
             case 1 -> playHelp();
             case 2 -> gameplayClient.redrawBoard();

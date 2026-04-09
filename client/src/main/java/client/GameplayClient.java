@@ -1,7 +1,17 @@
 package client;
 
+import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
+import exception.ResponseException;
+import model.GameData;
 import serverFacade.ServerFacade;
+import ui.BoardPerspective;
+import ui.ChessBoardRenderer;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class GameplayClient implements ServerMessageObserver{
     private final ServerFacade server;
@@ -80,10 +90,13 @@ public class GameplayClient implements ServerMessageObserver{
         return null;
     }
 
+    // TODO: If an observer, send back an error
     public String makeMove() {
         return null;
     }
 
+    // TODO: Does not cause the player to leave the game
+    // TODO: If an observer, send back an error
     public String resign() {
         return null;
     }
