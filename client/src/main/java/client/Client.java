@@ -248,13 +248,13 @@ public class Client {
         return """
                 Input 1 for help
                 Input 2 to redraw the chess board
-                Input 3 to leave the game. Leaving the game does not cause you to forfeit. Another player may join \n
+                Input 3 to leave the game. Leaving the game does not cause you to forfeit. Another player may join
                 the game at any time and continue where you left off.
-                Input 4 to make a move. You can only move during your turn. Observers cannot make moves. Moves must \n
+                Input 4 to make a move. You can only move during your turn. Observers cannot make moves. Moves must
                 be in chess notation.
-                Input 5 to resign. Resigning results in an automatic forfeit. Observers cannot resign. Resigning \n
+                Input 5 to resign. Resigning results in an automatic forfeit. Observers cannot resign. Resigning
                 does not cause you to leave the game.
-                Input 6 to highlight legal moves for any given piece. Location is specified \n
+                Input 6 to highlight legal moves for any given piece. Location is specified
                 by <row number><column number> (e.g. 1a).
                 """;
     }
