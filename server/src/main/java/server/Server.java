@@ -5,7 +5,10 @@ import dataaccess.*;
 import handler.*;
 import io.javalin.Javalin;
 import service.*;
+import websocket.WebSocketHandler;
+import websocket.WebSocketService;
 
+import java.io.IOException;
 import java.util.Map;
 
 public class Server {
@@ -22,6 +25,7 @@ public class Server {
         UserHandler userHandler;
         GameHandler gameHandler;
         ClearHandler clearHandler;
+        WebSocketHandler webSocketHandler;
 
         javalin = Javalin.create(config -> config.staticFiles.add("web"));
 
@@ -33,6 +37,7 @@ public class Server {
             userHandler = new UserHandler(new UserService(memoryAuthDAO, memoryUserDAO));
             gameHandler = new GameHandler(new GameService(memoryAuthDAO, memoryGameDAO));
             clearHandler = new ClearHandler(new ClearService(memoryAuthDAO, memoryGameDAO, memoryUserDAO));
+            webSocketHandler = new WebSocketHandler(); //TODO: might change
         } else {
             MySqlAuthDAO mySqlAuthDAO = new MySqlAuthDAO();
             MySqlGameDAO mySqlGameDAO = new MySqlGameDAO();
@@ -50,6 +55,7 @@ public class Server {
             userHandler = new UserHandler(new UserService(mySqlAuthDAO, mySqlUserDAO));
             gameHandler = new GameHandler(new GameService(mySqlAuthDAO, mySqlGameDAO));
             clearHandler = new ClearHandler(new ClearService(mySqlAuthDAO, mySqlGameDAO, mySqlUserDAO));
+            webSocketHandler = new WebSocketHandler(); //TODO: might change
         }
 
 
@@ -62,6 +68,12 @@ public class Server {
         javalin.put("/game", gameHandler::joinGame);
 
         javalin.delete("/db", clearHandler::clear);
+
+        javalin.ws("/ws", ws -> {
+            ws.onConnect(webSocketHandler);
+            ws.onMessage(webSocketHandler);
+            ws.onClose(webSocketHandler);
+        }); //TODO
 
         javalin.exception(Exception.class, (e, ctx) ->
                 ctx.status(500).result(serializer.toJson(Map.of("message", "Error: " + e.getMessage()))));
