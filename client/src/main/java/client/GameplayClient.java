@@ -107,7 +107,6 @@ public class GameplayClient implements GameplayWebsocketFacade.ServerMessageObse
         return String.format("Sent move request %s to %s", params[0], params[1]);
     }
 
-    // TODO: Does not cause the player to leave the game
     public String resign(String... params) throws ResponseException {
         session.assertPlaying();
         if (session.isObserver()) {
