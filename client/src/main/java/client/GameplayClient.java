@@ -174,4 +174,25 @@ public class GameplayClient implements ServerMessageObserver{
         return new ChessPosition(rank - '0', file - 'a' + 1);
     }
 
+    private ChessMove parseMove(String... params) throws ResponseException {
+        ChessPosition start = parsePosition(params[0]);
+        ChessPosition end = parsePosition(params[1]);
+        ChessPiece.PieceType promotion = null;
+
+        if (params.length >= 3 && !params[2].isBlank()) {
+            promotion = parsePromotionPiece(params[2]);
+        }
+        return new ChessMove(start, end, promotion);
+    }
+
+    private ChessPiece.PieceType parsePromotionPiece(String input) throws ResponseException {
+        return switch (input.trim().toUpperCase()) {
+            case "QUEEN" -> ChessPiece.PieceType.QUEEN;
+            case "ROOK" -> ChessPiece.PieceType.ROOK;
+            case "BISHOP" -> ChessPiece.PieceType.BISHOP;
+            case "KNIGHT" -> ChessPiece.PieceType.KNIGHT;
+            default -> throw new ResponseException("Promotion piece must be queen, rook, bishop, or knight");
+        };
+    }
+
 }
