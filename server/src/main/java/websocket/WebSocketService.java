@@ -52,10 +52,13 @@ public class WebSocketService {
         ChessGame.TeamColor playerColor = getPlayerColor(gameData, username);
 
         if (playerColor == null) {
-            throw new ResponseException("Error: unauthorized");
+            throw new ResponseException("Error: observers can't make moves");
         }
-        if (game.getTeamTurn() != playerColor || game.isGameOver()) {
-            throw new ResponseException("Error: bad request");
+        if (game.getTeamTurn() != playerColor) {
+            throw new ResponseException("Error: not your turn");
+        }
+        if (game.isGameOver()) {
+            throw new ResponseException("Error: the game is over");
         }
 
         MakeMoveCommand moveCommand = (MakeMoveCommand) command;
@@ -67,18 +70,22 @@ public class WebSocketService {
             throw new ResponseException("Error: invalid move");
         }
 
-        ChessGame.TeamColor opponent = playerColor == ChessGame.TeamColor.WHITE
+        ChessGame.TeamColor opponentColor = playerColor == ChessGame.TeamColor.WHITE
                 ? ChessGame.TeamColor.BLACK
                 : ChessGame.TeamColor.WHITE;
 
+        String opponentUsername = opponentColor == ChessGame.TeamColor.WHITE
+                ? gameData.whiteUsername()
+                : gameData.blackUsername();
+
         String statusNotificationText = "";
-        if (game.isInCheck(opponent)) {
-            statusNotificationText = opponent + " is in check";
-        } else if (game.isInCheckmate(opponent)) {
-            statusNotificationText = opponent + " is in checkmate";
+        if (game.isInCheckmate(opponentColor)) {
+            statusNotificationText = opponentUsername + " is in checkmate";
             game.setIsGameOver(true);
-        } else if (game.isInStalemate(opponent)) {
-            statusNotificationText = opponent + " is in stalemate";
+        } else if (game.isInCheck(opponentColor)) {
+            statusNotificationText = opponentUsername + " is in check";
+        } else if (game.isInStalemate(opponentColor)) {
+            statusNotificationText = opponentUsername + " is in stalemate";
             game.setIsGameOver(true);
         }
 
