@@ -37,8 +37,9 @@ public enum BoardPerspective {
                 displayBoard,
                 displayPosition(startPosition),
                 displayPositions(endPositions),
+                SET_TEXT_COLOR_RED,
                 SET_TEXT_COLOR_BLUE,
-                SET_TEXT_COLOR_RED
+                this
         );
     }
 
@@ -48,7 +49,7 @@ public enum BoardPerspective {
         }
         return this == BLACK
                 ? new ChessPosition(position.getRow(), 9 - position.getColumn())
-                : new ChessPosition(9 - position.getRow(), position.getColumn());
+                : position;
     }
 
     public Collection<ChessPosition> displayPositions(Collection<ChessPosition> positions) {

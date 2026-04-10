@@ -12,6 +12,7 @@ public record BoardRenderModel(
         ChessPosition startPosition,
         Collection<ChessPosition> endPositions,
         String yourPieceTextColor,
-        String opposingPieceTextColor
+        String opposingPieceTextColor,
+        BoardPerspective perspective
 ) {
 }

@@ -47,18 +47,20 @@ public final class TerminalBoardRenderer {
     }
 
     private void drawChessBoard(PrintStream out, BoardRenderModel model) {
-        for (int boardRow = 1; boardRow <= BOARD_SIZE_IN_SQUARES - 2; ++boardRow) {
+        for (int boardRow = 8; boardRow >= 1; --boardRow) {
+            String rowHeader = model.rowHeaders()[8- boardRow];
+
             ChessPiece[] rowContents = new ChessPiece[BOARD_SIZE_IN_SQUARES - 2];
             for (int boardColumn = 1; boardColumn <= BOARD_SIZE_IN_SQUARES - 2; ++boardColumn) {
                 rowContents[boardColumn - 1] = model.board().getPiece(new ChessPosition(boardRow, boardColumn));
             }
-            String rowHeader = model.rowHeaders()[boardRow - 1];
-            drawRowOfSquares(out, boardRow - 1, rowContents, rowHeader, model);
+            drawRowOfSquares(out, boardRow, 8 - boardRow, rowContents, rowHeader, model);
         }
     }
 
     private void drawRowOfSquares(PrintStream out,
-                                  int boardRow,
+                                  int actualBoardRow,
+                                  int displayRow,
                                   ChessPiece[] rowContents,
                                   String rowHeader,
                                   BoardRenderModel model) {
@@ -68,8 +70,10 @@ public final class TerminalBoardRenderer {
 
             for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES - 2; ++boardCol) {
                 ChessPiece piece = rowContents[boardCol];
-                ChessPosition currentPosition = new ChessPosition(boardRow + 1, boardCol + 1);
-                boolean isLightSquare = (boardRow + boardCol) % 2 == 0;
+                ChessPosition currentPosition = model.perspective() == BoardPerspective.BLACK
+                        ? new ChessPosition(9 - actualBoardRow, boardCol + 1)
+                        : new ChessPosition(actualBoardRow, boardCol + 1);
+                boolean isLightSquare = (displayRow + boardCol) % 2 == 0;
 
                 if (isLightSquare) {
                     setWhite(out);
