@@ -15,6 +15,7 @@ public class GameplayClient implements GameplayWebsocketFacade.ServerMessageObse
     private final ServerFacade server;
     private final ClientSession session;
     private final GameplayWebsocketFacade socketFacade;
+    private boolean initialLoadComplete = false;
 
     public GameplayClient(String serverURL, ServerFacade server, ClientSession session) {
         this.server = server;
@@ -35,6 +36,12 @@ public class GameplayClient implements GameplayWebsocketFacade.ServerMessageObse
 
         GameData game = findGame(gameID);
         session.startGame(gameID, perspective, false, game);
+
+        try {
+            renderCurrentBoard(null, null);
+        } catch (ResponseException ignored) {
+        }
+
         socketFacade.connect(session.getAuthToken(), gameID);
         return String.format("Joined game with id %s", gameID);
     }
@@ -48,6 +55,12 @@ public class GameplayClient implements GameplayWebsocketFacade.ServerMessageObse
         int gameID = parseGameID(params[0]);
         GameData game = findGame(gameID);
         session.startGame(gameID, BoardPerspective.WHITE, true, game);
+
+        try {
+            renderCurrentBoard(null, null);
+        } catch (ResponseException ignored) {
+        }
+
         socketFacade.connect(session.getAuthToken(), gameID);
         return String.format("Observing game with id %s", gameID);
     }
@@ -89,6 +102,7 @@ public class GameplayClient implements GameplayWebsocketFacade.ServerMessageObse
         socketFacade.leaveGame(session.getAuthToken(), gameID);
         socketFacade.disconnect();
         session.leaveGame();
+        initialLoadComplete = false;
         return "Left game";
     }
 
@@ -130,9 +144,15 @@ public class GameplayClient implements GameplayWebsocketFacade.ServerMessageObse
                     current.gameName(),
                     game
             ));
-            try {
-                renderCurrentBoard(null, null);
-            } catch (ResponseException ignored) {
+
+            if (initialLoadComplete) {
+                try {
+                    System.out.println();
+                    renderCurrentBoard(null, null);
+                } catch (ResponseException ignored) {
+                }
+            } else {
+                initialLoadComplete = true;
             }
         }
     }
