@@ -6,7 +6,7 @@ import java.util.Scanner;
 import exception.ResponseException;
 import model.GameData;
 import result.AuthResult;
-import serverFacade.ServerFacade;
+import serverfacade.ServerFacade;
 
 
 public class Client {

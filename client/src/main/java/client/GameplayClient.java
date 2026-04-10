@@ -3,7 +3,7 @@ package client;
 import chess.*;
 import exception.ResponseException;
 import model.GameData;
-import serverFacade.ServerFacade;
+import serverfacade.ServerFacade;
 import ui.BoardPerspective;
 import ui.ChessBoardRenderer;
 import websocket.commands.MakeMoveCommand;

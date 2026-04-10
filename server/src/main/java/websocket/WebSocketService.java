@@ -143,8 +143,8 @@ public class WebSocketService {
         }
     }
 
-    private boolean validateAuth(String AuthToken) throws DataAccessException {
-        AuthData authData = authDAO.getAuth(AuthToken);
+    private boolean validateAuth(String authToken) throws DataAccessException {
+        AuthData authData = authDAO.getAuth(authToken);
         return authData != null;
     }
 
